@@ -15,6 +15,10 @@ namespace UnityEditor.Rendering.Universal
         SerializedDataParameter m_HighQualityFiltering;
         SerializedDataParameter m_DirtTexture;
         SerializedDataParameter m_DirtIntensity;
+        SerializedDataParameter m_MaxIterations;
+        SerializedDataParameter m_DownScale;
+
+        public override bool hasAdvancedMode => true;
 
         public override void OnEnable()
         {
@@ -28,6 +32,8 @@ namespace UnityEditor.Rendering.Universal
             m_HighQualityFiltering = Unpack(o.Find(x => x.highQualityFiltering));
             m_DirtTexture = Unpack(o.Find(x => x.dirtTexture));
             m_DirtIntensity = Unpack(o.Find(x => x.dirtIntensity));
+            m_MaxIterations = Unpack(o.Find(x => x.maxIterations));
+            m_DownScale = Unpack(o.Find(x => x.downScale));
         }
 
         public override void OnInspectorGUI()
@@ -48,6 +54,13 @@ namespace UnityEditor.Rendering.Universal
 
             PropertyField(m_DirtTexture);
             PropertyField(m_DirtIntensity);
+
+            if (isInAdvancedMode)
+            {
+                EditorGUILayout.LabelField("Quality", EditorStyles.miniLabel);
+                PropertyField(m_MaxIterations);
+                PropertyField(m_DownScale);
+            }
         }
     }
 }

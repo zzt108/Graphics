@@ -2,6 +2,12 @@ using System;
 
 namespace UnityEngine.Rendering.Universal
 {
+    public enum BloomDownScale
+    {
+        Half = 1,
+        Quarter = 2,
+    }
+
     [Serializable, VolumeComponentMenu("Post-processing/Bloom")]
     public sealed class Bloom : VolumeComponent, IPostProcessComponent
     {
@@ -29,8 +35,15 @@ namespace UnityEngine.Rendering.Universal
         [Tooltip("Amount of dirtiness.")]
         public MinFloatParameter dirtIntensity = new MinFloatParameter(0f, 0f);
 
+        public ClampedIntParameter maxIterations = new ClampedIntParameter(16, 2, 16);
+
+        public BloomDownScaleParameter downScale = new BloomDownScaleParameter(BloomDownScale.Half, false);
+
         public bool IsActive() => intensity.value > 0f;
 
         public bool IsTileCompatible() => false;
     }
+
+    [Serializable]
+    public sealed class BloomDownScaleParameter : VolumeParameter<BloomDownScale> { public BloomDownScaleParameter(BloomDownScale value, bool overrideState = false) : base(value, overrideState) { } }
 }

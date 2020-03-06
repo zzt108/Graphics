@@ -46,7 +46,7 @@ namespace UnityEngine.Rendering.Universal.Internal
         FilmGrain m_FilmGrain;
 
         // Misc
-        const int k_MaxPyramidSize = 16;
+        int k_MaxPyramidSize = 16;
         readonly GraphicsFormat m_DefaultHDRFormat;
         bool m_UseRGBM;
         readonly GraphicsFormat m_GaussianCoCFormat;
@@ -245,7 +245,7 @@ namespace UnityEngine.Rendering.Universal.Internal
                     // Avoid using m_Source.id as new destination, it may come with a depth buffer that we don't want, may have MSAA that we don't want etc
                     cmd.GetTemporaryRT(ShaderConstants._TempTarget2, GetStereoCompatibleDescriptor(), FilterMode.Bilinear);
                     destination = ShaderConstants._TempTarget2;
-                    tempTarget2Used = true; 
+                    tempTarget2Used = true;
                 }
 
                 return destination;
@@ -336,7 +336,7 @@ namespace UnityEngine.Rendering.Universal.Internal
                 // Only apply dithering & grain if there isn't a final pass.
                 SetupGrain(cameraData, m_Materials.uber);
                 SetupDithering(cameraData, m_Materials.uber);
-				
+
                 if (Display.main.requiresSrgbBlitToBackbuffer && m_EnableSRGBConversionIfNeeded)
                     m_Materials.uber.EnableKeyword(ShaderKeywordStrings.LinearToSRGBConversion);
 
@@ -780,13 +780,13 @@ namespace UnityEngine.Rendering.Universal.Internal
         void SetupBloom(CommandBuffer cmd, int source, Material uberMaterial)
         {
             // Start at half-res
-            int tw = m_Descriptor.width >> 1;
-            int th = m_Descriptor.height >> 1;
+            int tw = m_Descriptor.width >> (int)m_Bloom.downScale.value;
+            int th = m_Descriptor.height >> (int)m_Bloom.downScale.value;
 
             // Determine the iteration count
             int maxSize = Mathf.Max(tw, th);
             int iterations = Mathf.FloorToInt(Mathf.Log(maxSize, 2f) - 1);
-            int mipCount = Mathf.Clamp(iterations, 1, k_MaxPyramidSize);
+            int mipCount = Mathf.Clamp(iterations, 1, m_Bloom.maxIterations.value);
 
             // Pre-filtering parameters
             float clamp = m_Bloom.clamp.value;
