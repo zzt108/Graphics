@@ -26,7 +26,6 @@ To add **Bloom** to a Volume:
 | **Scatter**                | Set the radius of the bloom effect in a range from 0 to 1. Higher values give a larger radius. The default value is 0.7. |
 | **Tint**                   | Use the color picker to select a color for the Bloom effect to tint to. |
 | **Clamp**                  | Set the maximum intensity that Unity uses to calculate Bloom. If pixels in your Scene are more intense than this, URP renders them at their current intensity, but uses this intensity value for the purposes of Bloom calculations. The default value is 65472. |
-| **High Quality Filtering** | Enable this to use high quality sampling. This reduces flickering and improves the overall smoothness, but is more resource-intensive and can affect performance. |
 
 ### Lens Dirt
 
@@ -35,10 +34,22 @@ To add **Bloom** to a Volume:
 | **Texture**   | Assign a Texture to apply the effect of dirt (such as smudges or dust) to the lens. |
 | **Intensity** | Set the strength of the **Lens Dirt** effect.                    |
 
+### Quality
+
+To see these quality settings, make sure to toggle the **More Options** at the top of the Bloom Override.
+
+| **Property**  | **Description**                                              |
+| ------------- | ------------------------------------------------------------ |
+| **High Quality Filtering** | Enable this to use high quality sampling. This reduces flickering and improves the overall smoothness, but is more resource-intensive and can affect performance. |
+| **Max Iterations**   | Controls the maximum number of blur iterations. Lowering this value will help with performance at a cost of visual fidelity. |
+| **Downsample** | The starting resolution when performing the bloom. Lower this to gain performance and lower memory usage. |
+
 ## Troubleshooting performance issues
 
 There are multiple ways to improve the performance impact of Bloom. Listed in order of effectiveness, you can: 
 
-1. Disable **High Quality Filtering**. Bloom then uses bilinear filtering instead of bicubic. This reduces the overall smoothness of the Bloom effect, but greatly improves performance, especially on lower-end hardware and platforms. In some extreme cases, you might see blocky graphical artifacts in your Scene. 
-2. Use a lower resolution **Lens Dirt** Texture to reduce memory pressure and speed up blending across volumes.
+1. Use lower **Max Iterations**, 16 is very high and depending on the resolution you are rendering to it will use that many, if targeting mobile, look at using 8 or less. 
+2. Try using **Quarter** for the **Downsampling** option, this will improve performance and memory consumption but may lead to visual flickering if you have small bright pixels.
+3. Disable **High Quality Filtering**. Bloom then uses bilinear filtering instead of bicubic. This reduces the overall smoothness of the Bloom effect, but greatly improves performance, especially on lower-end hardware and platforms. In some extreme cases, you might see blocky graphical artifacts in your Scene. 
+4. Use a lower resolution **Lens Dirt** Texture to reduce memory pressure and speed up blending across volumes.
 

@@ -2,7 +2,7 @@ using System;
 
 namespace UnityEngine.Rendering.Universal
 {
-    public enum BloomDownScale
+    public enum BloomDownsample
     {
         Half = 1,
         Quarter = 2,
@@ -35,9 +35,11 @@ namespace UnityEngine.Rendering.Universal
         [Tooltip("Amount of dirtiness.")]
         public MinFloatParameter dirtIntensity = new MinFloatParameter(0f, 0f);
 
+        [Tooltip("Controls the maximum number of blur iterations. Lowering this value will help with performance at a cost of visual fidelity.")]
         public ClampedIntParameter maxIterations = new ClampedIntParameter(16, 2, 16);
 
-        public BloomDownScaleParameter downScale = new BloomDownScaleParameter(BloomDownScale.Half, false);
+        [Tooltip("The starting resolution when performing the bloom. Lower this to gain performance and lower memory usage.")]
+        public BloomDownsampleParameter downsample = new BloomDownsampleParameter(BloomDownsample.Half, false);
 
         public bool IsActive() => intensity.value > 0f;
 
@@ -45,5 +47,5 @@ namespace UnityEngine.Rendering.Universal
     }
 
     [Serializable]
-    public sealed class BloomDownScaleParameter : VolumeParameter<BloomDownScale> { public BloomDownScaleParameter(BloomDownScale value, bool overrideState = false) : base(value, overrideState) { } }
+    public sealed class BloomDownsampleParameter : VolumeParameter<BloomDownsample> { public BloomDownsampleParameter(BloomDownsample value, bool overrideState = false) : base(value, overrideState) { } }
 }

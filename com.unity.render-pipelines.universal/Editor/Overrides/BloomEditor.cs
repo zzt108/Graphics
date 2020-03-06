@@ -16,7 +16,7 @@ namespace UnityEditor.Rendering.Universal
         SerializedDataParameter m_DirtTexture;
         SerializedDataParameter m_DirtIntensity;
         SerializedDataParameter m_MaxIterations;
-        SerializedDataParameter m_DownScale;
+        SerializedDataParameter m_Downsample;
 
         public override bool hasAdvancedMode => true;
 
@@ -33,7 +33,7 @@ namespace UnityEditor.Rendering.Universal
             m_DirtTexture = Unpack(o.Find(x => x.dirtTexture));
             m_DirtIntensity = Unpack(o.Find(x => x.dirtIntensity));
             m_MaxIterations = Unpack(o.Find(x => x.maxIterations));
-            m_DownScale = Unpack(o.Find(x => x.downScale));
+            m_Downsample = Unpack(o.Find(x => x.downsample));
         }
 
         public override void OnInspectorGUI()
@@ -45,7 +45,6 @@ namespace UnityEditor.Rendering.Universal
             PropertyField(m_Scatter);
             PropertyField(m_Tint);
             PropertyField(m_Clamp);
-            PropertyField(m_HighQualityFiltering);
 
             if (m_HighQualityFiltering.overrideState.boolValue && m_HighQualityFiltering.value.boolValue && CoreEditorUtils.buildTargets.Contains(GraphicsDeviceType.OpenGLES2))
                 EditorGUILayout.HelpBox("High Quality Bloom isn't supported on GLES2 platforms.", MessageType.Warning);
@@ -58,8 +57,9 @@ namespace UnityEditor.Rendering.Universal
             if (isInAdvancedMode)
             {
                 EditorGUILayout.LabelField("Quality", EditorStyles.miniLabel);
+                PropertyField(m_HighQualityFiltering);
                 PropertyField(m_MaxIterations);
-                PropertyField(m_DownScale);
+                PropertyField(m_Downsample);
             }
         }
     }
