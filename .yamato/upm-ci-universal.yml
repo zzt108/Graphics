@@ -39,8 +39,7 @@ platforms:
       - editor
       - il2cpp
   - name: Android
-    # android needs a windows unity editor built
-    os: windows
+    os: android
     type: Unity::mobile::android
     image: mobile/android-execution-r19:stable
     flavor: b1.large
