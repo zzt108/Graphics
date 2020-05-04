@@ -50,7 +50,7 @@ namespace UnityEngine.Rendering.HighDefinition
         {
             // Keep track of the render pipeline asset
             m_RenderPipelineAsset = hdAsset;
-            var hdResources = HDRenderPipeline.defaultAsset.renderPipelineResources;
+            var hdResources = HDDefaultSettings.instance.renderPipelineResources;
 
             // Create the texture cookie cache that we shall be using for the area lights
             GlobalLightLoopSettings gLightLoopSettings = hdAsset.currentPlatformRenderPipelineSettings.lightLoopSettings;

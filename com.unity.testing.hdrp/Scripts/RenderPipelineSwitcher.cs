@@ -17,28 +17,28 @@ namespace UnityEngine.Experimental.Rendering.HDPipelineTest
 	    {
 	    	if(previousPipeline == null)
 	    	{
-	        	previousPipeline = (GraphicsSettings.renderPipelineAsset as HDRenderPipelineAsset);
+	        	previousPipeline = (QualitySettings.renderPipeline as HDRenderPipelineAsset);
 	    	}
-            if (targetPipeline != null && GraphicsSettings.renderPipelineAsset != targetPipeline)
+            if (targetPipeline != null && QualitySettings.renderPipeline != targetPipeline)
             {
-                GraphicsSettings.renderPipelineAsset = targetPipeline;
+                QualitySettings.renderPipeline = targetPipeline;
             }
         }
         void Update()
         {
             if (previousPipeline == null)
             {
-                previousPipeline = (GraphicsSettings.renderPipelineAsset as HDRenderPipelineAsset);
+                previousPipeline = (QualitySettings.renderPipeline as HDRenderPipelineAsset);
             }
-	        if(targetPipeline != null && GraphicsSettings.renderPipelineAsset != targetPipeline)
+	        if(targetPipeline != null && QualitySettings.renderPipeline != targetPipeline)
 	        {
-	        	GraphicsSettings.renderPipelineAsset = targetPipeline;
+                QualitySettings.renderPipeline = targetPipeline;
 	        }
 		}
 
 		void OnDisable()
 		{
-        	GraphicsSettings.renderPipelineAsset = previousPipeline;
+            QualitySettings.renderPipeline = previousPipeline;
 		}
 	}
 }

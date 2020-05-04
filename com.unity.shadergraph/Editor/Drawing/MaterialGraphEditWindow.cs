@@ -149,10 +149,10 @@ namespace UnityEditor.ShaderGraph.Drawing
                 m_ColorSpace = PlayerSettings.colorSpace;
             }
 
-            if (GraphicsSettings.renderPipelineAsset != m_RenderPipelineAsset)
+            if (QualitySettings.renderPipeline != m_RenderPipelineAsset)
             {
                 graphEditorView = null;
-                m_RenderPipelineAsset = GraphicsSettings.renderPipelineAsset;
+                m_RenderPipelineAsset = QualitySettings.renderPipeline;
             }
 
             if (EditorGUIUtility.isProSkin != m_ProTheme)
@@ -203,7 +203,7 @@ namespace UnityEditor.ShaderGraph.Drawing
                         assetName = asset.name.Split('/').Last()
                     };
                     m_ColorSpace = PlayerSettings.colorSpace;
-                    m_RenderPipelineAsset = GraphicsSettings.renderPipelineAsset;
+                    m_RenderPipelineAsset = QualitySettings.renderPipeline;
                     graphObject.Validate();
                 }
 
@@ -801,7 +801,7 @@ namespace UnityEditor.ShaderGraph.Drawing
             try
             {
                 m_ColorSpace = PlayerSettings.colorSpace;
-                m_RenderPipelineAsset = GraphicsSettings.renderPipelineAsset;
+                m_RenderPipelineAsset = QualitySettings.renderPipeline;
 
                 var asset = AssetDatabase.LoadAssetAtPath<Object>(AssetDatabase.GUIDToAssetPath(assetGuid));
                 if (asset == null)

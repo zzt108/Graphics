@@ -101,8 +101,7 @@ namespace UnityEditor.Rendering.HighDefinition
 
         void CreateDefaultSceneFromPackageAnsAssignIt(bool forDXR)
         {
-            var hdrpAsset = HDRenderPipeline.defaultAsset;
-            if (hdrpAsset == null)
+            if (HDRenderPipeline.currentAsset == null)
                 return;
 
             string subPath = forDXR ? "/DXR/" : "/";
@@ -112,7 +111,7 @@ namespace UnityEditor.Rendering.HighDefinition
             if (forDXR && !AssetDatabase.IsValidFolder("Assets/" + HDProjectSettings.projectSettingsFolderPath + subPath))
                 AssetDatabase.CreateFolder("Assets/" + HDProjectSettings.projectSettingsFolderPath, "DXR");
 
-            var hdrpAssetEditorResources = HDRenderPipeline.defaultAsset.renderPipelineEditorResources;
+            var hdrpAssetEditorResources = HDDefaultSettings.instance.renderPipelineEditorResources;
             
             GameObject originalDefaultSceneAsset = forDXR ? hdrpAssetEditorResources.defaultDXRScene : hdrpAssetEditorResources.defaultScene;
             string defaultScenePath = "Assets/" + HDProjectSettings.projectSettingsFolderPath + subPath + originalDefaultSceneAsset.name + ".prefab";
@@ -164,7 +163,7 @@ namespace UnityEditor.Rendering.HighDefinition
             {
                 title = Style.hdrpAssetDisplayDialogTitle;
                 content = Style.hdrpAssetDisplayDialogContent;
-                target = GraphicsSettings.renderPipelineAsset as HDRenderPipelineAsset;
+                target = HDRenderPipeline.currentAsset;
             }
             else
                 throw new ArgumentException("Unknown type used");
@@ -181,7 +180,7 @@ namespace UnityEditor.Rendering.HighDefinition
                     AssetDatabase.Refresh();
 
                     if (typeof(T) == typeof(HDRenderPipelineAsset))
-                        GraphicsSettings.renderPipelineAsset = asset as HDRenderPipelineAsset;
+                        QualitySettings.renderPipeline = asset as HDRenderPipelineAsset;
                     break;
                 case 1: //cancel
                     onCancel?.Invoke();
@@ -227,7 +226,7 @@ namespace UnityEditor.Rendering.HighDefinition
 
             AssetDatabase.CreateAsset(hdrpAsset, "Assets/" + HDProjectSettings.projectSettingsFolderPath + "/" + hdrpAsset.name + ".asset");
 
-            GraphicsSettings.renderPipelineAsset = hdrpAsset;
+            QualitySettings.renderPipeline = hdrpAsset;
             if (!IsHdrpAssetRuntimeResourcesCorrect())
                 FixHdrpAssetRuntimeResources(true);
             if (!IsHdrpAssetEditorResourcesCorrect())

@@ -200,7 +200,7 @@ namespace UnityEngine.Rendering.HighDefinition
 
         void RenderPathTracing(HDCamera hdCamera, CommandBuffer cmd, RTHandle outputTexture)
         {
-            RayTracingShader pathTracingShader = m_Asset.renderPipelineRayTracingResources.pathTracing;
+            RayTracingShader pathTracingShader = HDDefaultSettings.instance.renderPipelineRayTracingResources.pathTracing;
             m_PathTracingSettings = hdCamera.volumeStack.GetComponent<PathTracing>();
 
             // Check the validity of the state before moving on with the computation
@@ -240,8 +240,8 @@ namespace UnityEngine.Rendering.HighDefinition
                 cmd.SetRayTracingAccelerationStructure(pathTracingShader, HDShaderIDs._RaytracingAccelerationStructureName, accelerationStructure);
 
                 // Inject the ray-tracing sampling data
-                cmd.SetGlobalTexture(HDShaderIDs._OwenScrambledTexture, m_Asset.renderPipelineResources.textures.owenScrambled256Tex);
-                cmd.SetGlobalTexture(HDShaderIDs._ScramblingTexture, m_Asset.renderPipelineResources.textures.scramblingTex);
+                cmd.SetGlobalTexture(HDShaderIDs._OwenScrambledTexture, HDDefaultSettings.instance.renderPipelineResources.textures.owenScrambled256Tex);
+                cmd.SetGlobalTexture(HDShaderIDs._ScramblingTexture, HDDefaultSettings.instance.renderPipelineResources.textures.scramblingTex);
 
                 // Inject the ray generation data
 

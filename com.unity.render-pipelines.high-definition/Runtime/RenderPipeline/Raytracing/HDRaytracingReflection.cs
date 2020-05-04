@@ -141,9 +141,9 @@ namespace UnityEngine.Rendering.HighDefinition
             deferredParameters.lightCluster = RequestLightCluster();
 
             // Shaders
-            deferredParameters.gBufferRaytracingRT = m_Asset.renderPipelineRayTracingResources.gBufferRaytracingRT;
-            deferredParameters.deferredRaytracingCS = m_Asset.renderPipelineRayTracingResources.deferredRaytracingCS;
-            deferredParameters.rayBinningCS = m_Asset.renderPipelineRayTracingResources.rayBinningCS;
+            deferredParameters.gBufferRaytracingRT = HDDefaultSettings.instance.renderPipelineRayTracingResources.gBufferRaytracingRT;
+            deferredParameters.deferredRaytracingCS = HDDefaultSettings.instance.renderPipelineRayTracingResources.deferredRaytracingCS;
+            deferredParameters.rayBinningCS = HDDefaultSettings.instance.renderPipelineRayTracingResources.rayBinningCS;
 
             // XRTODO: add ray binning support for single-pass
             if (deferredParameters.viewCount > 1 && deferredParameters.rayBinning)
@@ -159,9 +159,9 @@ namespace UnityEngine.Rendering.HighDefinition
         {
             // Fetch the required resources
             BlueNoise blueNoise = GetBlueNoiseManager();
-            RayTracingShader reflectionShaderRT = m_Asset.renderPipelineRayTracingResources.reflectionRaytracingRT;
-            ComputeShader reflectionShaderCS = m_Asset.renderPipelineRayTracingResources.reflectionRaytracingCS;
-            ComputeShader reflectionFilter = m_Asset.renderPipelineRayTracingResources.reflectionBilateralFilterCS;
+            RayTracingShader reflectionShaderRT = HDDefaultSettings.instance.renderPipelineRayTracingResources.reflectionRaytracingRT;
+            ComputeShader reflectionShaderCS = HDDefaultSettings.instance.renderPipelineRayTracingResources.reflectionRaytracingCS;
+            ComputeShader reflectionFilter = HDDefaultSettings.instance.renderPipelineRayTracingResources.reflectionBilateralFilterCS;
             RTHandle intermediateBuffer0 = GetRayTracingBuffer(InternalRayTracingBuffers.RGBA0);
             RTHandle intermediateBuffer1 = GetRayTracingBuffer(InternalRayTracingBuffers.RGBA1);
 
@@ -244,7 +244,7 @@ namespace UnityEngine.Rendering.HighDefinition
                 cmd.SetComputeTextureParam(reflectionFilter, currentKernel, HDShaderIDs._NormalBufferTexture, m_SharedRTManager.GetNormalBuffer());
                 cmd.SetComputeTextureParam(reflectionFilter, currentKernel, HDShaderIDs._BlueNoiseTexture, blueNoise.textureArray16RGB);
                 cmd.SetComputeTextureParam(reflectionFilter, currentKernel, "_RaytracingReflectionTexture", outputTexture);
-                cmd.SetComputeTextureParam(reflectionFilter, currentKernel, HDShaderIDs._ScramblingTexture, m_Asset.renderPipelineResources.textures.scramblingTex);
+                cmd.SetComputeTextureParam(reflectionFilter, currentKernel, HDShaderIDs._ScramblingTexture, HDDefaultSettings.instance.renderPipelineResources.textures.scramblingTex);
                 cmd.SetComputeIntParam(reflectionFilter, HDShaderIDs._SpatialFilterRadius, settings.upscaleRadius.value);
                 cmd.SetComputeIntParam(reflectionFilter, HDShaderIDs._RaytracingDenoiseRadius, settings.denoise.value ? settings.denoiserRadius.value : 0);
                 cmd.SetGlobalFloat(HDShaderIDs._RaytracingReflectionMinSmoothness, settings.minSmoothness.value);
@@ -288,8 +288,8 @@ namespace UnityEngine.Rendering.HighDefinition
         void RenderReflectionsQuality(HDCamera hdCamera, CommandBuffer cmd, RTHandle outputTexture, ScriptableRenderContext renderContext, int frameCount)
         {
             // Fetch the shaders that we will be using
-            ComputeShader reflectionFilter = m_Asset.renderPipelineRayTracingResources.reflectionBilateralFilterCS;
-            RayTracingShader reflectionShader = m_Asset.renderPipelineRayTracingResources.reflectionRaytracingRT;
+            ComputeShader reflectionFilter = HDDefaultSettings.instance.renderPipelineRayTracingResources.reflectionBilateralFilterCS;
+            RayTracingShader reflectionShader = HDDefaultSettings.instance.renderPipelineRayTracingResources.reflectionRaytracingRT;
 
             // Request the buffers we shall be using
             RTHandle intermediateBuffer0 = GetRayTracingBuffer(InternalRayTracingBuffers.RGBA0);

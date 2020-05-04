@@ -117,7 +117,7 @@ namespace UnityEngine.Rendering.HighDefinition
         public override void Build()
         {
             var hdrpAsset     = HDRenderPipeline.currentAsset;
-            var hdrpResources = HDRenderPipeline.defaultAsset.renderPipelineResources;
+            var hdrpResources = HDDefaultSettings.instance.renderPipelineResources;
 
             // Shaders
             s_GroundIrradiancePrecomputationCS    = hdrpResources.shaders.groundIrradiancePrecomputationCS;

@@ -12,29 +12,25 @@ namespace UnityEditor.Rendering.HighDefinition
 
         public void OnPreprocessBuild(BuildReport report)
         {
-            // Detect if the users forget to assign an HDRP Asset
-            if (GraphicsSettings.renderPipelineAsset == null)
+            // Don't execute the preprocess if we are not on a HDRenderPipeline
+            HDRenderPipelineAsset hdPipelineAsset = QualitySettings.renderPipeline as HDRenderPipelineAsset;
+            if (hdPipelineAsset == null)
             {
                 if (!Application.isBatchMode)
                 {
                     if (!EditorUtility.DisplayDialog("Build Player",
-                                                    "There is no HDRP Asset provided in GraphicsSettings.\nAre you sure you want to continue?\n Build time can be extremely long without it.", "Ok", "Cancel"))
+                                                    "There is no HDRP Asset provided in the selected Quality Level.\nAre you sure you want to continue?\n Build time can be extremely long without it.", "Ok", "Cancel"))
                     {
                         throw new BuildFailedException("Stop build on request.");
                     }
                 }
                 else
                 {
-                    Debug.LogWarning("There is no HDRP Asset provided in GraphicsSettings. Build time can be extremely long without it.");
+                    Debug.LogWarning("There is no HDRP Asset provided in the selected Quality Level. Build time can be extremely long without it.");
                 }
 
                 return;
             }
-
-            // Don't execute the preprocess if we are not HDRenderPipeline
-            HDRenderPipelineAsset hdPipelineAsset = GraphicsSettings.renderPipelineAsset as HDRenderPipelineAsset;
-            if (hdPipelineAsset == null)
-                return;
 
             // If platform is supported all good
             GraphicsDeviceType  unsupportedGraphicDevice = GraphicsDeviceType.Null;

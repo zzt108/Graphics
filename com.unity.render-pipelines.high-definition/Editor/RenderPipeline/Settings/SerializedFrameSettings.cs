@@ -60,13 +60,13 @@ namespace UnityEditor.Rendering.HighDefinition
                 return ref (obj as HDProbe).frameSettings;
             if (obj is HDRenderPipelineAsset)
                 switch (HDRenderPipelineUI.selectedFrameSettings)
-                {
+                {/* TODOJENNY
                     case HDRenderPipelineUI.SelectedFrameSettings.Camera:
                         return ref (obj as HDRenderPipelineAsset).GetDefaultFrameSettings(FrameSettingsRenderType.Camera);
                     case HDRenderPipelineUI.SelectedFrameSettings.BakedOrCustomReflection:
                         return ref (obj as HDRenderPipelineAsset).GetDefaultFrameSettings(FrameSettingsRenderType.CustomOrBakedReflection);
                     case HDRenderPipelineUI.SelectedFrameSettings.RealtimeReflection:
-                        return ref (obj as HDRenderPipelineAsset).GetDefaultFrameSettings(FrameSettingsRenderType.RealtimeReflection);
+                        return ref (obj as HDRenderPipelineAsset).GetDefaultFrameSettings(FrameSettingsRenderType.RealtimeReflection);*/
                     default:
                         throw new System.ArgumentException("Unknown kind of HDRenderPipelineUI.SelectedFrameSettings");
                 }

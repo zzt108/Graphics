@@ -31,8 +31,8 @@ namespace UnityEngine.Rendering.HighDefinition
         {
             // Keep track of the pipeline asset
             m_PipelineSettings = renderPipeline.currentPlatformRenderPipelineSettings;
-            m_PipelineResources = renderPipeline.asset.renderPipelineResources;
-            m_PipelineRayTracingResources = renderPipeline.asset.renderPipelineRayTracingResources;
+            m_PipelineResources = HDDefaultSettings.instance.renderPipelineResources;
+            m_PipelineRayTracingResources = HDDefaultSettings.instance.renderPipelineRayTracingResources;
 
             // keep track of the render pipeline
             m_RenderPipeline = renderPipeline;

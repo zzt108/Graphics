@@ -59,7 +59,7 @@ namespace UnityEngine.Rendering.HighDefinition
 
             using (new ProfilingScope(cmd, ProfilingSampler.Get(HDProfileId.RayTracingRecursiveRendering)))
             {
-                RayTracingShader forwardShader = m_Asset.renderPipelineRayTracingResources.forwardRaytracing;
+                RayTracingShader forwardShader = HDDefaultSettings.instance.renderPipelineRayTracingResources.forwardRaytracing;
                 LightCluster lightClusterSettings = hdCamera.volumeStack.GetComponent<LightCluster>();
                 RayTracingSettings rtSettings = hdCamera.volumeStack.GetComponent<RayTracingSettings>();
 
@@ -74,8 +74,8 @@ namespace UnityEngine.Rendering.HighDefinition
                 cmd.SetRayTracingAccelerationStructure(forwardShader, HDShaderIDs._RaytracingAccelerationStructureName, accelerationStructure);
 
                 // Inject the ray-tracing sampling data
-                cmd.SetRayTracingTextureParam(forwardShader, HDShaderIDs._OwenScrambledTexture, m_Asset.renderPipelineResources.textures.owenScrambledRGBATex);
-                cmd.SetRayTracingTextureParam(forwardShader, HDShaderIDs._ScramblingTexture, m_Asset.renderPipelineResources.textures.scramblingTex);
+                cmd.SetRayTracingTextureParam(forwardShader, HDShaderIDs._OwenScrambledTexture, HDDefaultSettings.instance.renderPipelineResources.textures.owenScrambledRGBATex);
+                cmd.SetRayTracingTextureParam(forwardShader, HDShaderIDs._ScramblingTexture, HDDefaultSettings.instance.renderPipelineResources.textures.scramblingTex);
 
                 // Inject the ray generation data
                 cmd.SetGlobalFloat(HDShaderIDs._RaytracingRayBias, rtSettings.rayBias.value);

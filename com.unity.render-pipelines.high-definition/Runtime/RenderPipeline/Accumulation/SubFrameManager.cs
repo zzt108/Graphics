@@ -234,7 +234,7 @@ namespace UnityEngine.Rendering.HighDefinition
 
         void RenderAccumulation(HDCamera hdCamera, CommandBuffer cmd, RTHandle inputTexture, RTHandle outputTexture, bool needsExposure = false)
         {
-            ComputeShader accumulationShader = m_Asset.renderPipelineResources.shaders.accumulationCS;
+            ComputeShader accumulationShader = HDDefaultSettings.instance.renderPipelineResources.shaders.accumulationCS;
 
             // Grab the history buffer (hijack the reflections one)
             RTHandle history = hdCamera.GetCurrentFrameRT((int)HDCameraFrameHistoryType.PathTracing)

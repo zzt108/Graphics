@@ -137,12 +137,12 @@ namespace UnityEngine.Rendering.HighDefinition
             {
                 CreateProbeVolumeBuffers();
 
-                s_ProbeVolumeAtlasBlitCS = asset.renderPipelineResources.shaders.probeVolumeAtlasBlitCS;
+                s_ProbeVolumeAtlasBlitCS = HDDefaultSettings.instance.renderPipelineResources.shaders.probeVolumeAtlasBlitCS;
                 s_ProbeVolumeAtlasBlitKernel = s_ProbeVolumeAtlasBlitCS.FindKernel("ProbeVolumeAtlasBlitKernel");
 
-                s_ProbeVolumeAtlasOctahedralDepthBlitCS = asset.renderPipelineResources.shaders.probeVolumeAtlasOctahedralDepthBlitCS;
+                s_ProbeVolumeAtlasOctahedralDepthBlitCS = HDDefaultSettings.instance.renderPipelineResources.shaders.probeVolumeAtlasOctahedralDepthBlitCS;
                 s_ProbeVolumeAtlasOctahedralDepthBlitKernel = s_ProbeVolumeAtlasOctahedralDepthBlitCS.FindKernel("ProbeVolumeAtlasOctahedralDepthBlitKernel");
-                s_ProbeVolumeAtlasOctahedralDepthConvolveCS = asset.renderPipelineResources.shaders.probeVolumeAtlasOctahedralDepthConvolveCS;
+                s_ProbeVolumeAtlasOctahedralDepthConvolveCS = HDDefaultSettings.instance.renderPipelineResources.shaders.probeVolumeAtlasOctahedralDepthConvolveCS;
                 s_ProbeVolumeAtlasOctahedralDepthConvolveKernel = s_ProbeVolumeAtlasOctahedralDepthConvolveCS.FindKernel("ProbeVolumeAtlasOctahedralDepthConvolveKernel");
             }
             else

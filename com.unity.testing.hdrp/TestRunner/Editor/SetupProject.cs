@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -29,7 +29,7 @@ public static class SetupProject
     {
         RenderPipelineAsset rpAsset = AssetDatabase.LoadAssetAtPath<RenderPipelineAsset>(RPAssets[rpAssetIdentifier]);
 
-        GraphicsSettings.renderPipelineAsset = rpAsset;
+        QualitySettings.renderPipeline = rpAsset;
     }
 
     public static void ApplySettings()

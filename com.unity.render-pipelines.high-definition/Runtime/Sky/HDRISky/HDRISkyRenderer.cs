@@ -18,8 +18,7 @@ namespace UnityEngine.Rendering.HighDefinition
 
         public override void Build()
         {
-            var hdrp = HDRenderPipeline.defaultAsset;
-            m_SkyHDRIMaterial = CoreUtils.CreateEngineMaterial(hdrp.renderPipelineResources.shaders.hdriSkyPS);
+            m_SkyHDRIMaterial = CoreUtils.CreateEngineMaterial(HDDefaultSettings.instance.renderPipelineResources.shaders.hdriSkyPS);
         }
 
         public override void Cleanup()

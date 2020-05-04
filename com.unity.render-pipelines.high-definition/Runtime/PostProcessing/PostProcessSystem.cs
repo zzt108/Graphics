@@ -497,7 +497,7 @@ namespace UnityEngine.Rendering.HighDefinition
                     {
                         using (new ProfilingScope(cmd, ProfilingSampler.Get(HDProfileId.CustomPostProcessBeforePP)))
                         {
-                            foreach (var typeString in HDRenderPipeline.defaultAsset.beforePostProcessCustomPostProcesses)
+                            foreach (var typeString in HDDefaultSettings.instance.beforePostProcessCustomPostProcesses)
                                 RenderCustomPostProcess(cmd, camera, ref source, colorBuffer, Type.GetType(typeString));
                         }
                     }
@@ -603,7 +603,7 @@ namespace UnityEngine.Rendering.HighDefinition
                     {
                         using (new ProfilingScope(cmd, ProfilingSampler.Get(HDProfileId.CustomPostProcessAfterPP)))
                         {
-                            foreach (var typeString in HDRenderPipeline.defaultAsset.afterPostProcessCustomPostProcesses)
+                            foreach (var typeString in HDDefaultSettings.instance.afterPostProcessCustomPostProcesses)
                                 RenderCustomPostProcess(cmd, camera, ref source, colorBuffer, Type.GetType(typeString));
                         }
                     }
@@ -2743,7 +2743,7 @@ namespace UnityEngine.Rendering.HighDefinition
             using (new ProfilingScope(cmd, ProfilingSampler.Get(HDProfileId.CustomPostProcessAfterOpaqueAndSky)))
             {
                 bool needsBlitToColorBuffer = false;
-                foreach (var typeString in HDRenderPipeline.defaultAsset.beforeTransparentCustomPostProcesses)
+                foreach (var typeString in HDDefaultSettings.instance.beforeTransparentCustomPostProcesses)
                     needsBlitToColorBuffer |= RenderCustomPostProcess(cmd, camera, ref source, colorBuffer, Type.GetType(typeString));
 
                 if (needsBlitToColorBuffer)

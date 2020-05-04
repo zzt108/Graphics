@@ -65,7 +65,7 @@ namespace UnityEngine.Rendering.HighDefinition
 
         public void InitializeHDRPResouces(HDRenderPipelineAsset asset)
         {
-            m_ClearPropertyMaskBufferShader = asset.renderPipelineResources.shaders.decalClearPropertyMaskBufferCS;
+            m_ClearPropertyMaskBufferShader = HDDefaultSettings.instance.renderPipelineResources.shaders.decalClearPropertyMaskBufferCS;
             m_ClearPropertyMaskBufferKernel = m_ClearPropertyMaskBufferShader.FindKernel("CSMain");
         }
 

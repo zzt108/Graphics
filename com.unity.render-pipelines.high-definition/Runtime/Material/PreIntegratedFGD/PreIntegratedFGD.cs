@@ -50,13 +50,12 @@ namespace UnityEngine.Rendering.HighDefinition
 
             if (m_refCounting[(int)index] == 0)
             {
-                var hdrp = HDRenderPipeline.defaultAsset;
                 int res  = (int)FGDTexture.Resolution;
 
                 switch(index)
                 {
                     case FGDIndex.FGD_GGXAndDisneyDiffuse:
-                        m_PreIntegratedFGDMaterial[(int)index] = CoreUtils.CreateEngineMaterial(hdrp.renderPipelineResources.shaders.preIntegratedFGD_GGXDisneyDiffusePS);
+                        m_PreIntegratedFGDMaterial[(int)index] = CoreUtils.CreateEngineMaterial(HDDefaultSettings.instance.renderPipelineResources.shaders.preIntegratedFGD_GGXDisneyDiffusePS);
                         m_PreIntegratedFGD[(int)index] = new RenderTexture(res, res, 0, RenderTextureFormat.ARGB2101010, RenderTextureReadWrite.Linear);
                         m_PreIntegratedFGD[(int)index].hideFlags = HideFlags.HideAndDontSave;
                         m_PreIntegratedFGD[(int)index].filterMode = FilterMode.Bilinear;
@@ -66,7 +65,7 @@ namespace UnityEngine.Rendering.HighDefinition
                         break;
 
                     case FGDIndex.FGD_CharlieAndFabricLambert:
-                        m_PreIntegratedFGDMaterial[(int)index] = CoreUtils.CreateEngineMaterial(hdrp.renderPipelineResources.shaders.preIntegratedFGD_CharlieFabricLambertPS);
+                        m_PreIntegratedFGDMaterial[(int)index] = CoreUtils.CreateEngineMaterial(HDDefaultSettings.instance.renderPipelineResources.shaders.preIntegratedFGD_CharlieFabricLambertPS);
                         m_PreIntegratedFGD[(int)index] = new RenderTexture(res, res, 0, RenderTextureFormat.ARGB2101010, RenderTextureReadWrite.Linear);
                         m_PreIntegratedFGD[(int)index].hideFlags = HideFlags.HideAndDontSave;
                         m_PreIntegratedFGD[(int)index].filterMode = FilterMode.Bilinear;

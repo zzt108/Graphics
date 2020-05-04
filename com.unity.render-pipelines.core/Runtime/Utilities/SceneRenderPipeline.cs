@@ -15,11 +15,11 @@ public class SceneRenderPipeline : MonoBehaviour
 
     void OnEnable()
     {
-        GraphicsSettings.renderPipelineAsset = renderPipelineAsset;
+        QualitySettings.renderPipeline = renderPipelineAsset;
     }
 
     void OnValidate()
     {
-        GraphicsSettings.renderPipelineAsset = renderPipelineAsset;
+        QualitySettings.renderPipeline = renderPipelineAsset;
     }
 }

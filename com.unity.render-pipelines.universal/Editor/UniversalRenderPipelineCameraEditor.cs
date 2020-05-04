@@ -198,7 +198,7 @@ namespace UnityEditor.Rendering.Universal
         public new void OnEnable()
         {
             base.OnEnable();
-            m_UniversalRenderPipeline = GraphicsSettings.renderPipelineAsset as UniversalRenderPipelineAsset;
+            m_UniversalRenderPipeline = QualitySettings.renderPipeline as UniversalRenderPipelineAsset;
 
             m_CommonCameraSettingsFoldout = new SavedBool($"{target.GetType()}.CommonCameraSettingsFoldout", false);
             m_EnvironmentSettingsFoldout = new SavedBool($"{target.GetType()}.EnvironmentSettingsFoldout", false);

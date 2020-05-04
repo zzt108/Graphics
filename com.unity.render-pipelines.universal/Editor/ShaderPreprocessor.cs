@@ -207,7 +207,7 @@ namespace UnityEditor.Rendering.Universal
 
         public void OnProcessShader(Shader shader, ShaderSnippetData snippetData, IList<ShaderCompilerData> compilerDataList)
         {
-            UniversalRenderPipelineAsset urpAsset = GraphicsSettings.renderPipelineAsset as UniversalRenderPipelineAsset;
+            UniversalRenderPipelineAsset urpAsset = QualitySettings.renderPipeline as UniversalRenderPipelineAsset;
             if (urpAsset == null || compilerDataList == null || compilerDataList.Count == 0)
                 return;
 

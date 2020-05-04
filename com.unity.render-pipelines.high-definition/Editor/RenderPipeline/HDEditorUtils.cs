@@ -234,11 +234,11 @@ namespace UnityEditor.Rendering.HighDefinition
         internal static int DrawLightLayerMask(Rect rect, int value, GUIContent label = null)
         {
             int lightLayer = HDAdditionalLightData.RenderingLayerMaskToLightLayer(value);
-            if (HDRenderPipeline.defaultAsset == null)
+            if (HDRenderPipeline.currentAsset == null) //TODOJENNY move to default
                 return lightLayer;
 
             EditorGUI.BeginChangeCheck();
-            lightLayer = EditorGUI.MaskField(rect, label ?? GUIContent.none, lightLayer, HDRenderPipeline.defaultAsset.lightLayerNames);
+            lightLayer = EditorGUI.MaskField(rect, label ?? GUIContent.none, lightLayer, HDRenderPipeline.currentAsset.lightLayerNames);
             if (EditorGUI.EndChangeCheck())
                 lightLayer = HDAdditionalLightData.LightLayerToRenderingLayerMask(lightLayer, value);
             return lightLayer;

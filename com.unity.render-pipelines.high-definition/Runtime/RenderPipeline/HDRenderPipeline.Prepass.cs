@@ -20,7 +20,7 @@ namespace UnityEngine.Rendering.HighDefinition
 
         void InitializePrepass(HDRenderPipelineAsset hdAsset)
         {
-            m_DepthResolveMaterial = CoreUtils.CreateEngineMaterial(asset.renderPipelineResources.shaders.depthValuesPS);
+            m_DepthResolveMaterial = CoreUtils.CreateEngineMaterial(HDDefaultSettings.instance.renderPipelineResources.shaders.depthValuesPS);
 
             m_GBufferOutput = new GBufferOutput();
             m_GBufferOutput.mrt = new TextureHandle[RenderGraph.kMaxMRTCount];

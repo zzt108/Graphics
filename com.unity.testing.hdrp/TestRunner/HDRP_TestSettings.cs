@@ -40,13 +40,13 @@ public class HDRP_TestSettings : GraphicsTestSettings
             return;
         }
 
-        var currentRP = GraphicsSettings.renderPipelineAsset;
+        var currentRP = QualitySettings.renderPipeline;
 
         if (currentRP != renderPipelineAsset)
         {
             quitDebug.AppendLine($"{SceneManager.GetActiveScene().name} RP asset change: {((currentRP==null)?"null": currentRP.name)} => {renderPipelineAsset.name}");
 
-            GraphicsSettings.renderPipelineAsset = renderPipelineAsset;
+            QualitySettings.renderPipeline = renderPipelineAsset;
         }
     }
 

@@ -3754,7 +3754,7 @@ namespace UnityEngine.Rendering.HighDefinition
             if (hdCamera.frameSettings.IsEnabled(FrameSettingsField.RayTracing))
             {
                 RayTracingSettings raySettings = hdCamera.volumeStack.GetComponent<RayTracingSettings>();
-                parameters.contactShadowsRTS = m_Asset.renderPipelineRayTracingResources.contactShadowRayTracingRT;
+                parameters.contactShadowsRTS = HDDefaultSettings.instance.renderPipelineRayTracingResources.contactShadowRayTracingRT;
                 parameters.rayTracingBias = raySettings.rayBias.value;
                 parameters.accelerationStructure = RequestAccelerationStructure();
 

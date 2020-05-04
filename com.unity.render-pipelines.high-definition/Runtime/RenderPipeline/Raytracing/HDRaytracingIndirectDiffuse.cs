@@ -76,7 +76,7 @@ namespace UnityEngine.Rendering.HighDefinition
             // If we are in deferred mode, we need to make sure to add the indirect diffuse (that we intentionally ignored during the GBuffer pass)
             // Note that this discards the texture/object ambient occlusion. But we consider that okay given that the ray traced indirect diffuse
             // is a physically correct evaluation of that quantity
-            ComputeShader indirectDiffuseCS = m_Asset.renderPipelineRayTracingResources.indirectDiffuseRaytracingCS;
+            ComputeShader indirectDiffuseCS = HDDefaultSettings.instance.renderPipelineRayTracingResources.indirectDiffuseRaytracingCS;
             if (hdCamera.frameSettings.litShaderMode == LitShaderMode.Deferred)
             {
                 int indirectDiffuseKernel = indirectDiffuseCS.FindKernel("IndirectDiffuseAccumulation");
@@ -97,7 +97,7 @@ namespace UnityEngine.Rendering.HighDefinition
                 cmd.DispatchCompute(indirectDiffuseCS, indirectDiffuseKernel, numTilesX, numTilesY, hdCamera.viewCount);
             }
 
-            (RenderPipelineManager.currentPipeline as HDRenderPipeline).PushFullScreenDebugTexture(hdCamera, cmd, m_IndirectDiffuseBuffer, FullScreenDebugMode.RayTracedGlobalIllumination);
+            HDRenderPipeline.currentPipeline.PushFullScreenDebugTexture(hdCamera, cmd, m_IndirectDiffuseBuffer, FullScreenDebugMode.RayTracedGlobalIllumination);
         }
 
         DeferredLightingRTParameters PrepareIndirectDiffuseDeferredLightingRTParameters(HDCamera hdCamera)
@@ -138,9 +138,9 @@ namespace UnityEngine.Rendering.HighDefinition
             deferredParameters.lightCluster = RequestLightCluster();
 
             // Shaders
-            deferredParameters.gBufferRaytracingRT = m_Asset.renderPipelineRayTracingResources.gBufferRaytracingRT;
-            deferredParameters.deferredRaytracingCS = m_Asset.renderPipelineRayTracingResources.deferredRaytracingCS;
-            deferredParameters.rayBinningCS = m_Asset.renderPipelineRayTracingResources.rayBinningCS;
+            deferredParameters.gBufferRaytracingRT = HDDefaultSettings.instance.renderPipelineRayTracingResources.gBufferRaytracingRT;
+            deferredParameters.deferredRaytracingCS = HDDefaultSettings.instance.renderPipelineRayTracingResources.deferredRaytracingCS;
+            deferredParameters.rayBinningCS = HDDefaultSettings.instance.renderPipelineRayTracingResources.rayBinningCS;
 
             // XRTODO: add ray binning support for single-pass
             if (deferredParameters.viewCount > 1 && deferredParameters.rayBinning)
@@ -162,7 +162,7 @@ namespace UnityEngine.Rendering.HighDefinition
             LightCluster lightClusterSettings = hdCamera.volumeStack.GetComponent<LightCluster>();
             RayTracingSettings rtSettings = hdCamera.volumeStack.GetComponent<RayTracingSettings>();
 
-            ComputeShader indirectDiffuseCS = m_Asset.renderPipelineRayTracingResources.indirectDiffuseRaytracingCS;
+            ComputeShader indirectDiffuseCS = HDDefaultSettings.instance.renderPipelineRayTracingResources.indirectDiffuseRaytracingCS;
 
             // Request the intermediate texture we will be using
             RTHandle directionBuffer = GetRayTracingBuffer(InternalRayTracingBuffers.Direction);
@@ -218,7 +218,7 @@ namespace UnityEngine.Rendering.HighDefinition
                 cmd.SetComputeTextureParam(indirectDiffuseCS, currentKernel, HDShaderIDs._RaytracingDirectionBuffer, directionBuffer);
                 cmd.SetComputeTextureParam(indirectDiffuseCS, currentKernel, HDShaderIDs._BlueNoiseTexture, blueNoise.textureArray16RGB);
                 cmd.SetComputeTextureParam(indirectDiffuseCS, currentKernel, HDShaderIDs._UpscaledIndirectDiffuseTextureRW, intermediateBuffer1);
-                cmd.SetComputeTextureParam(indirectDiffuseCS, currentKernel, HDShaderIDs._ScramblingTexture, m_Asset.renderPipelineResources.textures.scramblingTex);
+                cmd.SetComputeTextureParam(indirectDiffuseCS, currentKernel, HDShaderIDs._ScramblingTexture, HDDefaultSettings.instance.renderPipelineResources.textures.scramblingTex);
                 cmd.SetComputeIntParam(indirectDiffuseCS, HDShaderIDs._SpatialFilterRadius, settings.upscaleRadius.value);
 
                 // Texture dimensions
@@ -303,7 +303,7 @@ namespace UnityEngine.Rendering.HighDefinition
             RayTracingSettings rtSettings = hdCamera.volumeStack.GetComponent<RayTracingSettings>();
 
             // Shaders that are used
-            RayTracingShader indirectDiffuseRT = m_Asset.renderPipelineRayTracingResources.indirectDiffuseRaytracingRT;
+            RayTracingShader indirectDiffuseRT = HDDefaultSettings.instance.renderPipelineRayTracingResources.indirectDiffuseRaytracingRT;
 
             // Request the intermediate texture we will be using
             RTHandle intermediateBuffer1 = GetRayTracingBuffer(InternalRayTracingBuffers.RGBA1);

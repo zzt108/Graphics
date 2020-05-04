@@ -250,7 +250,7 @@ namespace UnityEngine.Rendering.HighDefinition
             {
                 m_DefaultPreviewSky = ScriptableObject.CreateInstance<HDRISky>();
                 m_DefaultPreviewSky.hdriSky.overrideState = true;
-                m_DefaultPreviewSky.hdriSky.value = HDRenderPipeline.currentAsset?.renderPipelineResources?.textures?.defaultHDRISky;
+                m_DefaultPreviewSky.hdriSky.value = HDDefaultSettings.instance?.renderPipelineResources?.textures?.defaultHDRISky;
             }
 
             return m_DefaultPreviewSky;
@@ -260,8 +260,6 @@ namespace UnityEngine.Rendering.HighDefinition
 
         public void Build(HDRenderPipelineAsset hdAsset, RenderPipelineResources defaultResources, IBLFilterBSDF[] iblFilterBSDFArray)
         {
-            var hdrp = HDRenderPipeline.defaultAsset;
-
             m_Resolution = (int)hdAsset.currentPlatformRenderPipelineSettings.lightLoopSettings.skyReflectionSize;
             m_IBLFilterArray = iblFilterBSDFArray;
 
@@ -271,7 +269,7 @@ namespace UnityEngine.Rendering.HighDefinition
             m_OpaqueAtmScatteringMaterial = CoreUtils.CreateEngineMaterial(defaultResources.shaders.opaqueAtmosphericScatteringPS);
             m_OpaqueAtmScatteringBlock = new MaterialPropertyBlock();
 
-            m_ComputeAmbientProbeCS = hdrp.renderPipelineResources.shaders.ambientProbeConvolutionCS;
+            m_ComputeAmbientProbeCS = HDDefaultSettings.instance.renderPipelineResources.shaders.ambientProbeConvolutionCS;
             m_ComputeAmbientProbeKernel = m_ComputeAmbientProbeCS.FindKernel("AmbientProbeConvolution");
 
             lightingOverrideVolumeStack = VolumeManager.instance.CreateStack();
@@ -1026,13 +1024,12 @@ namespace UnityEngine.Rendering.HighDefinition
 #if UNITY_EDITOR
         void OnBakeStarted()
         {
-            var hdrp = HDRenderPipeline.defaultAsset;
-            if (hdrp == null)
+            if (HDRenderPipeline.currentPipeline == null )
                 return;
 
             // Happens sometime in the tests.
             if (m_StandardSkyboxMaterial == null)
-                m_StandardSkyboxMaterial = CoreUtils.CreateEngineMaterial(hdrp.renderPipelineResources.shaders.skyboxCubemapPS);
+                m_StandardSkyboxMaterial = CoreUtils.CreateEngineMaterial(HDDefaultSettings.instance.renderPipelineResources.shaders.skyboxCubemapPS);
 
             // At the start of baking we need to update the GI system with the static lighting sky in order for lightmaps and probes to be baked with it.
             var staticLightingSky = GetStaticLightingSky();

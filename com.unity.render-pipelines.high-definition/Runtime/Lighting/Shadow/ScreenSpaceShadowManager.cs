@@ -58,10 +58,10 @@ namespace UnityEngine.Rendering.HighDefinition
         // This buffer holds the unfiltered, accumulated, shadow values, it is accessed with the same index as the one used at runtime (aka screen space shadow slot)
         static RTHandle ShadowHistoryBufferAllocatorFunction(string viewName, int frameIndex, RTHandleSystem rtHandleSystem)
         {
-            HDRenderPipelineAsset hdPipelineAsset = GraphicsSettings.renderPipelineAsset as HDRenderPipelineAsset;
-            GraphicsFormat graphicsFormat = (GraphicsFormat)hdPipelineAsset.currentPlatformRenderPipelineSettings.hdShadowInitParams.screenSpaceShadowBufferFormat;
-            HDRenderPipeline hdrp = (RenderPipelineManager.currentPipeline as HDRenderPipeline);
-            int numShadowSlices = Math.Max((int)Math.Ceiling(hdrp.m_Asset.currentPlatformRenderPipelineSettings.hdShadowInitParams.maxScreenSpaceShadowSlots / 4.0f), 1);
+            var shadowInitParams = HDRenderPipeline.currentAsset.currentPlatformRenderPipelineSettings.hdShadowInitParams;
+
+            GraphicsFormat graphicsFormat = (GraphicsFormat)shadowInitParams.screenSpaceShadowBufferFormat;
+            int numShadowSlices = Math.Max((int)Math.Ceiling(shadowInitParams.maxScreenSpaceShadowSlots / 4.0f), 1);
             return rtHandleSystem.Alloc(Vector2.one, slices: numShadowSlices * TextureXR.slices, dimension: TextureDimension.Tex2DArray, filterMode: FilterMode.Point, colorFormat: graphicsFormat,
                 enableRandomWrite: true, useDynamicScale: true, useMipMap: false, name: string.Format("ScreenSpaceShadowHistoryBuffer{0}", frameIndex));
         }
@@ -72,20 +72,20 @@ namespace UnityEngine.Rendering.HighDefinition
         // It is accessed with the same index used at runtime (aka screen space shadow slot)
         static RTHandle ShadowHistoryValidityBufferAllocatorFunction(string viewName, int frameIndex, RTHandleSystem rtHandleSystem)
         {
-            HDRenderPipelineAsset hdPipelineAsset = GraphicsSettings.renderPipelineAsset as HDRenderPipelineAsset;
-            HDRenderPipeline hdrp = (RenderPipelineManager.currentPipeline as HDRenderPipeline);
-            GraphicsFormat graphicsFormat = (GraphicsFormat)hdPipelineAsset.currentPlatformRenderPipelineSettings.hdShadowInitParams.screenSpaceShadowBufferFormat;
-            int numShadowSlices = Math.Max((int)Math.Ceiling(hdrp.m_Asset.currentPlatformRenderPipelineSettings.hdShadowInitParams.maxScreenSpaceShadowSlots / 4.0f), 1);
+            var shadowInitParams = HDRenderPipeline.currentAsset.currentPlatformRenderPipelineSettings.hdShadowInitParams;
+
+            GraphicsFormat graphicsFormat = (GraphicsFormat)shadowInitParams.screenSpaceShadowBufferFormat;
+            int numShadowSlices = Math.Max((int)Math.Ceiling(shadowInitParams.maxScreenSpaceShadowSlots / 4.0f), 1);
             return rtHandleSystem.Alloc(Vector2.one, slices: numShadowSlices * TextureXR.slices, dimension: TextureDimension.Tex2DArray, filterMode: FilterMode.Point, colorFormat: graphicsFormat,
                         enableRandomWrite: true, useDynamicScale: true, useMipMap: false, name: string.Format("ShadowHistoryValidityBuffer{0}", frameIndex));
         }
 
         static RTHandle ShadowHistoryDistanceBufferAllocatorFunction(string viewName, int frameIndex, RTHandleSystem rtHandleSystem)
         {
-            HDRenderPipelineAsset hdPipelineAsset = GraphicsSettings.renderPipelineAsset as HDRenderPipelineAsset;
-            HDRenderPipeline hdrp = (RenderPipelineManager.currentPipeline as HDRenderPipeline);
-            GraphicsFormat graphicsFormat = (GraphicsFormat)hdPipelineAsset.currentPlatformRenderPipelineSettings.hdShadowInitParams.screenSpaceShadowBufferFormat;
-            int numShadowSlices = Math.Max((int)Math.Ceiling(hdrp.m_Asset.currentPlatformRenderPipelineSettings.hdShadowInitParams.maxScreenSpaceShadowSlots / 4.0f), 1);
+            var shadowInitParams = HDRenderPipeline.currentAsset.currentPlatformRenderPipelineSettings.hdShadowInitParams;
+
+            GraphicsFormat graphicsFormat = (GraphicsFormat)shadowInitParams.screenSpaceShadowBufferFormat;
+            int numShadowSlices = Math.Max((int)Math.Ceiling(shadowInitParams.maxScreenSpaceShadowSlots / 4.0f), 1);
             return rtHandleSystem.Alloc(Vector2.one, slices: numShadowSlices * TextureXR.slices, dimension: TextureDimension.Tex2DArray, filterMode: FilterMode.Point, colorFormat: graphicsFormat,
                         enableRandomWrite: true, useDynamicScale: true, useMipMap: false, name: string.Format("ShadowHistoryDistanceBuffer{0}", frameIndex));
         }
@@ -176,9 +176,9 @@ namespace UnityEngine.Rendering.HighDefinition
             // Fetch the shaders
             if (m_RayTracingSupported)
             {
-                m_ScreenSpaceShadowsCS = m_Asset.renderPipelineRayTracingResources.shadowRaytracingCS;
-                m_ScreenSpaceShadowsFilterCS = m_Asset.renderPipelineRayTracingResources.shadowFilterCS;
-                m_ScreenSpaceShadowsRT = m_Asset.renderPipelineRayTracingResources.shadowRaytracingRT;
+                m_ScreenSpaceShadowsCS = HDDefaultSettings.instance.renderPipelineRayTracingResources.shadowRaytracingCS;
+                m_ScreenSpaceShadowsFilterCS = HDDefaultSettings.instance.renderPipelineRayTracingResources.shadowFilterCS;
+                m_ScreenSpaceShadowsRT = HDDefaultSettings.instance.renderPipelineRayTracingResources.shadowRaytracingRT;
 
                 // Directional shadow kernels
                 m_ClearShadowTexture = m_ScreenSpaceShadowsCS.FindKernel("ClearShadowTexture");
@@ -689,7 +689,7 @@ namespace UnityEngine.Rendering.HighDefinition
                     // Inject parameters for noise estimation
                     cmd.SetComputeTextureParam(m_ScreenSpaceShadowsFilterCS, m_AreaEstimateNoiseKernel, HDShaderIDs._DepthTexture, m_SharedRTManager.GetDepthStencilBuffer());
                     cmd.SetComputeTextureParam(m_ScreenSpaceShadowsFilterCS, m_AreaEstimateNoiseKernel, HDShaderIDs._NormalBufferTexture, m_SharedRTManager.GetNormalBuffer());
-                    cmd.SetComputeTextureParam(m_ScreenSpaceShadowsFilterCS, m_AreaEstimateNoiseKernel, HDShaderIDs._ScramblingTexture, m_Asset.renderPipelineResources.textures.scramblingTex);
+                    cmd.SetComputeTextureParam(m_ScreenSpaceShadowsFilterCS, m_AreaEstimateNoiseKernel, HDShaderIDs._ScramblingTexture, HDDefaultSettings.instance.renderPipelineResources.textures.scramblingTex);
 
                     // Noise estimation pre-pass
                     cmd.SetComputeTextureParam(m_ScreenSpaceShadowsFilterCS, m_AreaEstimateNoiseKernel, HDShaderIDs._DenoiseInputTexture, intermediateBufferRGBA1);
@@ -895,10 +895,10 @@ namespace UnityEngine.Rendering.HighDefinition
 
         void EvaluateShadowDebugView(CommandBuffer cmd, HDCamera hdCamera)
         {
-            ComputeShader shadowFilter = m_Asset.renderPipelineRayTracingResources.shadowFilterCS;
+            ComputeShader shadowFilter = HDDefaultSettings.instance.renderPipelineRayTracingResources.shadowFilterCS;
 
             // If this is the right debug mode and the index we are asking for is in the range
-            HDRenderPipeline hdrp = (RenderPipelineManager.currentPipeline as HDRenderPipeline);
+            HDRenderPipeline hdrp = HDRenderPipeline.currentPipeline;
             if (FullScreenDebugMode.ScreenSpaceShadows == hdrp.m_CurrentDebugDisplaySettings.data.fullScreenDebugMode)
             {
                 // Texture dimensions

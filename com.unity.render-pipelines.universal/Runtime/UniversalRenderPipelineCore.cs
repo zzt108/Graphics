@@ -283,7 +283,7 @@ namespace UnityEngine.Rendering.Universal
         /// </summary>
         public static UniversalRenderPipelineAsset asset
         {
-            get => GraphicsSettings.currentRenderPipeline as UniversalRenderPipelineAsset;
+            get => GraphicsSettings.currentRenderPipeline as UniversalRenderPipelineAsset; //TODOJENNY
         }
 
         /// <summary>

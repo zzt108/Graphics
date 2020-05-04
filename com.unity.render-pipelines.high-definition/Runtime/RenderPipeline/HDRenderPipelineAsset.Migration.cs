@@ -25,7 +25,7 @@ namespace UnityEngine.Rendering.HighDefinition
         }
 
         static readonly MigrationDescription<Version, HDRenderPipelineAsset> k_Migration = MigrationDescription.New(
-            MigrationStep.New(Version.UpgradeFrameSettingsToStruct, (HDRenderPipelineAsset data) =>
+            /*MigrationStep.New(Version.UpgradeFrameSettingsToStruct, (HDRenderPipelineAsset data) =>
             {
 #pragma warning disable 618 // Type or member is obsolete
                 FrameSettingsOverrideMask unusedMaskForDefault = new FrameSettingsOverrideMask();
@@ -64,7 +64,7 @@ namespace UnityEngine.Rendering.HighDefinition
             MigrationStep.New(Version.AddCustomPostprocessAndCustomPass, (HDRenderPipelineAsset data) =>
             {
                 FrameSettings.MigrateToCustomPostprocessAndCustomPass(ref data.m_RenderingPathDefaultCameraFrameSettings);
-            }),
+            }),*/
             MigrationStep.New(Version.ScalableSettingsRefactor, (HDRenderPipelineAsset data) =>
             {
                 ref var shadowInit = ref data.m_RenderPipelineSettings.hdShadowInitParams;
@@ -77,10 +77,10 @@ namespace UnityEngine.Rendering.HighDefinition
                 ref var shadowInit = ref data.m_RenderPipelineSettings.hdShadowInitParams;
                 shadowInit.shadowFilteringQuality = shadowInit.shadowFilteringQuality > HDShadowFilteringQuality.High ? HDShadowFilteringQuality.High : shadowInit.shadowFilteringQuality;
             }),
-            MigrationStep.New(Version.SeparateColorGradingAndTonemappingFrameSettings, (HDRenderPipelineAsset data) =>
+            /*MigrationStep.New(Version.SeparateColorGradingAndTonemappingFrameSettings, (HDRenderPipelineAsset data) =>
             {
                 FrameSettings.MigrateToSeparateColorGradingAndTonemapping(ref data.m_RenderingPathDefaultCameraFrameSettings);
-            }),
+            }),*/
             MigrationStep.New(Version.ReplaceTextureArraysByAtlasForCookieAndPlanar, (HDRenderPipelineAsset data) =>
             {
                 ref var lightLoopSettings = ref data.m_RenderPipelineSettings.lightLoopSettings;
@@ -100,7 +100,7 @@ namespace UnityEngine.Rendering.HighDefinition
 
                 lightLoopSettings.cookieAtlasSize = (CookieAtlasResolution)cookieAtlasSize;
                 lightLoopSettings.planarReflectionAtlasSize = (PlanarReflectionAtlasResolution)planarSize;
-            }),
+            })/*,
             MigrationStep.New(Version.AddedAdaptiveSSS, (HDRenderPipelineAsset data) =>
             {
             #pragma warning disable 618 // Type or member is obsolete
@@ -110,7 +110,7 @@ namespace UnityEngine.Rendering.HighDefinition
                 FrameSettings.MigrateSubsurfaceParams(ref data.m_RenderingPathDefaultCameraFrameSettings,                  previouslyHighQuality);
                 FrameSettings.MigrateSubsurfaceParams(ref data.m_RenderingPathDefaultBakedOrCustomReflectionFrameSettings, previouslyHighQuality);
                 FrameSettings.MigrateSubsurfaceParams(ref data.m_RenderingPathDefaultRealtimeReflectionFrameSettings,      previouslyHighQuality);
-            })
+            })*/
         );
 
         [SerializeField]

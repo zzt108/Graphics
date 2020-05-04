@@ -220,8 +220,7 @@ namespace UnityEditor.Rendering.HighDefinition
                 };
 
             // We need to force it to go through legacy
-            bool assetUsedFromQuality = false;
-            var currentPipelineAsset = HDUtils.SwitchToBuiltinRenderPipeline(out assetUsedFromQuality);
+            var currentPipelineAsset = HDUtils.SwitchToBuiltinRenderPipeline();
 
             previewMaterial.SetVector("_CameraWorldPosition", m_PreviewUtility.camera.transform.position);
             previewMaterial.SetFloat("_Mip", 0.0f);
@@ -237,7 +236,7 @@ namespace UnityEditor.Rendering.HighDefinition
             var outTexture = m_PreviewUtility.EndStaticPreview();
 
             // Reset back to whatever asset was used before the rendering
-            HDUtils.RestoreRenderPipelineAsset(assetUsedFromQuality, currentPipelineAsset);
+            HDUtils.RestoreRenderPipelineAsset(currentPipelineAsset);
 
             // Dummy empty render call to reset the pipeline in RenderPipelineManager
             m_PreviewUtility.camera.Render();

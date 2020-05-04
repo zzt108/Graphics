@@ -293,9 +293,9 @@ namespace UnityEngine.Rendering.HighDefinition
                     cmd.DispatchCompute(m_ScreenSpaceShadowsCS, m_ClearShadowTexture, numTilesXHR, numTilesYHR, hdCamera.viewCount);
 
                     // Fetch the volume overrides that we shall be using
-                    RayTracingShader subSurfaceShader = m_Asset.renderPipelineRayTracingResources.subSurfaceRayTracing;
+                    RayTracingShader subSurfaceShader = HDDefaultSettings.instance.renderPipelineRayTracingResources.subSurfaceRayTracing;
                     RayTracingSettings rayTracingSettings = hdCamera.volumeStack.GetComponent<RayTracingSettings>();
-                    ComputeShader deferredRayTracing = m_Asset.renderPipelineRayTracingResources.deferredRaytracingCS;
+                    ComputeShader deferredRayTracing = HDDefaultSettings.instance.renderPipelineRayTracingResources.deferredRaytracingCS;
 
                     // Fetch all the intermediate buffers that we need
                     RTHandle intermediateBuffer0 = GetRayTracingBuffer(InternalRayTracingBuffers.RGBA0);

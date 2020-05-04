@@ -127,15 +127,15 @@ namespace UnityEditor.Rendering.HighDefinition
 
         static FrameSettings GetDefaultFrameSettingsFor(Editor owner)
         {
-            HDRenderPipelineAsset hdrpAsset = GetHDRPAssetFor(owner);
+            //HDRenderPipelineAsset hdrpAsset = GetHDRPAssetFor(owner);
             if (owner is IHDProbeEditor)
             {
                 if ((owner as IHDProbeEditor).GetTarget(owner.target).mode == ProbeSettings.Mode.Realtime)
-                    return hdrpAsset.GetDefaultFrameSettings(FrameSettingsRenderType.RealtimeReflection);
+                    return HDDefaultSettings.instance.GetDefaultFrameSettings(FrameSettingsRenderType.RealtimeReflection);
                 else
-                    return hdrpAsset.GetDefaultFrameSettings(FrameSettingsRenderType.CustomOrBakedReflection);
+                    return HDDefaultSettings.instance.GetDefaultFrameSettings(FrameSettingsRenderType.CustomOrBakedReflection);
             }
-            return hdrpAsset.GetDefaultFrameSettings(FrameSettingsRenderType.Camera);
+            return HDDefaultSettings.instance.GetDefaultFrameSettings(FrameSettingsRenderType.Camera);
         }
 
         static void Drawer_SectionRenderingSettings(SerializedFrameSettings serialized, Editor owner, bool withOverride)

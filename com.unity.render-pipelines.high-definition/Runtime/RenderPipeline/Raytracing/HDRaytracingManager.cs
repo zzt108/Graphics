@@ -138,14 +138,14 @@ namespace UnityEngine.Rendering.HighDefinition
         internal void InitRayTracingManager()
         {
             // Init the denoisers
-            m_TemporalFilter.Init(m_Asset.renderPipelineRayTracingResources, m_SharedRTManager, this);
-            m_SimpleDenoiser.Init(m_Asset.renderPipelineRayTracingResources, m_SharedRTManager, this);
-            m_DiffuseDenoiser.Init(m_Asset.renderPipelineResources, m_Asset.renderPipelineRayTracingResources, m_SharedRTManager, this);
-            m_ReflectionDenoiser.Init(m_Asset.renderPipelineRayTracingResources, m_SharedRTManager, this);
-            m_DiffuseShadowDenoiser.Init(m_Asset.renderPipelineRayTracingResources, m_SharedRTManager, this);
+            m_TemporalFilter.Init(HDDefaultSettings.instance.renderPipelineRayTracingResources, m_SharedRTManager, this);
+            m_SimpleDenoiser.Init(HDDefaultSettings.instance.renderPipelineRayTracingResources, m_SharedRTManager, this);
+            m_DiffuseDenoiser.Init(HDDefaultSettings.instance.renderPipelineResources, HDDefaultSettings.instance.renderPipelineRayTracingResources, m_SharedRTManager, this);
+            m_ReflectionDenoiser.Init(HDDefaultSettings.instance.renderPipelineRayTracingResources, m_SharedRTManager, this);
+            m_DiffuseShadowDenoiser.Init(HDDefaultSettings.instance.renderPipelineRayTracingResources, m_SharedRTManager, this);
 
             // Init the ray count manager
-            m_RayCountManager.Init(m_Asset.renderPipelineRayTracingResources);
+            m_RayCountManager.Init(HDDefaultSettings.instance.renderPipelineRayTracingResources);
 
             // Build the light cluster
             m_RayTracingLightCluster.Initialize(this);

@@ -80,6 +80,20 @@ namespace UnityEngine.Rendering.Universal
         {
             get => 8;
         }
+        public override RenderPipelineDefaultSettings defaultSettings
+        {
+            get
+            {
+                Debug.LogError("TODOJENNY");
+                return null;
+            }
+#if UNITY_EDITOR
+            set
+            {
+                Debug.LogError("TODOJENNY");
+            }
+#endif
+        }
 
         public UniversalRenderPipeline(UniversalRenderPipelineAsset asset)
         {
