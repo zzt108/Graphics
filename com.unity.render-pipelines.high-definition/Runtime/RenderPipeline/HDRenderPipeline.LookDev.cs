@@ -52,10 +52,9 @@ namespace UnityEngine.Rendering.HighDefinition
             volume.enabled = false;
 
 #if UNITY_EDITOR
-            HDRenderPipelineAsset hdrpAsset = HDRenderPipeline.currentAsset;
-            if (hdrpAsset.defaultLookDevProfile == null)
-                hdrpAsset.defaultLookDevProfile = HDDefaultSettings.instance.renderPipelineEditorResources.lookDev.defaultLookDevVolumeProfile;
-            VolumeProfile profile = ScriptableObject.Instantiate(hdrpAsset.defaultLookDevProfile);
+            if (HDDefaultSettings.instance.defaultLookDevProfile == null)
+                HDDefaultSettings.instance.defaultLookDevProfile = HDDefaultSettings.instance.renderPipelineEditorResources.lookDev.defaultLookDevVolumeProfile;
+            VolumeProfile profile = ScriptableObject.Instantiate(HDDefaultSettings.instance.defaultLookDevProfile);
             volume.sharedProfile = profile;
 
             VisualEnvironment visualEnvironment;

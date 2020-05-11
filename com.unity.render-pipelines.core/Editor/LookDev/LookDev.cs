@@ -50,7 +50,7 @@ namespace UnityEditor.Rendering.LookDev
         public static bool open { get; private set; }
 
         /// <summary>
-        /// Does LookDev is supported with the current render pipeline?
+        /// Is LookDev supported by the current render pipeline?
         /// </summary>
         public static bool supported => dataProvider != null;
 
