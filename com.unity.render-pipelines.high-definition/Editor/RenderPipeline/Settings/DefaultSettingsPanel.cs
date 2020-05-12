@@ -31,9 +31,10 @@ namespace UnityEditor.Rendering.HighDefinition
             public class Styles
             {
                 public const int labelWidth = 220;
-                public static GUIContent defaultHDRPAsset = new GUIContent("Asset with the default settings");
+                public static GUIContent defaultSettingsAssetLabel = new GUIContent("Default Settings Asset");
                 public static GUIContent defaultVolumeProfileLabel = new GUIContent("Default Volume Profile Asset");
                 public static GUIContent lookDevVolumeProfileLabel = new GUIContent("LookDev Volume Profile Asset");
+                public static GUIContent resourceLabel = new GUIContent("Resources");
                 public static GUIContent frameSettingsLabel = new GUIContent("Frame Settings");
                 public static GUIContent volumeComponentsLabel = new GUIContent("Volume Components");
                 public static GUIContent customPostProcessOrderLabel = new GUIContent("Custom Post Process Orders");
@@ -50,18 +51,23 @@ namespace UnityEditor.Rendering.HighDefinition
             public void OnGUI(string searchContext)
             {
                 m_ScrollViewPosition = GUILayout.BeginScrollView(m_ScrollViewPosition, EditorStyles.largeLabel);
-                Draw_GeneralSettings();
+
+                Draw_AssetSelection();
                 EditorGUILayout.Space();
 
-                EditorGUILayout.LabelField(Styles.frameSettingsLabel, EditorStyles.largeLabel);
+                EditorGUILayout.LabelField(Styles.resourceLabel,EditorStyles.boldLabel);
+                Draw_Resources();
+                EditorGUILayout.Space();
+
+                EditorGUILayout.LabelField(Styles.frameSettingsLabel, EditorStyles.boldLabel);
                 Draw_DefaultFrameSettings();
                 EditorGUILayout.Space();
 
-                EditorGUILayout.LabelField(Styles.volumeComponentsLabel, EditorStyles.largeLabel);
+                EditorGUILayout.LabelField(Styles.volumeComponentsLabel, EditorStyles.boldLabel);
                 Draw_VolumeInspector();
                 EditorGUILayout.Space();
 
-                EditorGUILayout.LabelField(Styles.customPostProcessOrderLabel, EditorStyles.largeLabel);
+                EditorGUILayout.LabelField(Styles.customPostProcessOrderLabel, EditorStyles.boldLabel);
                 Draw_CustomPostProcess();
                 GUILayout.EndScrollView();
             }
@@ -79,12 +85,7 @@ namespace UnityEditor.Rendering.HighDefinition
 
             void InitializeCustomPostProcessesLists() 
             {
-                if(HDRenderPipeline.currentPipeline == null)
-{ 
-                    Debug.LogError("No HD pipeline active");
-                    return;
-                }
-                var defaultHDRP = HDRenderPipeline.defaultAsset;
+                var defaultHDRP = HDRenderPipeline.currentAsset.defaultSettings as HDDefaultSettings;
                 if(defaultHDRP == null) 
                 {
                     Debug.LogError("No HD Default Settings");
@@ -113,7 +114,7 @@ namespace UnityEditor.Rendering.HighDefinition
 
                     reorderableList = new ReorderableList(customPostProcessTypes, typeof(string));
                     reorderableList.drawHeaderCallback = (rect) =>
-                        EditorGUI.LabelField(rect, headerName, EditorStyles.boldLabel);
+                        EditorGUI.LabelField(rect, headerName, EditorStyles.label);
                     reorderableList.drawElementCallback = (rect, index, isActive, isFocused) =>
                     {
                         rect.height = EditorGUIUtility.singleLineHeight;
@@ -160,11 +161,46 @@ namespace UnityEditor.Rendering.HighDefinition
                 m_AfterPostProcessCustomPostProcesses.DoLayoutList();
             }
 
-            void Draw_GeneralSettings()
+            void Draw_Resources()
             {
-                if (HDRenderPipeline.currentPipeline == null)
+                if(HDRenderPipeline.currentPipeline == null)
                 {
-                    EditorGUILayout.HelpBox("No HDRP pipeline currently active (see Quality Settings active level).", MessageType.Warning);
+                    //EditorGUILayout.HelpBox("No HDRP pipeline currently active (see Quality Settings active level).",MessageType.Warning);
+                    return;
+                }
+
+                var oldWidth = EditorGUIUtility.labelWidth;
+                EditorGUIUtility.labelWidth = Styles.labelWidth;
+
+                var serializedObject = new SerializedObject(HDDefaultSettings.instance);
+                var serialized = new SerializedHDDefaultSettings(serializedObject);
+
+                // HDRenderPipelineUI.GeneralSection.Draw(serializedHDDefaultSettings, null);
+
+                EditorGUILayout.PropertyField(serialized.renderPipelineResources,HDRenderPipelineUI.Styles.GeneralSection.renderPipelineResourcesContent);
+
+                HDRenderPipeline hdrp = (RenderPipelineManager.currentPipeline as HDRenderPipeline);
+                if(hdrp != null && hdrp.rayTracingSupported)
+                    EditorGUILayout.PropertyField(serialized.renderPipelineRayTracingResources,HDRenderPipelineUI.Styles.GeneralSection.renderPipelineRayTracingResourcesContent);
+
+                // Not serialized as editor only datas... Retrieve them in data
+                EditorGUI.showMixedValue = serialized.editorResourceHasMultipleDifferentValues;
+                EditorGUI.BeginChangeCheck();
+                var editorResources = EditorGUILayout.ObjectField(HDRenderPipelineUI.Styles.GeneralSection.renderPipelineEditorResourcesContent,serialized.firstEditorResources,typeof(HDRenderPipelineEditorResources),allowSceneObjects: false) as HDRenderPipelineEditorResources;
+                if(EditorGUI.EndChangeCheck())
+                    serialized.SetEditorResource(editorResources);
+                //TODOJENNY check how to do this for default settings
+                EditorGUI.showMixedValue = false;
+
+                serializedObject.ApplyModifiedProperties();
+                EditorGUIUtility.labelWidth = oldWidth;
+            }
+
+            void Draw_AssetSelection()
+            {
+                if(HDRenderPipeline.currentPipeline == null)
+                {
+                    EditorGUILayout.HelpBox("No HDRP pipeline currently active (see Quality Settings active level).",MessageType.Warning);
                     return;
                 }
 
@@ -172,15 +208,16 @@ namespace UnityEditor.Rendering.HighDefinition
                 EditorGUIUtility.labelWidth = Styles.labelWidth;
 
                 GUI.enabled = false;
-                EditorGUILayout.ObjectField(Styles.defaultHDRPAsset, HDRenderPipeline.currentAsset, typeof(HDRenderPipelineAsset), false);
+                EditorGUILayout.ObjectField(Styles.defaultSettingsAssetLabel,HDDefaultSettings.instance,typeof(HDDefaultSettings),false);
                 GUI.enabled = true;
+                
+                EditorGUILayout.Space();
 
+                // TODOJENNY:  move shader log level to default settings?
                 var serializedObject = new SerializedObject(HDRenderPipeline.currentAsset);
                 var serializedHDRPAsset = new SerializedHDRenderPipelineAsset(serializedObject);
-
                 HDRenderPipelineUI.GeneralSection.Draw(serializedHDRPAsset, null);
 
-                serializedObject.ApplyModifiedProperties();
                 EditorGUIUtility.labelWidth = oldWidth;
             }
 
@@ -188,7 +225,7 @@ namespace UnityEditor.Rendering.HighDefinition
             {
                 if (HDRenderPipeline.currentPipeline == null)
                 {
-                    EditorGUILayout.HelpBox("No HDRP pipeline currently active (see Quality Settings active Level).", MessageType.Warning);
+                    //EditorGUILayout.HelpBox("No HDRP pipeline currently active (see Quality Settings active Level).", MessageType.Warning);
                     return;
                 }
                 
@@ -270,13 +307,14 @@ namespace UnityEditor.Rendering.HighDefinition
             {
                 if (HDRenderPipeline.currentPipeline == null)
                 {
-                    EditorGUILayout.HelpBox("No HDRP pipeline currently active (see Quality Settings active level).", MessageType.Warning);
+                    //EditorGUILayout.HelpBox("No HDRP pipeline currently active (see Quality Settings active level).", MessageType.Warning);
                     return;
                 }
 
                 var serializedObject = new SerializedObject(HDRenderPipeline.currentAsset);
                 var serializedHDRPAsset = new SerializedHDRenderPipelineAsset(serializedObject);
 
+                EditorGUILayout.HelpBox("No Frame settings to show. Come back to it once Jenny figured out CED works. TODOJENNY",MessageType.Warning);
                 //HDRenderPipelineUI.FrameSettingsSection.Draw(serializedHDRPAsset, null);
                 serializedObject.ApplyModifiedProperties();
             }
