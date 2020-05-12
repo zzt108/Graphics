@@ -33,7 +33,7 @@ namespace UnityEngine.Rendering.HighDefinition
         [RuntimeInitializeOnLoadMethod]
         static void Initialize()
         {
-            if (GraphicsSettings.currentRenderPipeline is HDRenderPipelineAsset)
+            if (QualitySettings.renderPipeline is HDRenderPipelineAsset)
                 ScriptableRuntimeReflectionSystemSettings.system = k_instance;
         }
 

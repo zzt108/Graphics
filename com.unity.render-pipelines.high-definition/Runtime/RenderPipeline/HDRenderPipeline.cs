@@ -12,10 +12,10 @@ namespace UnityEngine.Rendering.HighDefinition
     /// <summary>
     /// High Definition Render Pipeline class.
     /// </summary>
-    public partial class HDRenderPipeline : RenderPipeline
+    public partial class HDRenderPipeline:RenderPipeline
     {
         #region Default Settings
-// TODOJENNY mark it as obsolete
+        // TODOJENNY mark it as obsolete
         internal static HDDefaultSettings defaultAsset
             => HDDefaultSettings.instance;
 
@@ -33,16 +33,16 @@ namespace UnityEngine.Rendering.HighDefinition
             get
             {
                 return m_defaultSettings;
-                }
+            }
 #if UNITY_EDITOR
             set
-        {
+            {
                 m_defaultSettings = (HDDefaultSettings)value;
             }
 #endif
-            }
+        }
         internal static RenderPipelineDefaultSettings CreateDefaultSettings()
-            {
+        {
             HDDefaultSettings defaultSettingsInst = UnityEngine.ScriptableObject.CreateInstance<HDDefaultSettings>();
             /* TODOJENNY
                     profile.name = Path.GetFileName(path);
@@ -51,7 +51,7 @@ namespace UnityEngine.Rendering.HighDefinition
                     AssetDatabase.Refresh();
                     */
             return defaultSettingsInst;
-            }
+        }
 
         #endregion
         /// <summary>

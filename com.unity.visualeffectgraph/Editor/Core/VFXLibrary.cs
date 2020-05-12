@@ -482,10 +482,10 @@ namespace UnityEditor.VFX
             {
                 LoadSRPBindersIfNeeded();
                 VFXSRPBinder binder = null;
-                srpBinders.TryGetValue(GraphicsSettings.currentRenderPipeline == null ? "None" : GraphicsSettings.currentRenderPipeline.GetType().Name, out binder);
+                srpBinders.TryGetValue(QualitySettings.renderPipeline == null ? "None" : QualitySettings.renderPipeline.GetType().Name, out binder);
 
                 if (binder == null)
-                    throw new NullReferenceException("The SRP was not registered in VFX: " + GraphicsSettings.currentRenderPipeline.GetType());
+                    throw new NullReferenceException("The SRP was not registered in VFX: " + QualitySettings.renderPipeline.GetType());
 
                 return binder;
             }

@@ -357,7 +357,7 @@ namespace UnityEditor.ShaderGraph
         {
             foreach (var target in (masterNode as AbstractMaterialNode).owner.validTargets)
             {
-                if (target.IsPipelineCompatible(GraphicsSettings.currentRenderPipeline))
+                if (target.IsPipelineCompatible(QualitySettings.renderPipeline))
                 {
                     var context = new TargetSetupContext();
                     context.SetMasterNode(masterNode);

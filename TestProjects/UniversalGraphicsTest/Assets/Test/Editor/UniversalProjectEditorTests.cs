@@ -23,7 +23,7 @@ public class UniversalProjectEditorTests
     //Utilities
     void GetUniversalAsset()
     {
-        var renderpipelineAsset = GraphicsSettings.currentRenderPipeline;
+        var renderpipelineAsset = QualitySettings.renderPipeline;
 
         if(renderpipelineAsset == null)
             Assert.Fail("No Render Pipeline Asset assigned.");

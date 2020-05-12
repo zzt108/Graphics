@@ -163,7 +163,7 @@ namespace UnityEditor.ShaderGraph.Drawing
                 foreach(Target activeTarget in node.owner.validTargets)
                 {
                     //if we have a valid active target implementation and render pipeline, don't display the error
-                    if (activeTarget.IsPipelineCompatible(GraphicsSettings.currentRenderPipeline))
+                    if (activeTarget.IsPipelineCompatible(QualitySettings.renderPipeline))
                     {
                         validTarget = true;
                         break;

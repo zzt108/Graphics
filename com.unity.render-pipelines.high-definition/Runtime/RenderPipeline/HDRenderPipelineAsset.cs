@@ -52,12 +52,13 @@ namespace UnityEngine.Rendering.HighDefinition
 
             UpdateRenderingLayerNames();
 
-            isInOnValidateCall = false;
+               isInOnValidateCall = false;
         }
 
         internal HDDefaultSettings m_DefaultSettings;
         public HDDefaultSettings defaultSettings {
-            get {             //TODOJENNY only one active at a time
+            get 
+            {             //TODOJENNY only one active at a time
                 if(m_DefaultSettings is null)
                     m_DefaultSettings = HDRenderPipeline.CreateDefaultSettings() as HDDefaultSettings;
                 return m_DefaultSettings;

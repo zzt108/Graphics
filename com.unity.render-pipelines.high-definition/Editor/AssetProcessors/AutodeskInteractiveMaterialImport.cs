@@ -30,11 +30,11 @@ namespace UnityEditor.Rendering.HighDefinition
 
                 Shader shader;
                 if (isMasked)
-                    shader = GraphicsSettings.currentRenderPipeline.autodeskInteractiveMaskedShader;
+                    shader = QualitySettings.renderPipeline.autodeskInteractiveMaskedShader;
                 else if (isTransparent)
-                    shader = GraphicsSettings.currentRenderPipeline.autodeskInteractiveTransparentShader;
+                    shader = QualitySettings.renderPipeline.autodeskInteractiveTransparentShader;
                 else
-                    shader = GraphicsSettings.currentRenderPipeline.autodeskInteractiveShader;
+                    shader = QualitySettings.renderPipeline.autodeskInteractiveShader;
 
                 if (shader == null)
                     return;

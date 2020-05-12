@@ -77,12 +77,19 @@ namespace UnityEditor.Rendering.HighDefinition
                 InitializeCustomPostProcessesLists();
             }
 
-            void InitializeCustomPostProcessesLists()
+            void InitializeCustomPostProcessesLists() 
             {
-                var defaultHDRP = HDDefaultSettings.instance;
-                if (defaultHDRP == null)
+                if(HDRenderPipeline.currentPipeline == null)
+{ 
+                    Debug.LogError("No HD pipeline active");
                     return;
-
+                }
+                var defaultHDRP = HDRenderPipeline.defaultAsset;
+                if(defaultHDRP == null) 
+                {
+                    Debug.LogError("No HD Default Settings");
+                    return;
+                }
                 var ppVolumeTypes = TypeCache.GetTypesDerivedFrom<CustomPostProcessVolumeComponent>();
                 var ppVolumeTypeInjectionPoints = new Dictionary<Type, CustomPostProcessInjectionPoint>();
                 foreach (var ppVolumeType in ppVolumeTypes)

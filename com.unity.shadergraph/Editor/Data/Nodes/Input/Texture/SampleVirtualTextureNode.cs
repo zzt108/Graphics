@@ -280,7 +280,7 @@ namespace UnityEditor.ShaderGraph
                 }
 
                 // display warning if the current render pipeline doesn't support virtual texturing
-                IVirtualTexturingEnabledRenderPipeline vtRp = GraphicsSettings.currentRenderPipeline as IVirtualTexturingEnabledRenderPipeline;
+                IVirtualTexturingEnabledRenderPipeline vtRp = QualitySettings.renderPipeline as IVirtualTexturingEnabledRenderPipeline;
                 if (vtRp == null)
                     ps.Add(new HelpBoxRow(MessageType.Warning), (row) => row.Add(new Label("The current render pipeline does not support Virtual Texturing, this node will do regular 2D sampling.")));
                 else if (vtRp.virtualTexturingEnabled == false)

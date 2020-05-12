@@ -405,7 +405,7 @@ namespace UnityEditor.Rendering.HighDefinition
                     if (IsNullComparison(lLightData, rLightData, out var order))
                         return order;
 
-                    var hdrp = GraphicsSettings.currentRenderPipeline as HDRenderPipelineAsset;
+                    var hdrp = HDRenderPipeline.currentAsset;
                     var lUseContactShadow = lLightData.useContactShadow;
                     var rUseContactShadow = rLightData.useContactShadow;
 
@@ -418,7 +418,7 @@ namespace UnityEditor.Rendering.HighDefinition
                     if (!TryGetAdditionalLightData(target, out var tLightData) || !TryGetAdditionalLightData(source, out var sLightData))
                         return;
 
-                    var hdrp = GraphicsSettings.currentRenderPipeline as HDRenderPipelineAsset;
+                    var hdrp = QualitySettings.renderPipeline as HDRenderPipelineAsset;
                     var tUseContactShadow = tLightData.useContactShadow;
                     var sUseContactShadow = sLightData.useContactShadow;
 
@@ -505,7 +505,7 @@ namespace UnityEditor.Rendering.HighDefinition
                     if (IsNullComparison(lLightData, rLightData, out var order))
                         return order;
 
-                    var hdrp = GraphicsSettings.currentRenderPipeline as HDRenderPipelineAsset;
+                    var hdrp = QualitySettings.renderPipeline as HDRenderPipelineAsset;
                     var lShadowResolution = lLightData.shadowResolution;
                     var rShadowResolution = rLightData.shadowResolution;
                     var lLightShape = lLightData.type;
@@ -520,7 +520,7 @@ namespace UnityEditor.Rendering.HighDefinition
                     if (!TryGetAdditionalLightData(target, out var tLightData) || !TryGetAdditionalLightData(source, out var sLightData))
                         return;
 
-                    var hdrp = GraphicsSettings.currentRenderPipeline as HDRenderPipelineAsset;
+                    var hdrp = QualitySettings.renderPipeline as HDRenderPipelineAsset;
                     var tShadowResolution = tLightData.shadowResolution;
                     var sShadowResolution = sLightData.shadowResolution;
 

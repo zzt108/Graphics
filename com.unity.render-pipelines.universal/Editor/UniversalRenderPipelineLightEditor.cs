@@ -324,7 +324,7 @@ namespace UnityEditor.Rendering.Universal
 
         protected override void OnSceneGUI()
         {
-            if (!(GraphicsSettings.currentRenderPipeline is UniversalRenderPipelineAsset))
+            if (!(QualitySettings.renderPipeline is UniversalRenderPipelineAsset))
                 return;
 
             Light light = target as Light;
