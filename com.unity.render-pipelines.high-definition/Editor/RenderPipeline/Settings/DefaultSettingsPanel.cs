@@ -52,6 +52,19 @@ namespace UnityEditor.Rendering.HighDefinition
             {
                 m_ScrollViewPosition = GUILayout.BeginScrollView(m_ScrollViewPosition, EditorStyles.largeLabel);
 
+                if(HDRenderPipeline.currentPipeline == null)
+                {
+                    EditorGUILayout.HelpBox("No HDRP pipeline currently active (see Quality Settings active level).",MessageType.Warning);
+                    GUILayout.EndScrollView();
+                    return;
+                }
+
+                if(HDDefaultSettings.instance == null)
+                {
+                    EditorGUILayout.HelpBox("No HD Default Settings.",MessageType.Warning);
+                    GUILayout.EndScrollView();
+                    return;
+                }
                 Draw_AssetSelection();
                 EditorGUILayout.Space();
 
@@ -85,7 +98,7 @@ namespace UnityEditor.Rendering.HighDefinition
 
             void InitializeCustomPostProcessesLists() 
             {
-                var defaultHDRP = HDRenderPipeline.currentAsset.defaultSettings as HDDefaultSettings;
+                var defaultHDRP = HDDefaultSettings.instance;
                 if(defaultHDRP == null) 
                 {
                     Debug.LogError("No HD Default Settings");
