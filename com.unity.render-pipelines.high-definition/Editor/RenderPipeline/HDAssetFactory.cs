@@ -104,5 +104,26 @@ namespace UnityEditor.Rendering.HighDefinition
             var icon = EditorGUIUtility.FindTexture("ScriptableObject Icon");
             ProjectWindowUtil.StartNameEditingIfProjectWindowExists(0, ScriptableObject.CreateInstance<DoCreateNewAssetHDRenderPipelineEditorResources>(), "New HDRenderPipelineEditorResources.asset", icon, null);
         }
+
+        class HDDefaultSettingsCreator:UnityEditor.ProjectWindowCallback.EndNameEditAction
+        {
+            public override void Action(int instanceId,string pathName,string resourceFile)
+            {
+                var newAsset = CreateInstance<HDDefaultSettings>();
+                newAsset.name = Path.GetFileName(pathName);
+
+                ResourceReloader.ReloadAllNullIn(newAsset,HDUtils.GetHDRenderPipelinePath());
+
+                AssetDatabase.CreateAsset(newAsset,pathName);
+                ProjectWindowUtil.ShowCreatedAsset(newAsset);
+            }
+        }
+
+        [MenuItem("Assets/Create/Rendering/High Definition Default Settings Asset",priority = CoreUtils.assetCreateMenuPriority2)]
+        static void CreateHDDefaultSettings()
+        {
+            var icon = EditorGUIUtility.FindTexture("ScriptableObject Icon");
+            ProjectWindowUtil.StartNameEditingIfProjectWindowExists(0,ScriptableObject.CreateInstance<HDDefaultSettingsCreator>(),"New HDDefaultSettings.asset",icon,null);
+        }
     }
 }

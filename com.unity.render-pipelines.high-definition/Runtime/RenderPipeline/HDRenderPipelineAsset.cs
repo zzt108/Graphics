@@ -31,11 +31,9 @@ namespace UnityEngine.Rendering.HighDefinition
         /// CreatePipeline implementation.
         /// </summary>
         /// <returns>A new HDRenderPipeline instance.</returns>
-        protected override RenderPipeline CreatePipeline() 
+        protected override RenderPipeline CreatePipeline()
         {
-            if(m_DefaultSettings is null)
-                m_DefaultSettings = HDRenderPipeline.CreateDefaultSettings() as HDDefaultSettings;
-            return new HDRenderPipeline(this, defaultSettings);
+            return new HDRenderPipeline(this);
         }
 
         /// <summary>
@@ -55,50 +53,14 @@ namespace UnityEngine.Rendering.HighDefinition
                isInOnValidateCall = false;
         }
 
-        internal HDDefaultSettings m_DefaultSettings;
-        public HDDefaultSettings defaultSettings {
-            get 
-            {             //TODOJENNY only one active at a time
-                if(m_DefaultSettings is null)
-                    m_DefaultSettings = HDRenderPipeline.CreateDefaultSettings() as HDDefaultSettings;
-                return m_DefaultSettings;
-            }
-
-            set { m_DefaultSettings = value; }
-        }
+        public HDDefaultSettings defaultSettings => HDDefaultSettings.instance;
 
         internal RenderPipelineResources renderPipelineResources
         {
             get { return defaultSettings.renderPipelineResources; }
             set { defaultSettings.renderPipelineResources = value; }
         }
-        /*
-        // To be able to turn on/off FrameSettings properties at runtime for debugging purpose without affecting the original one
-        // we create a runtime copy (m_ActiveFrameSettings that is used, and any parametrization is done on serialized frameSettings)
-        [SerializeField]
-        FrameSettings m_RenderingPathDefaultCameraFrameSettings = FrameSettings.NewDefaultCamera();
 
-        [SerializeField]
-        FrameSettings m_RenderingPathDefaultBakedOrCustomReflectionFrameSettings = FrameSettings.NewDefaultCustomOrBakeReflectionProbe();
-
-        [SerializeField]
-        FrameSettings m_RenderingPathDefaultRealtimeReflectionFrameSettings = FrameSettings.NewDefaultRealtimeReflectionProbe();
-
-        internal ref FrameSettings GetDefaultFrameSettings(FrameSettingsRenderType type)
-        {
-            switch(type)
-            {
-                case FrameSettingsRenderType.Camera:
-                    return ref m_RenderingPathDefaultCameraFrameSettings;
-                case FrameSettingsRenderType.CustomOrBakedReflection:
-                    return ref m_RenderingPathDefaultBakedOrCustomReflectionFrameSettings;
-                case FrameSettingsRenderType.RealtimeReflection:
-                    return ref m_RenderingPathDefaultRealtimeReflectionFrameSettings;
-                default:
-                    throw new ArgumentException("Unknown FrameSettingsRenderType");
-            }
-        }
-        */
         internal bool frameSettingsHistory { get; set; } = false;
 
         internal ReflectionSystemParameters reflectionSystemParameters

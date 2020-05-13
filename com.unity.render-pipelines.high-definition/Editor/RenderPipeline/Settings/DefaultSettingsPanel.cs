@@ -58,30 +58,27 @@ namespace UnityEditor.Rendering.HighDefinition
                     GUILayout.EndScrollView();
                     return;
                 }
-
-                if(HDDefaultSettings.instance == null)
-                {
-                    EditorGUILayout.HelpBox("No HD Default Settings.",MessageType.Warning);
-                    GUILayout.EndScrollView();
-                    return;
-                }
                 Draw_AssetSelection();
-                EditorGUILayout.Space();
 
-                EditorGUILayout.LabelField(Styles.resourceLabel,EditorStyles.boldLabel);
-                Draw_Resources();
-                EditorGUILayout.Space();
+                if(HDDefaultSettings.instance != null)
+                {
+                    EditorGUILayout.Space();
 
-                EditorGUILayout.LabelField(Styles.frameSettingsLabel, EditorStyles.boldLabel);
-                Draw_DefaultFrameSettings();
-                EditorGUILayout.Space();
+                    EditorGUILayout.LabelField(Styles.resourceLabel,EditorStyles.boldLabel);
+                    Draw_Resources();
+                    EditorGUILayout.Space();
 
-                EditorGUILayout.LabelField(Styles.volumeComponentsLabel, EditorStyles.boldLabel);
-                Draw_VolumeInspector();
-                EditorGUILayout.Space();
+                    EditorGUILayout.LabelField(Styles.frameSettingsLabel,EditorStyles.boldLabel);
+                    Draw_DefaultFrameSettings();
+                    EditorGUILayout.Space();
 
-                EditorGUILayout.LabelField(Styles.customPostProcessOrderLabel, EditorStyles.boldLabel);
-                Draw_CustomPostProcess();
+                    EditorGUILayout.LabelField(Styles.volumeComponentsLabel,EditorStyles.boldLabel);
+                    Draw_VolumeInspector();
+                    EditorGUILayout.Space();
+
+                    EditorGUILayout.LabelField(Styles.customPostProcessOrderLabel,EditorStyles.boldLabel);
+                    Draw_CustomPostProcess();
+                }
                 GUILayout.EndScrollView();
             }
 
@@ -176,12 +173,6 @@ namespace UnityEditor.Rendering.HighDefinition
 
             void Draw_Resources()
             {
-                if(HDRenderPipeline.currentPipeline == null)
-                {
-                    //EditorGUILayout.HelpBox("No HDRP pipeline currently active (see Quality Settings active level).",MessageType.Warning);
-                    return;
-                }
-
                 var oldWidth = EditorGUIUtility.labelWidth;
                 EditorGUIUtility.labelWidth = Styles.labelWidth;
 
@@ -216,17 +207,38 @@ namespace UnityEditor.Rendering.HighDefinition
                     EditorGUILayout.HelpBox("No HDRP pipeline currently active (see Quality Settings active level).",MessageType.Warning);
                     return;
                 }
+                else if(HDDefaultSettings.instance == null)
+                {
+                    EditorGUILayout.HelpBox("There is no HD Default Settings asset registered.",MessageType.Warning);
+                }
 
                 var oldWidth = EditorGUIUtility.labelWidth;
                 EditorGUIUtility.labelWidth = Styles.labelWidth;
 
-                GUI.enabled = false;
-                EditorGUILayout.ObjectField(Styles.defaultSettingsAssetLabel,HDDefaultSettings.instance,typeof(HDDefaultSettings),false);
+                EditorGUILayout.BeginHorizontal();
+                var asset = HDDefaultSettings.instance;
+                GUI.enabled = (asset != null);
+                var newAsset = (HDDefaultSettings)EditorGUILayout.ObjectField(Styles.defaultSettingsAssetLabel,asset,typeof(HDDefaultSettings),false);
                 GUI.enabled = true;
-                
-                EditorGUILayout.Space();
+                if(newAsset == null)
+                {
+                    Debug.Log("HD Default Settings Asset cannot be null. Rolling back to previous value.");
+
+                }
+                else if(newAsset != asset)
+                {
+                    asset = newAsset;
+                    EditorUtility.SetDirty(HDDefaultSettings.instance);  //TODOJENNY
+                }
+
+                if(GUILayout.Button(EditorGUIUtility.TrTextContent("New","Create a HD Default Settings Asset in your default resource folder (defined in Wizard)"),GUILayout.Width(38),GUILayout.Height(18)))
+                {
+                    HDAssetFactory.CreateHDDefaultSettings();
+                }
+                EditorGUILayout.EndHorizontal();
 
                 // TODOJENNY:  move shader log level to default settings?
+                EditorGUILayout.Space();
                 var serializedObject = new SerializedObject(HDRenderPipeline.currentAsset);
                 var serializedHDRPAsset = new SerializedHDRenderPipelineAsset(serializedObject);
                 HDRenderPipelineUI.GeneralSection.Draw(serializedHDRPAsset, null);
@@ -235,18 +247,12 @@ namespace UnityEditor.Rendering.HighDefinition
             }
 
             void Draw_VolumeInspector()
-            {
-                if (HDRenderPipeline.currentPipeline == null)
-                {
-                    //EditorGUILayout.HelpBox("No HDRP pipeline currently active (see Quality Settings active Level).", MessageType.Warning);
-                    return;
-                }
-                
+            {                
                 var oldWidth = EditorGUIUtility.labelWidth;
                 EditorGUIUtility.labelWidth = Styles.labelWidth;
 
                 EditorGUILayout.BeginHorizontal();
-                var asset = EditorDefaultSettings.GetOrAssignDefaultVolumeProfile();
+                var asset = HDDefaultSettings.instance.GetOrCreateDefaultVolumeProfile();
                 var newAsset = (VolumeProfile)EditorGUILayout.ObjectField(Styles.defaultVolumeProfileLabel, asset, typeof(VolumeProfile), false);
                 if (newAsset == null)
                 {

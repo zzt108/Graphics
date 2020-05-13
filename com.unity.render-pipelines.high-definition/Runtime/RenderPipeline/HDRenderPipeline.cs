@@ -61,7 +61,7 @@ namespace UnityEngine.Rendering.HighDefinition
 
         readonly HDRenderPipelineAsset m_Asset;
         internal HDRenderPipelineAsset asset { get { return m_Asset; } }
-        internal RenderPipelineResources defaultResources { get { return HDDefaultSettings.instance.renderPipelineResources; } }
+        internal RenderPipelineResources defaultResources { get { return m_defaultSettings.renderPipelineResources; } }
 
         internal RenderPipelineSettings currentPlatformRenderPipelineSettings { get { return m_Asset.currentPlatformRenderPipelineSettings; } }
 
@@ -322,10 +322,29 @@ namespace UnityEngine.Rendering.HighDefinition
         /// HDRenderPipeline constructor.
         /// </summary>
         /// <param name="asset">Source HDRenderPipelineAsset.</param>
-        /// <param name="defaultAsset">Defauklt HDRenderPipelineAsset.</param>
-        public HDRenderPipeline(HDRenderPipelineAsset asset, HDDefaultSettings defaults)
+        /// <param name="defaultAsset">Defauklt HDRenderPipelineAsset. [Obsolete]</param>
+        public HDRenderPipeline(HDRenderPipelineAsset asset,HDRenderPipelineAsset obsolete_defaultAsset) :  this(asset)
         {
-            m_defaultSettings = defaults;
+        }
+
+        public HDRenderPipeline(HDRenderPipelineAsset asset)
+        { 
+            if(m_defaultSettings is null)
+            {
+                if(HDDefaultSettings.instance != null)
+                    m_defaultSettings = HDDefaultSettings.instance;
+                else
+                    m_defaultSettings = HDRenderPipeline.CreateDefaultSettings() as HDDefaultSettings; //TODOJENNY load asset
+            }
+            else
+            {
+                if(m_defaultSettings != HDDefaultSettings.instance)
+                {
+                    Debug.LogError("Default Settings for the new HDRP Asset is incorrect.");
+                    m_defaultSettings = HDDefaultSettings.instance;
+                }
+            }
+
             m_Asset = asset;
             HDProbeSystem.Parameters = asset.reflectionSystemParameters;
 
@@ -369,7 +388,7 @@ namespace UnityEngine.Rendering.HighDefinition
             // TODO: Might want to initialize to at least the window resolution to avoid un-necessary re-alloc in the player
             RTHandles.Initialize(1, 1, m_Asset.currentPlatformRenderPipelineSettings.supportMSAA, m_Asset.currentPlatformRenderPipelineSettings.msaaSampleCount);
 
-            m_XRSystem = new XRSystem(m_defaultSettings.renderPipelineResources.shaders);
+            m_XRSystem = new XRSystem(defaultResources.shaders);
             m_GPUCopy = new GPUCopy(defaultResources.shaders.copyChannelCS);
 
             m_MipGenerator = new MipGenerator(defaultResources);
