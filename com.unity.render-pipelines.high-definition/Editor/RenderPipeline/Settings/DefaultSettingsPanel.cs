@@ -16,7 +16,7 @@ namespace UnityEditor.Rendering.HighDefinition
         [SettingsProvider]
         public static SettingsProvider CreateSettingsProvider()
         {
-            return new SettingsProvider("Project/HDRP Default Settings", SettingsScope.Project)
+            return new SettingsProvider("Project/Graphics/HDRP Default Settings", SettingsScope.Project)
             {
                 activateHandler = s_IMGUIImpl.OnActivate,
                 keywords = SettingsProvider.GetSearchKeywordsFromGUIContentProperties<HDRenderPipelineUI.Styles.GeneralSection>()
@@ -55,8 +55,6 @@ namespace UnityEditor.Rendering.HighDefinition
                 if(HDRenderPipeline.currentPipeline == null)
                 {
                     EditorGUILayout.HelpBox("No HDRP pipeline currently active (see Quality Settings active level).",MessageType.Warning);
-                    GUILayout.EndScrollView();
-                    return;
                 }
                 Draw_AssetSelection();
 
@@ -161,11 +159,51 @@ namespace UnityEditor.Rendering.HighDefinition
                 }
             }
 
+            void Draw_AssetSelection()
+            {
+                if(HDDefaultSettings.instance == null)
+                {
+                    EditorGUILayout.HelpBox("There is no HD Default Settings asset registered.",MessageType.Warning);
+                }
+
+                var oldWidth = EditorGUIUtility.labelWidth;
+                EditorGUIUtility.labelWidth = Styles.labelWidth;
+
+                EditorGUILayout.BeginHorizontal();
+                var asset = HDDefaultSettings.instance;
+                GUI.enabled = (asset != null);
+                var newAsset = (HDDefaultSettings)EditorGUILayout.ObjectField(Styles.defaultSettingsAssetLabel,asset,typeof(HDDefaultSettings),false);
+                GUI.enabled = true;
+                if(newAsset == null)
+                {
+                    Debug.Log("HD Default Settings Asset cannot be null. Rolling back to previous value.");
+
+                }
+                else if(newAsset != asset)
+                {
+                    asset = newAsset;
+                    EditorUtility.SetDirty(HDDefaultSettings.instance);  //TODOJENNY
+                }
+
+                if(GUILayout.Button(EditorGUIUtility.TrTextContent("New","Create a HD Default Settings Asset in your default resource folder (defined in Wizard)"),GUILayout.Width(38),GUILayout.Height(18)))
+                {
+                    HDAssetFactory.CreateHDDefaultSettings();
+                }
+                EditorGUILayout.EndHorizontal();
+
+                // TODOJENNY:  move shader log level to default settings?
+                if(HDRenderPipeline.currentAsset != null)
+                {
+                    EditorGUILayout.Space();
+                    var serializedObject = new SerializedObject(HDRenderPipeline.currentAsset);
+                    var serializedHDRPAsset = new SerializedHDRenderPipelineAsset(serializedObject);
+                    HDRenderPipelineUI.GeneralSection.Draw(serializedHDRPAsset,null);
+                }
+                EditorGUIUtility.labelWidth = oldWidth;
+            }
+
             void Draw_CustomPostProcess()
             {
-                if (HDRenderPipeline.currentPipeline == null)
-                    return;
-
                 m_BeforeTransparentCustomPostProcesses.DoLayoutList();
                 m_BeforePostProcessCustomPostProcesses.DoLayoutList();
                 m_AfterPostProcessCustomPostProcesses.DoLayoutList();
@@ -197,52 +235,6 @@ namespace UnityEditor.Rendering.HighDefinition
                 EditorGUI.showMixedValue = false;
 
                 serializedObject.ApplyModifiedProperties();
-                EditorGUIUtility.labelWidth = oldWidth;
-            }
-
-            void Draw_AssetSelection()
-            {
-                if(HDRenderPipeline.currentPipeline == null)
-                {
-                    EditorGUILayout.HelpBox("No HDRP pipeline currently active (see Quality Settings active level).",MessageType.Warning);
-                    return;
-                }
-                else if(HDDefaultSettings.instance == null)
-                {
-                    EditorGUILayout.HelpBox("There is no HD Default Settings asset registered.",MessageType.Warning);
-                }
-
-                var oldWidth = EditorGUIUtility.labelWidth;
-                EditorGUIUtility.labelWidth = Styles.labelWidth;
-
-                EditorGUILayout.BeginHorizontal();
-                var asset = HDDefaultSettings.instance;
-                GUI.enabled = (asset != null);
-                var newAsset = (HDDefaultSettings)EditorGUILayout.ObjectField(Styles.defaultSettingsAssetLabel,asset,typeof(HDDefaultSettings),false);
-                GUI.enabled = true;
-                if(newAsset == null)
-                {
-                    Debug.Log("HD Default Settings Asset cannot be null. Rolling back to previous value.");
-
-                }
-                else if(newAsset != asset)
-                {
-                    asset = newAsset;
-                    EditorUtility.SetDirty(HDDefaultSettings.instance);  //TODOJENNY
-                }
-
-                if(GUILayout.Button(EditorGUIUtility.TrTextContent("New","Create a HD Default Settings Asset in your default resource folder (defined in Wizard)"),GUILayout.Width(38),GUILayout.Height(18)))
-                {
-                    HDAssetFactory.CreateHDDefaultSettings();
-                }
-                EditorGUILayout.EndHorizontal();
-
-                // TODOJENNY:  move shader log level to default settings?
-                EditorGUILayout.Space();
-                var serializedObject = new SerializedObject(HDRenderPipeline.currentAsset);
-                var serializedHDRPAsset = new SerializedHDRenderPipelineAsset(serializedObject);
-                HDRenderPipelineUI.GeneralSection.Draw(serializedHDRPAsset, null);
-
                 EditorGUIUtility.labelWidth = oldWidth;
             }
 
@@ -324,18 +316,12 @@ namespace UnityEditor.Rendering.HighDefinition
 
             void Draw_DefaultFrameSettings()
             {
-                if (HDRenderPipeline.currentPipeline == null)
-                {
-                    //EditorGUILayout.HelpBox("No HDRP pipeline currently active (see Quality Settings active level).", MessageType.Warning);
-                    return;
-                }
+                //var serializedObject = new SerializedObject(HDRenderPipeline.currentAsset);
+                //var serializedHDRPAsset = new SerializedHDRenderPipelineAsset(serializedObject);
 
-                var serializedObject = new SerializedObject(HDRenderPipeline.currentAsset);
-                var serializedHDRPAsset = new SerializedHDRenderPipelineAsset(serializedObject);
-
-                EditorGUILayout.HelpBox("No Frame settings to show. Come back to it once Jenny figured out CED works. TODOJENNY",MessageType.Warning);
+                EditorGUILayout.HelpBox("No Frame settings to show. Come back to it once Jenny figured out CED works. TODOJENNY",MessageType.Info);
                 //HDRenderPipelineUI.FrameSettingsSection.Draw(serializedHDRPAsset, null);
-                serializedObject.ApplyModifiedProperties();
+                //serializedObject.ApplyModifiedProperties();
             }
         }
     }

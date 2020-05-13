@@ -42,7 +42,7 @@ namespace UnityEditor.Rendering.HighDefinition
                 public const int HDRPAssetListMaxHeight = 150;
 
                 public static readonly GUIContent @default = new GUIContent("default");
-                public const string hdrpSubtitleHelp = "HDRP Assets that are assigned either in Graphics settings or in any Quality Level will be listed here.";
+                public const string hdrpSubtitleHelp = "HDRP Assets that are assigned in any Quality Level will be listed here.";
             }
 
             static GUIContent s_CachedGUIContent = new GUIContent();
