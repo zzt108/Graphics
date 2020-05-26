@@ -88,12 +88,6 @@ namespace UnityEngine.Rendering.Universal
                 Debug.LogError("TODOJENNY");
                 return null;
             }
-#if UNITY_EDITOR
-            set
-            {
-                Debug.LogError("TODOJENNY");
-            }
-#endif
         }
 
         public UniversalRenderPipeline(UniversalRenderPipelineAsset asset)

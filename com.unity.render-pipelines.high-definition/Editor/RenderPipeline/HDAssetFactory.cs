@@ -15,9 +15,6 @@ namespace UnityEditor.Rendering.HighDefinition
             {
                 var newAsset = CreateInstance<HDRenderPipelineAsset>();
                 newAsset.name = Path.GetFileName(pathName);
-                // Load default renderPipelineResources / Material / Shader
-                HDDefaultSettings.instance.EnsureResources(forceReload: false);
-                EditorDefaultSettings.GetOrAssignDefaultVolumeProfile(newAsset);
 
                 //as we must init the editor resources with lazy init, it is not required here
 
@@ -33,12 +30,6 @@ namespace UnityEditor.Rendering.HighDefinition
             ProjectWindowUtil.StartNameEditingIfProjectWindowExists(0, ScriptableObject.CreateInstance<DoCreateNewAssetHDRenderPipeline>(), "New HDRenderPipelineAsset.asset", icon, null);
         }
 
-        // Note: move this to a static using once we can target C#6+
-        static T Load<T>(string path) where T : UnityObject
-        {
-            return AssetDatabase.LoadAssetAtPath<T>(path);
-        }
-
         class DoCreateNewAssetHDRenderPipelineResources : ProjectWindowCallback.EndNameEditAction
         {
             public override void Action(int instanceId, string pathName, string resourceFile)
@@ -46,6 +37,7 @@ namespace UnityEditor.Rendering.HighDefinition
                 var newAsset = CreateInstance<RenderPipelineResources>();
                 newAsset.name = Path.GetFileName(pathName);
 
+                // to prevent cases when the asset existed prior but then when upgrading the package, there is null field inside the resource asset
                 ResourceReloader.ReloadAllNullIn(newAsset, HDUtils.GetHDRenderPipelinePath());
 
                 AssetDatabase.CreateAsset(newAsset, pathName);
@@ -112,15 +104,22 @@ namespace UnityEditor.Rendering.HighDefinition
                 var newAsset = CreateInstance<HDDefaultSettings>();
                 newAsset.name = Path.GetFileName(pathName);
 
-                ResourceReloader.ReloadAllNullIn(newAsset,HDUtils.GetHDRenderPipelinePath());
+                // why is this needed?
+                // Load default renderPipelineResources / Material / Shader
+                newAsset.EnsureResources(forceReload: false);
+                newAsset.GetOrCreateDefaultVolumeProfile();
+                // TODOJENNY
 
                 AssetDatabase.CreateAsset(newAsset,pathName);
+                AssetDatabase.SaveAssets();
+                AssetDatabase.Refresh();
                 ProjectWindowUtil.ShowCreatedAsset(newAsset);
+                HDDefaultSettings.UpdateGraphicsSettings(newAsset);
             }
         }
 
         [MenuItem("Assets/Create/Rendering/High Definition Default Settings Asset",priority = CoreUtils.assetCreateMenuPriority2)]
-        static void CreateHDDefaultSettings()
+        internal static void CreateHDDefaultSettings()
         {
             var icon = EditorGUIUtility.FindTexture("ScriptableObject Icon");
             ProjectWindowUtil.StartNameEditingIfProjectWindowExists(0,ScriptableObject.CreateInstance<HDDefaultSettingsCreator>(),"New HDDefaultSettings.asset",icon,null);

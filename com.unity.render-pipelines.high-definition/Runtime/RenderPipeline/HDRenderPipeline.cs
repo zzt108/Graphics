@@ -28,30 +28,7 @@ namespace UnityEngine.Rendering.HighDefinition
         internal static bool pipelineSupportsRayTracing => HDRenderPipeline.currentPipeline != null && HDRenderPipeline.currentPipeline.rayTracingSupported;
 
         private HDDefaultSettings m_defaultSettings;
-        public override RenderPipelineDefaultSettings defaultSettings
-        {
-            get
-            {
-                return m_defaultSettings;
-            }
-#if UNITY_EDITOR
-            set
-            {
-                m_defaultSettings = (HDDefaultSettings)value;
-            }
-#endif
-        }
-        internal static RenderPipelineDefaultSettings CreateDefaultSettings()
-        {
-            HDDefaultSettings defaultSettingsInst = UnityEngine.ScriptableObject.CreateInstance<HDDefaultSettings>();
-            /* TODOJENNY
-                    profile.name = Path.GetFileName(path);
-                    AssetDatabase.CreateAsset(profile, path);
-                    AssetDatabase.SaveAssets();
-                    AssetDatabase.Refresh();
-                    */
-            return defaultSettingsInst;
-        }
+        public override RenderPipelineDefaultSettings defaultSettings => m_defaultSettings;
 
         #endregion
         /// <summary>
@@ -328,23 +305,9 @@ namespace UnityEngine.Rendering.HighDefinition
         }
 
         public HDRenderPipeline(HDRenderPipelineAsset asset)
-        { 
-            if(m_defaultSettings is null)
-            {
-                if(HDDefaultSettings.instance != null)
-                    m_defaultSettings = HDDefaultSettings.instance;
-                else
-                    m_defaultSettings = HDRenderPipeline.CreateDefaultSettings() as HDDefaultSettings; //TODOJENNY load asset
-            }
-            else
-            {
-                if(m_defaultSettings != HDDefaultSettings.instance)
-                {
-                    Debug.LogError("Default Settings for the new HDRP Asset is incorrect.");
-                    m_defaultSettings = HDDefaultSettings.instance;
-                }
-            }
-
+        {
+            m_defaultSettings = HDDefaultSettings.instance;
+            Debug.AssertFormat(m_defaultSettings != null,"HD Default Settings are not loaded");
             m_Asset = asset;
             HDProbeSystem.Parameters = asset.reflectionSystemParameters;
 

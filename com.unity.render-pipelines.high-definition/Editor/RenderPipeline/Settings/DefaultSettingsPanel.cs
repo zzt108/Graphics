@@ -47,6 +47,7 @@ namespace UnityEditor.Rendering.HighDefinition
             ReorderableList m_BeforePostProcessCustomPostProcesses;
             ReorderableList m_AfterPostProcessCustomPostProcesses;
             int m_CurrentVolumeProfileInstanceID;
+            HDDefaultSettings defaultSettings;
 
             public void OnGUI(string searchContext)
             {
@@ -56,9 +57,10 @@ namespace UnityEditor.Rendering.HighDefinition
                 {
                     EditorGUILayout.HelpBox("No HDRP pipeline currently active (see Quality Settings active level).",MessageType.Warning);
                 }
+                UpdateDefaultSettings();
                 Draw_AssetSelection();
 
-                if(HDDefaultSettings.instance != null)
+                if(defaultSettings != null)
                 {
                     EditorGUILayout.Space();
 
@@ -88,15 +90,24 @@ namespace UnityEditor.Rendering.HighDefinition
             public void OnActivate(string searchContext, VisualElement rootElement)
             {
                 m_ScrollViewPosition = Vector2.zero;
-                InitializeCustomPostProcessesLists();
+                UpdateDefaultSettings();
+            }
+
+            void UpdateDefaultSettings()
+            {
+                HDDefaultSettings gfxSettings = HDDefaultSettings.instance;
+                if(gfxSettings != defaultSettings)
+                {
+                    defaultSettings = gfxSettings;
+                    InitializeCustomPostProcessesLists();
+                }
             }
 
             void InitializeCustomPostProcessesLists() 
             {
-                var defaultHDRP = HDDefaultSettings.instance;
-                if(defaultHDRP == null) 
+                if(defaultSettings is null) 
                 {
-                    Debug.LogError("No HD Default Settings");
+                    Debug.LogError("No HD Default Settings"); //TODJENNY remove in cleanup
                     return;
                 }
                 var ppVolumeTypes = TypeCache.GetTypesDerivedFrom<CustomPostProcessVolumeComponent>();
@@ -111,9 +122,9 @@ namespace UnityEditor.Rendering.HighDefinition
                     CoreUtils.Destroy(comp);
                 }
 
-                InitList(ref m_BeforeTransparentCustomPostProcesses, defaultHDRP.beforeTransparentCustomPostProcesses, "After Opaque And Sky", CustomPostProcessInjectionPoint.AfterOpaqueAndSky);
-                InitList(ref m_BeforePostProcessCustomPostProcesses, defaultHDRP.beforePostProcessCustomPostProcesses, "Before Post Process", CustomPostProcessInjectionPoint.BeforePostProcess);
-                InitList(ref m_AfterPostProcessCustomPostProcesses, defaultHDRP.afterPostProcessCustomPostProcesses, "After Post Process", CustomPostProcessInjectionPoint.AfterPostProcess);
+                InitList(ref m_BeforeTransparentCustomPostProcesses,defaultSettings.beforeTransparentCustomPostProcesses, "After Opaque And Sky", CustomPostProcessInjectionPoint.AfterOpaqueAndSky);
+                InitList(ref m_BeforePostProcessCustomPostProcesses,defaultSettings.beforePostProcessCustomPostProcesses, "Before Post Process", CustomPostProcessInjectionPoint.BeforePostProcess);
+                InitList(ref m_AfterPostProcessCustomPostProcesses,defaultSettings.afterPostProcessCustomPostProcesses, "After Post Process", CustomPostProcessInjectionPoint.AfterPostProcess);
 
                 void InitList(ref ReorderableList reorderableList, List<string> customPostProcessTypes, string headerName, CustomPostProcessInjectionPoint injectionPoint)
                 {
@@ -137,7 +148,7 @@ namespace UnityEditor.Rendering.HighDefinition
                         {
                             if (kp.Value == injectionPoint && !customPostProcessTypes.Contains(kp.Key.AssemblyQualifiedName))
                                 menu.AddItem(new GUIContent(kp.Key.ToString()), false, () => {
-                                    Undo.RegisterCompleteObjectUndo(defaultHDRP, $"Added {kp.Key.ToString()} Custom Post Process");
+                                    Undo.RegisterCompleteObjectUndo(defaultSettings, $"Added {kp.Key.ToString()} Custom Post Process");
                                     customPostProcessTypes.Add(kp.Key.AssemblyQualifiedName);
                                 });
                         }
@@ -146,43 +157,30 @@ namespace UnityEditor.Rendering.HighDefinition
                             menu.AddDisabledItem(new GUIContent("No Custom Post Process Available"));
 
                         menu.ShowAsContext();
-                        EditorUtility.SetDirty(defaultHDRP);
+                        EditorUtility.SetDirty(defaultSettings);
                     };
                     reorderableList.onRemoveCallback = (list) =>
                     {
-                        Undo.RegisterCompleteObjectUndo(defaultHDRP, $"Removed {list.list[list.index].ToString()} Custom Post Process");
+                        Undo.RegisterCompleteObjectUndo(defaultSettings, $"Removed {list.list[list.index].ToString()} Custom Post Process");
                         customPostProcessTypes.RemoveAt(list.index);
-                        EditorUtility.SetDirty(defaultHDRP);
+                        EditorUtility.SetDirty(defaultSettings);
                     };
                     reorderableList.elementHeightCallback = _ => EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
-                    reorderableList.onReorderCallback = (list) => EditorUtility.SetDirty(defaultHDRP);
+                    reorderableList.onReorderCallback = (list) => EditorUtility.SetDirty(defaultSettings);
                 }
             }
 
             void Draw_AssetSelection()
             {
-                if(HDDefaultSettings.instance == null)
-                {
-                    EditorGUILayout.HelpBox("There is no HD Default Settings asset registered.",MessageType.Warning);
-                }
-
                 var oldWidth = EditorGUIUtility.labelWidth;
                 EditorGUIUtility.labelWidth = Styles.labelWidth;
 
                 EditorGUILayout.BeginHorizontal();
-                var asset = HDDefaultSettings.instance;
-                GUI.enabled = (asset != null);
-                var newAsset = (HDDefaultSettings)EditorGUILayout.ObjectField(Styles.defaultSettingsAssetLabel,asset,typeof(HDDefaultSettings),false);
-                GUI.enabled = true;
-                if(newAsset == null)
+                var newAsset = (HDDefaultSettings)EditorGUILayout.ObjectField(Styles.defaultSettingsAssetLabel,defaultSettings,typeof(RenderPipelineDefaultSettings),false);
+                if(newAsset != defaultSettings)
                 {
-                    Debug.Log("HD Default Settings Asset cannot be null. Rolling back to previous value.");
-
-                }
-                else if(newAsset != asset)
-                {
-                    asset = newAsset;
-                    EditorUtility.SetDirty(HDDefaultSettings.instance);  //TODOJENNY
+                    defaultSettings = newAsset;
+                    HDDefaultSettings.UpdateGraphicsSettings(newAsset);
                 }
 
                 if(GUILayout.Button(EditorGUIUtility.TrTextContent("New","Create a HD Default Settings Asset in your default resource folder (defined in Wizard)"),GUILayout.Width(38),GUILayout.Height(18)))
@@ -204,6 +202,9 @@ namespace UnityEditor.Rendering.HighDefinition
 
             void Draw_CustomPostProcess()
             {
+                if(m_BeforePostProcessCustomPostProcesses == null)
+                    InitializeCustomPostProcessesLists();
+
                 m_BeforeTransparentCustomPostProcesses.DoLayoutList();
                 m_BeforePostProcessCustomPostProcesses.DoLayoutList();
                 m_AfterPostProcessCustomPostProcesses.DoLayoutList();
@@ -214,7 +215,7 @@ namespace UnityEditor.Rendering.HighDefinition
                 var oldWidth = EditorGUIUtility.labelWidth;
                 EditorGUIUtility.labelWidth = Styles.labelWidth;
 
-                var serializedObject = new SerializedObject(HDDefaultSettings.instance);
+                var serializedObject = new SerializedObject(defaultSettings);
                 var serialized = new SerializedHDDefaultSettings(serializedObject);
 
                 // HDRenderPipelineUI.GeneralSection.Draw(serializedHDDefaultSettings, null);
@@ -244,7 +245,7 @@ namespace UnityEditor.Rendering.HighDefinition
                 EditorGUIUtility.labelWidth = Styles.labelWidth;
 
                 EditorGUILayout.BeginHorizontal();
-                var asset = HDDefaultSettings.instance.GetOrCreateDefaultVolumeProfile();
+                var asset = defaultSettings.GetOrCreateDefaultVolumeProfile();
                 var newAsset = (VolumeProfile)EditorGUILayout.ObjectField(Styles.defaultVolumeProfileLabel, asset, typeof(VolumeProfile), false);
                 if (newAsset == null)
                 {
@@ -253,13 +254,13 @@ namespace UnityEditor.Rendering.HighDefinition
                 else if (newAsset != asset)
                 {
                     asset = newAsset;
-                    HDDefaultSettings.instance.defaultVolumeProfile = asset;
-                    EditorUtility.SetDirty(HDDefaultSettings.instance);  //TODOJENNY
+                    defaultSettings.defaultVolumeProfile = asset;
+                    EditorUtility.SetDirty(defaultSettings);  //TODOJENNY
                 }
 
                 if (GUILayout.Button(EditorGUIUtility.TrTextContent("New", "Create a new Volume Profile for default in your default resource folder (defined in Wizard)"), GUILayout.Width(38), GUILayout.Height(18)))
                 {
-                    DefaultVolumeProfileCreator.CreateAndAssign(DefaultVolumeProfileCreator.Kind.Default);
+                    DefaultVolumeProfileCreator.CreateAndAssign(DefaultVolumeProfileCreator.Kind.Default, defaultSettings);
                 }
                 EditorGUILayout.EndHorizontal();
 
@@ -290,13 +291,13 @@ namespace UnityEditor.Rendering.HighDefinition
                 }
                 else if (newLookDevAsset != lookDevAsset)
                 {
-                    HDDefaultSettings.instance.defaultLookDevProfile = newLookDevAsset;
-                    EditorUtility.SetDirty(HDDefaultSettings.instance);  //TODOJENNY
+                    defaultSettings.defaultLookDevProfile = newLookDevAsset;
+                    EditorUtility.SetDirty(defaultSettings);  //TODOJENNY
                 }
 
                 if (GUILayout.Button(EditorGUIUtility.TrTextContent("New", "Create a new Volume Profile for default in your default resource folder (defined in Wizard)"), GUILayout.Width(38), GUILayout.Height(18)))
                 {
-                    DefaultVolumeProfileCreator.CreateAndAssign(DefaultVolumeProfileCreator.Kind.LookDev);
+                    DefaultVolumeProfileCreator.CreateAndAssign(DefaultVolumeProfileCreator.Kind.LookDev,defaultSettings);
                 }
                 EditorGUILayout.EndHorizontal();
 
@@ -345,10 +346,10 @@ namespace UnityEditor.Rendering.HighDefinition
             switch (m_Kind)
             {
                 case Kind.Default:
-                    HDDefaultSettings.instance.defaultVolumeProfile = profile;
+                    settings.defaultVolumeProfile = profile;
                     break;
                 case Kind.LookDev:
-                    HDDefaultSettings.instance.defaultLookDevProfile = profile;
+                    settings.defaultLookDevProfile = profile;
                     break;
             }
         }
@@ -371,8 +372,11 @@ namespace UnityEditor.Rendering.HighDefinition
             return defaultName;
         }
 
-        public static void CreateAndAssign(Kind kind)
+        static HDDefaultSettings settings;
+        public static void CreateAndAssign(Kind kind, HDDefaultSettings defaultSettings)
         {
+            settings = defaultSettings;
+
             var assetCreator = ScriptableObject.CreateInstance<DefaultVolumeProfileCreator>();
             assetCreator.SetKind(kind);
             ProjectWindowUtil.StartNameEditingIfProjectWindowExists(assetCreator.GetInstanceID(), assetCreator, $"Assets/{HDProjectSettings.projectSettingsFolderPath}/{GetDefaultName(kind)}.asset", null, null);
