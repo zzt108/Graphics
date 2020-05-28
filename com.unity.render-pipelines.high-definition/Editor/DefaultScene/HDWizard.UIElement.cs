@@ -235,6 +235,25 @@ namespace UnityEditor.Rendering.HighDefinition
             CreateDefaultSceneFromPackageAnsAssignIt(forDXR: false);
         }
 
+        void CreateHDDefaultSettingsAsset()
+        {
+            if(!AssetDatabase.IsValidFolder("Assets/" + HDProjectSettings.projectSettingsFolderPath))
+                AssetDatabase.CreateFolder("Assets",HDProjectSettings.projectSettingsFolderPath);
+
+            string pathName = "Assets/" + HDProjectSettings.projectSettingsFolderPath + "DefaultSettings.asset";
+            var newAsset = ScriptableObject.CreateInstance<HDDefaultSettings>();
+            newAsset.name = "HDDefaultSettings";
+
+            // why is this needed?
+            // Load default renderPipelineResources / Material / Shader
+            newAsset.EnsureResources(forceReload: false);
+            newAsset.GetOrCreateDefaultVolumeProfile();
+
+            AssetDatabase.CreateAsset(newAsset,pathName);
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+        }
+
         #endregion
 
         #region UIELEMENT

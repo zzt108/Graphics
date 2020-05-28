@@ -4,6 +4,7 @@ using UnityEngine.UIElements;
 using UnityEditor.UIElements;
 using System.Linq;
 using System;
+using UnityEngine.Rendering.HighDefinition;
 
 namespace UnityEditor.Rendering.HighDefinition
 {
@@ -14,6 +15,8 @@ namespace UnityEditor.Rendering.HighDefinition
         {
             public static readonly GUIContent title = EditorGUIUtility.TrTextContent("Render Pipeline Wizard");
 
+            public const string hdrpDefaultSettingsLabel = "Default Settings";
+            public const string hdrpDefaultSettingsTooltip = "Default Settings store Default Volume, Resources, and other core Settings necessary for HDRP to work.";
             public const string hdrpProjectSettingsPathLabel = "Default Resources Folder";
             public const string hdrpProjectSettingsPathTooltip = "Resources Folder will be the one where to get project elements related to HDRP as default scene and default settings.";
             public const string firstTimeInitLabel = "Populate / Reset";
@@ -278,6 +281,7 @@ namespace UnityEditor.Rendering.HighDefinition
             container.Add(CreateInstallConfigPackageArea());
 
             container.Add(CreateTitle(Style.defaultSettingsTitle));
+            container.Add(CreateHDDefaultSettings());
             container.Add(CreateFolderData());
             container.Add(m_DefaultScene = CreateDefaultScene());
             container.Add(m_DefaultDXRScene = CreateDXRDefaultScene());
@@ -409,6 +413,36 @@ namespace UnityEditor.Rendering.HighDefinition
                 => HDProjectSettings.defaultDXRScenePrefab = evt.newValue as GameObject);
 
             return newDXRScene;
+        }
+
+        VisualElement CreateHDDefaultSettings()
+        {
+            var newHDDefaultSettings = new ObjectField(Style.hdrpDefaultSettingsLabel)
+            {
+                tooltip = Style.hdrpDefaultSettingsTooltip,
+                name = "New HD Default Settings",
+                objectType = typeof(HDDefaultSettings),
+                value = HDDefaultSettings.instance
+            };
+            newHDDefaultSettings.Q<Label>().AddToClassList("normal");
+            newHDDefaultSettings.RegisterValueChangedCallback(evt
+                => HDDefaultSettings.UpdateGraphicsSettings(evt.newValue as HDDefaultSettings));
+
+            if(HDDefaultSettings.instance is null)
+            {
+                var repopulate = new Button(CreateHDDefaultSettingsAsset)
+                {
+                    text = Style.resolve,
+                    tooltip = Style.hdrpDefaultSettingsTooltip,
+                    name = "Fix"
+                };
+
+                var row = new VisualElement() { name = "ResourceRow" };
+                row.Add(newHDDefaultSettings);
+                row.Add(repopulate);
+                return row;
+            }
+            return newHDDefaultSettings;
         }
 
         VisualElement CreateTabbedBox((string label, string tooltip)[] tabs, out VisualElement innerBox)
