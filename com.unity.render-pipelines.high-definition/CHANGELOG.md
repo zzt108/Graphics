@@ -134,6 +134,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Added support for 3DsMax's 2021 Simplified Physical Material from FBX files in the Model Importer.
 
 ### Fixed
+- Fixed black screens for linux/HDRP (1246407)
 - Fix when rescale probe all direction below zero (1219246)
 - Update documentation of HDRISky-Backplate, precise how to have Ambient Occlusion on the Backplate
 - Sorting, undo, labels, layout in the Lighting Explorer.
