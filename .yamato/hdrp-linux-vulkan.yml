@@ -43,7 +43,7 @@ HDRP_Linux_Vulkan_playmode_XR_trunk:
 HDRP_Linux_Vulkan_editmode_trunk:
     name: HDRP on Linux_Vulkan_editmode on version trunk
     agent:
-        type: Unity::VM
+        type: Unity::VM::GPU
         image: cds-ops/ubuntu-18.04-base:stable
         flavor: b1.large
     variables:
@@ -127,7 +127,7 @@ HDRP_Linux_Vulkan_playmode_XR_fast-trunk:
 HDRP_Linux_Vulkan_editmode_fast-trunk:
     name: HDRP on Linux_Vulkan_editmode on version fast-trunk
     agent:
-        type: Unity::VM
+        type: Unity::VM::GPU
         image: cds-ops/ubuntu-18.04-base:stable
         flavor: b1.large
     variables:
@@ -213,7 +213,7 @@ HDRP_Linux_Vulkan_playmode_XR_CUSTOM-REVISION:
 HDRP_Linux_Vulkan_editmode_CUSTOM-REVISION:
     name: HDRP on Linux_Vulkan_editmode on version CUSTOM-REVISION
     agent:
-        type: Unity::VM
+        type: Unity::VM::GPU
         image: cds-ops/ubuntu-18.04-base:stable
         flavor: b1.large
     variables:

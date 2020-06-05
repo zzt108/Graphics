@@ -43,7 +43,7 @@ HDRP_Hybrid_Linux_OpenGLCore_playmode_XR_trunk:
 HDRP_Hybrid_Linux_OpenGLCore_editmode_trunk:
     name: HDRP_Hybrid on Linux_OpenGLCore_editmode on version trunk
     agent:
-        type: Unity::VM
+        type: Unity::VM::GPU
         image: cds-ops/ubuntu-18.04-base:stable
         flavor: b1.large
     variables:
@@ -106,7 +106,7 @@ HDRP_Hybrid_Linux_OpenGLCore_playmode_XR_fast-trunk:
 HDRP_Hybrid_Linux_OpenGLCore_editmode_fast-trunk:
     name: HDRP_Hybrid on Linux_OpenGLCore_editmode on version fast-trunk
     agent:
-        type: Unity::VM
+        type: Unity::VM::GPU
         image: cds-ops/ubuntu-18.04-base:stable
         flavor: b1.large
     variables:
@@ -171,7 +171,7 @@ HDRP_Hybrid_Linux_OpenGLCore_playmode_XR_CUSTOM-REVISION:
 HDRP_Hybrid_Linux_OpenGLCore_editmode_CUSTOM-REVISION:
     name: HDRP_Hybrid on Linux_OpenGLCore_editmode on version CUSTOM-REVISION
     agent:
-        type: Unity::VM
+        type: Unity::VM::GPU
         image: cds-ops/ubuntu-18.04-base:stable
         flavor: b1.large
     variables:

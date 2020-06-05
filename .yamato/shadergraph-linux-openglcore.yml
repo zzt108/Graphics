@@ -22,7 +22,7 @@ ShaderGraph_Linux_OpenGLCore_playmode_trunk:
 ShaderGraph_Linux_OpenGLCore_editmode_trunk:
     name: ShaderGraph on Linux_OpenGLCore_editmode on version trunk
     agent:
-        type: Unity::VM
+        type: Unity::VM::GPU
         image: cds-ops/ubuntu-18.04-base:stable
         flavor: b1.large
     variables:
@@ -64,7 +64,7 @@ ShaderGraph_Linux_OpenGLCore_playmode_fast-trunk:
 ShaderGraph_Linux_OpenGLCore_editmode_fast-trunk:
     name: ShaderGraph on Linux_OpenGLCore_editmode on version fast-trunk
     agent:
-        type: Unity::VM
+        type: Unity::VM::GPU
         image: cds-ops/ubuntu-18.04-base:stable
         flavor: b1.large
     variables:
@@ -107,7 +107,7 @@ ShaderGraph_Linux_OpenGLCore_playmode_CUSTOM-REVISION:
 ShaderGraph_Linux_OpenGLCore_editmode_CUSTOM-REVISION:
     name: ShaderGraph on Linux_OpenGLCore_editmode on version CUSTOM-REVISION
     agent:
-        type: Unity::VM
+        type: Unity::VM::GPU
         image: cds-ops/ubuntu-18.04-base:stable
         flavor: b1.large
     variables:

@@ -22,7 +22,7 @@ Universal_Linux_OpenGLCore_playmode_trunk:
 Universal_Linux_OpenGLCore_editmode_trunk:
     name: Universal on Linux_OpenGLCore_editmode on version trunk
     agent:
-        type: Unity::VM
+        type: Unity::VM::GPU
         image: cds-ops/ubuntu-18.04-base:stable
         flavor: b1.large
     variables:
@@ -85,7 +85,7 @@ Universal_Linux_OpenGLCore_playmode_fast-trunk:
 Universal_Linux_OpenGLCore_editmode_fast-trunk:
     name: Universal on Linux_OpenGLCore_editmode on version fast-trunk
     agent:
-        type: Unity::VM
+        type: Unity::VM::GPU
         image: cds-ops/ubuntu-18.04-base:stable
         flavor: b1.large
     variables:
@@ -149,7 +149,7 @@ Universal_Linux_OpenGLCore_playmode_CUSTOM-REVISION:
 Universal_Linux_OpenGLCore_editmode_CUSTOM-REVISION:
     name: Universal on Linux_OpenGLCore_editmode on version CUSTOM-REVISION
     agent:
-        type: Unity::VM
+        type: Unity::VM::GPU
         image: cds-ops/ubuntu-18.04-base:stable
         flavor: b1.large
     variables:

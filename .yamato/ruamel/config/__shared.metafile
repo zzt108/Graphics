@@ -80,10 +80,10 @@ project_platforms:
       type: Unity::VM::GPU
       image: cds-ops/ubuntu-18.04-base:stable
       flavor: b1.large
-    agent_editmode:
-      type: Unity::VM
-      image: cds-ops/ubuntu-18.04-base:stable
-      flavor: b1.large
+    override_test_platforms:
+      Standalone: --suite=playmode --platform=Standalone
+      playmode: --suite=playmode
+      editmode: --suite=editor --platform=editmode
   Android:
     name: Android
     os: android
