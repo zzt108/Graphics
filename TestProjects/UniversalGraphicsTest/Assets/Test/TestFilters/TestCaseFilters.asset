@@ -63,13 +63,6 @@ MonoBehaviour:
     StereoModes: 0
     Reason: 'Known issue: expected less than or equal to 0.000500000024f but was
       0.000877162092f'
-  - FilteredScene: {fileID: 102900000, guid: e23c793ace3c4a146a73360af1600fbd, type: 3}
-    ColorSpace: -1
-    BuildPlatform: 9
-    GraphicsDevice: 16
-    XrSdk: None
-    StereoModes: 0
-    Reason: iOS Tracked issue (005)
   - FilteredScene: {fileID: 102900000, guid: 169aede566e462449812f4bfb3f8d20d, type: 3}
     ColorSpace: -1
     BuildPlatform: 9
@@ -84,13 +77,6 @@ MonoBehaviour:
     XrSdk: None
     StereoModes: 0
     Reason: iOS Tracked issue (012)
-  - FilteredScene: {fileID: 102900000, guid: 245a2b08a4f72437193b06846a5c8e33, type: 3}
-    ColorSpace: -1
-    BuildPlatform: 9
-    GraphicsDevice: 16
-    XrSdk: None
-    StereoModes: 0
-    Reason: iOS Tracked issue (017)
   - FilteredScene: {fileID: 102900000, guid: 99da9ba2c3d1f4b1d92f851028bb7d0a, type: 3}
     ColorSpace: -1
     BuildPlatform: 9
