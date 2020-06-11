@@ -11,6 +11,8 @@ using UnityEngine.Rendering;using UnityEditor;using UnityEditor.Rendering;usi
 
         static public void UpdateGraphicsSettings(HDDefaultSettings newSettings)
         {
+            if(newSettings == null || newSettings == cachedInstance)
+                return;
             GraphicsSettings.RegisterRenderPipelineSettings<HDRenderPipeline>(newSettings as RenderPipelineDefaultSettings);
             cachedInstance = newSettings;
         }
@@ -40,9 +42,6 @@ using UnityEngine.Rendering;using UnityEditor;using UnityEditor.Rendering;usi
                     if(!AssetDatabase.IsValidFolder("Assets/HDRPDefaultResources/"))
                         AssetDatabase.CreateFolder("Assets","HDRPDefaultResources");
                     assetCreated = ScriptableObject.CreateInstance<HDDefaultSettings>();
-                    // why is this needed?
-                    // Load default renderPipelineResources / Material / Shader                    /*                    assetCreated.EnsureResources(forceReload: true);                    assetCreated.GetOrCreateDefaultVolumeProfile();
-                    */
                     AssetDatabase.CreateAsset(assetCreated,path);
                     AssetDatabase.SaveAssets();
                     AssetDatabase.Refresh();

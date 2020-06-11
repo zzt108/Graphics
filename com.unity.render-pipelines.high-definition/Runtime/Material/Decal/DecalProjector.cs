@@ -218,7 +218,7 @@ namespace UnityEngine.Rendering.HighDefinition
             {
 #if UNITY_EDITOR
                 var hdrp = HDRenderPipeline.currentAsset;
-                m_Material = hdrp != null ? hdrp.GetDefaultDecalMaterial() : null; //TODOJENNY
+                m_Material = hdrp != null ? hdrp.GetDefaultDecalMaterial() : null;
 #else
                 m_Material = null;
 #endif

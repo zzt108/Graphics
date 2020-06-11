@@ -108,7 +108,6 @@ namespace UnityEditor.Rendering.HighDefinition
                 // Load default renderPipelineResources / Material / Shader
                 newAsset.EnsureResources(forceReload: false);
                 newAsset.GetOrCreateDefaultVolumeProfile();
-                // TODOJENNY
 
                 AssetDatabase.CreateAsset(newAsset,pathName);
                 AssetDatabase.SaveAssets();
