@@ -35,7 +35,12 @@ namespace UnityEditor.Rendering.HighDefinition
         public override void OnEnable()
         {
             base.OnEnable();
+            if(HDRenderPipeline.currentAsset != null)
+                Init();
+        }
 
+        void Init()
+        { 
             m_EnableLuxIntensityMode = true;
 
             // HDRI sky does not have control over sun display.

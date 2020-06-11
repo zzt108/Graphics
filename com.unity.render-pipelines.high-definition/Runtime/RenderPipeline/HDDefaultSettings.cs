@@ -15,6 +15,44 @@ using UnityEngine.Rendering;using UnityEditor;using UnityEditor.Rendering;usi
             cachedInstance = newSettings;
         }
 
+        #if UNITY_EDITOR
+        //Making sure there is at least one HDDefaultSettings instance in the project
+        static public void Ensure()
+        {
+            if(HDDefaultSettings.instance)
+                return;
+
+            HDDefaultSettings assetCreated = null;
+            string path = "Assets/HDRPDefaultResources/DefaultSettings.asset";
+            assetCreated = AssetDatabase.LoadAssetAtPath<HDDefaultSettings>(path);
+            if(assetCreated == null)
+            {
+                //TODOJENNY do something less expensive?
+                var guidHDDefaultAssets = AssetDatabase.FindAssets("t:HDDefaultSettings");
+                if(guidHDDefaultAssets.Length > 0)
+                {
+                    var curGUID = guidHDDefaultAssets[0];
+                    path = AssetDatabase.GUIDToAssetPath(curGUID);
+                    assetCreated = AssetDatabase.LoadAssetAtPath<HDDefaultSettings>(path);
+                }
+                else
+                {
+                    if(!AssetDatabase.IsValidFolder("Assets/HDRPDefaultResources/"))
+                        AssetDatabase.CreateFolder("Assets","HDRPDefaultResources");
+                    assetCreated = ScriptableObject.CreateInstance<HDDefaultSettings>();
+                    // why is this needed?
+                    // Load default renderPipelineResources / Material / Shader                    /*                    assetCreated.EnsureResources(forceReload: true);                    assetCreated.GetOrCreateDefaultVolumeProfile();
+                    */
+                    AssetDatabase.CreateAsset(assetCreated,path);
+                    AssetDatabase.SaveAssets();
+                    AssetDatabase.Refresh();
+                }
+            }
+            Debug.Assert(assetCreated,"Could not create HD Default Settings - HDRP may not work correctly - Open the Graphics Window for additional help.");
+            UpdateGraphicsSettings(assetCreated);
+        }
+        #endif
+
         #region Volume
         [SerializeField]        private Volume s_DefaultVolume = null;        internal Volume GetOrCreateDefaultVolume()        {            GetOrCreateDefaultVolumeProfile(); //TODOJENNY: investigate why I happen to have a null defaultProfile in some cases (UpdateCurrentStaticLightingSky)            if (s_DefaultVolume == null || s_DefaultVolume.Equals(null))            {                var go = new GameObject("Default Volume") { hideFlags = HideFlags.HideAndDontSave }; //TODO: does this leak?                s_DefaultVolume = go.AddComponent<Volume>();                s_DefaultVolume.isGlobal = true;                s_DefaultVolume.priority = float.MinValue;                s_DefaultVolume.sharedProfile = defaultVolumeProfile;
 #if UNITY_EDITOR            UnityEditor.AssemblyReloadEvents.beforeAssemblyReload += () =>                             {                                 DestroyDefaultVolume();                             };

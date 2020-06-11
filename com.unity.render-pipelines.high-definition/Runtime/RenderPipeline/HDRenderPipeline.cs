@@ -29,7 +29,6 @@ namespace UnityEngine.Rendering.HighDefinition
 
         private HDDefaultSettings m_defaultSettings;
         public override RenderPipelineDefaultSettings defaultSettings => m_defaultSettings;
-
         #endregion
         /// <summary>
         /// Shader Tag for the High Definition Render Pipeline.
