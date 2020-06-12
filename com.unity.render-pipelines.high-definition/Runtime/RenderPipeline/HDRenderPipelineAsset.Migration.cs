@@ -1,5 +1,6 @@
 using System;
-using UnityEngine.Serialization;using System.Collections.Generic; //needed for list of Custom Post Processes injections
+using UnityEngine.Serialization;
+using System.Collections.Generic; //needed for list of Custom Post Processes injections
 
 namespace UnityEngine.Rendering.HighDefinition
 {
@@ -22,6 +23,7 @@ namespace UnityEngine.Rendering.HighDefinition
             SeparateColorGradingAndTonemappingFrameSettings,
             ReplaceTextureArraysByAtlasForCookieAndPlanar,
             AddedAdaptiveSSS,
+            RemoveCookieCubeAtlasToOctahedral2D,
             DefaultSettingsAsAnAsset
         }
 
@@ -103,16 +105,30 @@ namespace UnityEngine.Rendering.HighDefinition
                 lightLoopSettings.cookieAtlasSize = (CookieAtlasResolution)cookieAtlasSize;
                 lightLoopSettings.planarReflectionAtlasSize = (PlanarReflectionAtlasResolution)planarSize;
             }),
-            MigrationStep.New(Version.AddedAdaptiveSSS,(HDRenderPipelineAsset data) =>
+            MigrationStep.New(Version.AddedAdaptiveSSS, (HDRenderPipelineAsset data) =>
             {
-#pragma warning disable 618 // Type or member is obsolete
+            #pragma warning disable 618 // Type or member is obsolete
                 bool previouslyHighQuality = data.m_RenderPipelineSettings.m_ObsoleteincreaseSssSampleCount;
+            #pragma warning restore 618
+
+                FrameSettings.MigrateSubsurfaceParams(ref data.m_RenderingPathDefaultCameraFrameSettings,                  previouslyHighQuality);
+                FrameSettings.MigrateSubsurfaceParams(ref data.m_RenderingPathDefaultBakedOrCustomReflectionFrameSettings, previouslyHighQuality);
+                FrameSettings.MigrateSubsurfaceParams(ref data.m_RenderingPathDefaultRealtimeReflectionFrameSettings,      previouslyHighQuality);
+            }),
+            MigrationStep.New(Version.RemoveCookieCubeAtlasToOctahedral2D, (HDRenderPipelineAsset data) =>
+            {
+                ref var lightLoopSettings = ref data.m_RenderPipelineSettings.lightLoopSettings;
+
+#pragma warning disable 618 // Type or member is obsolete
+                float cookieAtlasSize = Mathf.Sqrt((int)lightLoopSettings.cookieAtlasSize * (int)lightLoopSettings.cookieAtlasSize * lightLoopSettings.cookieTexArraySize);
+                float planarSize = Mathf.Sqrt((int)lightLoopSettings.planarReflectionAtlasSize * (int)lightLoopSettings.planarReflectionAtlasSize * lightLoopSettings.maxPlanarReflectionOnScreen);
 #pragma warning restore 618
 
-                FrameSettings.MigrateSubsurfaceParams(ref data.m_RenderingPathDefaultCameraFrameSettings,previouslyHighQuality);
-                FrameSettings.MigrateSubsurfaceParams(ref data.m_RenderingPathDefaultBakedOrCustomReflectionFrameSettings,previouslyHighQuality);
-                FrameSettings.MigrateSubsurfaceParams(ref data.m_RenderingPathDefaultRealtimeReflectionFrameSettings,previouslyHighQuality);
-            })*/,
+                if (cookieAtlasSize > 128f && planarSize <= 1024f)
+                {
+                    Debug.LogWarning("HDRP Internally change the storage of Cube Cookie to Octahedral Projection inside the Planar Reflection Atlas. It is recommended that you increase the size of the Planar Projection Atlas if the cookies no longer fit.");
+                },
+*/,
             MigrationStep.New(Version.DefaultSettingsAsAnAsset,(HDRenderPipelineAsset data) =>
             {
 #pragma warning disable 618 // Type or member is obsolete
@@ -150,6 +166,9 @@ namespace UnityEngine.Rendering.HighDefinition
 
                     HDDefaultSettings.instance.afterPostProcessCustomPostProcesses = data.m_ObsoleteAfterPostProcessCustomPostProcesses;
                     data.m_ObsoleteAfterPostProcessCustomPostProcesses = null;
+
+                    HDDefaultSettings.instance.beforeTAACustomPostProcesses = data.m_ObsoleteBeforeTAACustomPostProcesses;
+                    data.m_ObsoleteBeforeTAACustomPostProcesses = null;
                 }
 #pragma warning restore 618
             })
@@ -187,10 +206,12 @@ namespace UnityEngine.Rendering.HighDefinition
         List<string> m_ObsoleteBeforePostProcessCustomPostProcesses;
         [FormerlySerializedAs("afterPostProcessCustomPostProcesses"), Obsolete("For data migration")]
         List<string> m_ObsoleteAfterPostProcessCustomPostProcesses;
-/*
-        [FormerlySerializedAs(""), Obsolete("For data migration")]
-        ObsoleteFrameSettings m_Obsolete;
-*/
+        [FormerlySerializedAs("beforeTAACustomPostProcesses"), Obsolete("For data migration")]
+        List<string> m_ObsoleteBeforeTAACustomPostProcesses;
+        /*
+                [FormerlySerializedAs(""), Obsolete("For data migration")]
+                ObsoleteFrameSettings m_Obsolete;
+        */
         // TODOJENNY
 #pragma warning restore 618
 

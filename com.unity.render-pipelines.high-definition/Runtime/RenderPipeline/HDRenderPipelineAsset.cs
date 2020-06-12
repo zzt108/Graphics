@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine.Serialization;
-
+#if UNITY_EDITOR
+using System.Linq;
+using UnityEditorInternal;
+#endif
 namespace UnityEngine.Rendering.HighDefinition
 {
     enum ShaderVariantLogLevel
@@ -181,7 +184,6 @@ namespace UnityEngine.Rendering.HighDefinition
         /// <summary>HDRP default shader.</summary>
         public override Shader defaultShader
             => defaultSettings.renderPipelineResources?.shaders.defaultPS;
-
 
 #if UNITY_EDITOR
         /// <summary>HDRP default material.</summary>
