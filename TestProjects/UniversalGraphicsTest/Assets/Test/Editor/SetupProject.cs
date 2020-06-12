@@ -16,7 +16,8 @@ public static class SetupProject
             { "glcore", () => SetGraphicsAPI(GraphicsDeviceType.OpenGLCore) },
             { "d3d11", () => SetGraphicsAPI(GraphicsDeviceType.Direct3D11) },
             { "d3d12", () => SetGraphicsAPI(GraphicsDeviceType.Direct3D12) },
-            { "vulkan", () => SetGraphicsAPI(GraphicsDeviceType.Vulkan) }
+            { "vulkan", () => SetGraphicsAPI(GraphicsDeviceType.Vulkan) },
+            { "opengles2", () => SetGraphicsAPI(GraphicsDeviceType.OpenGLES2) }
         };
 
         var args = Environment.GetCommandLineArgs();
