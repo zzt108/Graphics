@@ -22,8 +22,9 @@ platforms:
       - OpenGLCore
   - name: Android
     apis: 
-      - Vulkan
+      - OpenGLES2
       - OpenGLES3
+      - Vulkan
   - name: iPhone
     apis: 
       - Metal

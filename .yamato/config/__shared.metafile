@@ -87,7 +87,8 @@ project_platforms:
     name: Android
     os: android
     apis:
-      OpenGLES3: 
+      OpenGLES2: 
+      OpenGLES3:
       Vulkan:
     components:
       - editor
