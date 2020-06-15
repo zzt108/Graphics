@@ -92,14 +92,6 @@ namespace UnityEditor.Rendering.HighDefinition
             {
                 m_ScrollViewPosition = Vector2.zero;
                 UpdateDefaultSettings();
-
-// TODOJENNY
-                var editorResources = HDRenderPipeline.defaultAsset.renderPipelineEditorResources;
-                if (!EditorUtility.IsPersistent(editorResources))
-                {
-                    var editorResourcesPath = HDUtils.GetHDRenderPipelinePath() + "Editor/RenderPipelineResources/HDRenderPipelineEditorResources.asset";
-                    HDRenderPipeline.defaultAsset.renderPipelineEditorResources = AssetDatabase.LoadAssetAtPath<HDRenderPipelineEditorResources>(editorResourcesPath);
-                }
             }
 
             void UpdateDefaultSettings()

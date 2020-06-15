@@ -185,6 +185,9 @@ namespace UnityEngine.Rendering.HighDefinition
         public override Shader defaultShader
             => defaultSettings.renderPipelineResources?.shaders.defaultPS;
 
+        [SerializeField]
+        internal VirtualTexturingSettingsSRP virtualTexturingSettings = new VirtualTexturingSettingsSRP();
+
 #if UNITY_EDITOR
         /// <summary>HDRP default material.</summary>
         public override Material defaultMaterial

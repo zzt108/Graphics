@@ -267,6 +267,9 @@ namespace UnityEditor.Rendering.HighDefinition
 
         private void OnEnable()
         {
+            //TODOJENNY - should we display the Wizard when no QualitySettings selected HDRP?
+            HDDefaultSettings.Ensure();
+
             titleContent = Style.title;
             
             HDEditorUtils.AddStyleSheets(rootVisualElement, HDEditorUtils.FormatingPath); //.h1

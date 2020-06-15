@@ -499,11 +499,8 @@ namespace UnityEditor.Rendering.HighDefinition
 
         bool IsDefaultVolumeProfileAssigned()
         {
-            if (!IsHdrpAssetUsedCorrect())
-                return false;
-
-            var hdAsset = HDRenderPipeline.currentAsset;
-            return hdAsset.defaultVolumeProfile != null && !hdAsset.defaultVolumeProfile.Equals(null);
+            return IsHdrpAssetUsedCorrect()
+               && HDDefaultSettings.instance ? HDDefaultSettings.instance.defaultVolumeProfile : false;
         }
         void FixDefaultVolumeProfileAssigned(bool fromAsyncUnused)
         {
@@ -512,21 +509,6 @@ namespace UnityEditor.Rendering.HighDefinition
 
             HDDefaultSettings.instance.GetOrCreateDefaultVolumeProfile();
             EditorUtility.SetDirty(HDDefaultSettings.instance);
-
-/* 
-            VolumeProfile defaultSettingsVolumeProfileInPackage = hdrpAsset.renderPipelineEditorResources.defaultSettingsVolumeProfile;
-            string defaultSettingsVolumeProfilePath = "Assets/" + HDProjectSettings.projectSettingsFolderPath + '/' + defaultSettingsVolumeProfileInPackage.name + ".asset";
-
-            //try load one if one already exist
-            VolumeProfile defaultSettingsVolumeProfile = AssetDatabase.LoadAssetAtPath<VolumeProfile>(defaultSettingsVolumeProfilePath);
-            if (defaultSettingsVolumeProfile == null || defaultSettingsVolumeProfile.Equals(null))
-            {
-                //else create it
-                AssetDatabase.CopyAsset(AssetDatabase.GetAssetPath(defaultSettingsVolumeProfileInPackage), defaultSettingsVolumeProfilePath);
-                defaultSettingsVolumeProfile = AssetDatabase.LoadAssetAtPath<VolumeProfile>(defaultSettingsVolumeProfilePath);
-            }
-            hdrpAsset.defaultVolumeProfile = defaultSettingsVolumeProfile;
-*/
         }
 
         #endregion
