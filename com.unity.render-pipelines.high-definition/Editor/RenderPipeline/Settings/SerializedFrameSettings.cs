@@ -58,15 +58,15 @@ namespace UnityEditor.Rendering.HighDefinition
                 return ref (obj as HDAdditionalCameraData).renderingPathCustomFrameSettings;
             if (obj is HDProbe)
                 return ref (obj as HDProbe).frameSettings;
-            if (obj is HDRenderPipelineAsset)
+            if (obj is HDDefaultSettings)
                 switch (HDRenderPipelineUI.selectedFrameSettings)
-                {/* TODOJENNY
+                {
                     case HDRenderPipelineUI.SelectedFrameSettings.Camera:
-                        return ref (obj as HDRenderPipelineAsset).GetDefaultFrameSettings(FrameSettingsRenderType.Camera);
+                        return ref (obj as HDDefaultSettings).GetDefaultFrameSettings(FrameSettingsRenderType.Camera);
                     case HDRenderPipelineUI.SelectedFrameSettings.BakedOrCustomReflection:
-                        return ref (obj as HDRenderPipelineAsset).GetDefaultFrameSettings(FrameSettingsRenderType.CustomOrBakedReflection);
+                        return ref (obj as HDDefaultSettings).GetDefaultFrameSettings(FrameSettingsRenderType.CustomOrBakedReflection);
                     case HDRenderPipelineUI.SelectedFrameSettings.RealtimeReflection:
-                        return ref (obj as HDRenderPipelineAsset).GetDefaultFrameSettings(FrameSettingsRenderType.RealtimeReflection);*/
+                        return ref (obj as HDDefaultSettings).GetDefaultFrameSettings(FrameSettingsRenderType.RealtimeReflection);
                     default:
                         throw new System.ArgumentException("Unknown kind of HDRenderPipelineUI.SelectedFrameSettings");
                 }
@@ -79,7 +79,7 @@ namespace UnityEditor.Rendering.HighDefinition
                 return (obj as HDAdditionalCameraData).renderingPathCustomFrameSettingsOverrideMask;
             if (obj is HDProbe)
                 return (obj as HDProbe).frameSettingsOverrideMask;
-            if (obj is HDRenderPipelineAsset)
+            if(obj is HDDefaultSettings)
                 return null;
             throw new System.ArgumentException("Unknown kind of object");
         }

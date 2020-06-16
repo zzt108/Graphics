@@ -40,7 +40,7 @@ namespace UnityEngine.Rendering.HighDefinition
                 if(data.m_ObsoleteRealtimeReflectionFrameSettings != null)
                     FrameSettings.MigrateFromClassVersion(ref data.m_ObsoleteRealtimeReflectionFrameSettings,ref data.m_RenderingPathDefaultRealtimeReflectionFrameSettings,ref unusedMaskForDefault);
 #pragma warning restore 618
-            }),
+            }), 
             MigrationStep.New(Version.AddAfterPostProcessFrameSetting, (HDRenderPipelineAsset data) =>
             {
                 FrameSettings.MigrateToAfterPostprocess(ref data.m_RenderingPathDefaultCameraFrameSettings);
@@ -75,16 +75,16 @@ namespace UnityEngine.Rendering.HighDefinition
                 shadowInit.shadowResolutionArea.schemaId = ScalableSettingSchemaId.With4Levels;
                 shadowInit.shadowResolutionDirectional.schemaId = ScalableSettingSchemaId.With4Levels;
                 shadowInit.shadowResolutionPunctual.schemaId = ScalableSettingSchemaId.With4Levels;
-            })/*,
+            }),
             MigrationStep.New(Version.ShadowFilteringVeryHighQualityRemoval, (HDRenderPipelineAsset data) =>
             {
                 ref var shadowInit = ref data.m_RenderPipelineSettings.hdShadowInitParams;
                 shadowInit.shadowFilteringQuality = shadowInit.shadowFilteringQuality > HDShadowFilteringQuality.High ? HDShadowFilteringQuality.High : shadowInit.shadowFilteringQuality;
-            }),
+            }),/*
             MigrationStep.New(Version.SeparateColorGradingAndTonemappingFrameSettings, (HDRenderPipelineAsset data) =>
             {
                 FrameSettings.MigrateToSeparateColorGradingAndTonemapping(ref data.m_RenderingPathDefaultCameraFrameSettings);
-            }),
+            }),*/
             MigrationStep.New(Version.ReplaceTextureArraysByAtlasForCookieAndPlanar, (HDRenderPipelineAsset data) =>
             {
                 ref var lightLoopSettings = ref data.m_RenderPipelineSettings.lightLoopSettings;
@@ -110,10 +110,11 @@ namespace UnityEngine.Rendering.HighDefinition
             #pragma warning disable 618 // Type or member is obsolete
                 bool previouslyHighQuality = data.m_RenderPipelineSettings.m_ObsoleteincreaseSssSampleCount;
             #pragma warning restore 618
-
+                /*
                 FrameSettings.MigrateSubsurfaceParams(ref data.m_RenderingPathDefaultCameraFrameSettings,                  previouslyHighQuality);
                 FrameSettings.MigrateSubsurfaceParams(ref data.m_RenderingPathDefaultBakedOrCustomReflectionFrameSettings, previouslyHighQuality);
                 FrameSettings.MigrateSubsurfaceParams(ref data.m_RenderingPathDefaultRealtimeReflectionFrameSettings,      previouslyHighQuality);
+                */
             }),
             MigrationStep.New(Version.RemoveCookieCubeAtlasToOctahedral2D, (HDRenderPipelineAsset data) =>
             {
@@ -124,11 +125,11 @@ namespace UnityEngine.Rendering.HighDefinition
                 float planarSize = Mathf.Sqrt((int)lightLoopSettings.planarReflectionAtlasSize * (int)lightLoopSettings.planarReflectionAtlasSize * lightLoopSettings.maxPlanarReflectionOnScreen);
 #pragma warning restore 618
 
-                if (cookieAtlasSize > 128f && planarSize <= 1024f)
+                if(cookieAtlasSize > 128f && planarSize <= 1024f)
                 {
                     Debug.LogWarning("HDRP Internally change the storage of Cube Cookie to Octahedral Projection inside the Planar Reflection Atlas. It is recommended that you increase the size of the Planar Projection Atlas if the cookies no longer fit.");
-                },
-*/,
+                }
+            }),
             MigrationStep.New(Version.DefaultSettingsAsAnAsset,(HDRenderPipelineAsset data) =>
             {
 #pragma warning disable 618 // Type or member is obsolete

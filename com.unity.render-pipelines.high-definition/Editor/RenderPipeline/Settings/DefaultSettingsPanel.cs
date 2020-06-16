@@ -258,7 +258,7 @@ namespace UnityEditor.Rendering.HighDefinition
                 {
                     asset = newAsset;
                     defaultSettings.defaultVolumeProfile = asset;
-                    EditorUtility.SetDirty(defaultSettings);  //TODOJENNY
+                    EditorUtility.SetDirty(defaultSettings);
                 }
 
                 if (GUILayout.Button(EditorGUIUtility.TrTextContent("New", "Create a new Volume Profile for default in your default resource folder (defined in Wizard)"), GUILayout.Width(38), GUILayout.Height(18)))
@@ -295,7 +295,7 @@ namespace UnityEditor.Rendering.HighDefinition
                 else if (newLookDevAsset != lookDevAsset)
                 {
                     defaultSettings.defaultLookDevProfile = newLookDevAsset;
-                    EditorUtility.SetDirty(defaultSettings);  //TODOJENNY
+                    EditorUtility.SetDirty(defaultSettings);
                 }
 
                 if (GUILayout.Button(EditorGUIUtility.TrTextContent("New", "Create a new Volume Profile for default in your default resource folder (defined in Wizard)"), GUILayout.Width(38), GUILayout.Height(18)))
@@ -320,12 +320,35 @@ namespace UnityEditor.Rendering.HighDefinition
 
             void Draw_DefaultFrameSettings()
             {
-                //var serializedObject = new SerializedObject(HDRenderPipeline.currentAsset);
-                //var serializedHDRPAsset = new SerializedHDRenderPipelineAsset(serializedObject);
-
-                EditorGUILayout.HelpBox("No Frame settings to show. Come back to it once Jenny figured out CED works. TODOJENNY",MessageType.Info);
-                //HDRenderPipelineUI.FrameSettingsSection.Draw(serializedHDRPAsset, null);
-                //serializedObject.ApplyModifiedProperties();
+                var serializedObject = new SerializedObject(defaultSettings);
+                var serialized = new SerializedHDDefaultSettings(serializedObject);
+                //HDRenderPipelineUI.FrameSettingsSection.Draw(serialized, null);
+                EditorGUILayout.BeginVertical("box");
+               //HDRenderPipelineUI.Drawer_TitleDefaultFrameSettings();
+            /*CED.Conditional(
+                (serialized,owner) => k_ExpandedState[Expandable.CameraFrameSettings],
+                CED.Select(
+                    (serialized,owner) => serialized.defaultFrameSettings,
+                    FrameSettingsUI.InspectorInnerbox(withOverride: false)
+                    )
+                ),
+            CED.Conditional(
+                (serialized,owner) => k_ExpandedState[Expandable.BakedOrCustomProbeFrameSettings],
+                CED.Select(
+                    (serialized,owner) => serialized.defaultBakedOrCustomReflectionFrameSettings,
+                    FrameSettingsUI.InspectorInnerbox(withOverride: false)
+                    )
+                ),
+            CED.Conditional(
+                (serialized,owner) => k_ExpandedState[Expandable.RealtimeProbeFrameSettings],
+                CED.Select(
+                    (serialized,owner) => serialized.defaultRealtimeReflectionFrameSettings,
+                    FrameSettingsUI.InspectorInnerbox(withOverride: false)
+                    )
+                ),
+                */
+                EditorGUILayout.EndVertical();
+                serializedObject.ApplyModifiedProperties();
             }
         }
     }
