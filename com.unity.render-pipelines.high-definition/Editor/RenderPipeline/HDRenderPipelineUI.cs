@@ -13,9 +13,9 @@ namespace UnityEditor.Rendering.HighDefinition
     {
         enum Expandable
         {
-            CameraFrameSettings = 1 << 0,
-            BakedOrCustomProbeFrameSettings = 1 << 1,
-            RealtimeProbeFrameSettings = 1 << 2,
+           // CameraFrameSettings = 1 << 0, //obsolete
+           // BakedOrCustomProbeFrameSettings = 1 << 1, //obsolete
+           // RealtimeProbeFrameSettings = 1 << 2, //obsolete
             General = 1 << 3,
             Rendering = 1 << 4,
             Lighting = 1 << 5,
@@ -43,7 +43,7 @@ namespace UnityEditor.Rendering.HighDefinition
             VirtualTexturing = 1 << 27,
         }
 
-        static readonly ExpandedState<Expandable, HDRenderPipelineAsset> k_ExpandedState = new ExpandedState<Expandable, HDRenderPipelineAsset>(Expandable.CameraFrameSettings | Expandable.General, "HDRP");
+        static readonly ExpandedState<Expandable,HDRenderPipelineAsset> k_ExpandedState = new ExpandedState<Expandable,HDRenderPipelineAsset>(Expandable.General,"HDRP");
 
         enum ShadowResolutionValue
         {
@@ -57,17 +57,7 @@ namespace UnityEditor.Rendering.HighDefinition
             ShadowResolution16384 = 16384
         }
 
-        internal enum SelectedFrameSettings
-        {
-            Camera,
-            BakedOrCustomReflection,
-            RealtimeReflection
-        }
-
         internal static DiffusionProfileSettingsListUI diffusionProfileUI = new DiffusionProfileSettingsListUI();
-
-        internal static SelectedFrameSettings selectedFrameSettings;
-
         internal static VirtualTexturingSettingsUI virtualTexturingSettingsUI = new VirtualTexturingSettingsUI();
 
         static HDRenderPipelineUI()
@@ -104,77 +94,11 @@ namespace UnityEditor.Rendering.HighDefinition
                 CED.FoldoutGroup(Styles.xrTitle, Expandable.XR, k_ExpandedState, Drawer_SectionXRSettings),
                 CED.FoldoutGroup(Styles.virtualTexturingTitle, Expandable.VirtualTexturing, k_ExpandedState, Drawer_SectionVTSettings)
             );
-
-            // fix init of selection along what is serialized
-            if (k_ExpandedState[Expandable.BakedOrCustomProbeFrameSettings])
-                selectedFrameSettings = SelectedFrameSettings.BakedOrCustomReflection;
-            else if (k_ExpandedState[Expandable.RealtimeProbeFrameSettings])
-                selectedFrameSettings = SelectedFrameSettings.RealtimeReflection;
-            else //default value: camera
-                selectedFrameSettings = SelectedFrameSettings.Camera;
         }
 
         public static readonly CED.IDrawer Inspector;
 
         public static readonly CED.IDrawer GeneralSection = CED.Group(Drawer_SectionGeneral);
-
-/*
-        public static readonly CED.IDrawer FrameSettingsSection = CED.Group(
-            CED.Group(
-                (serialized, owner) => EditorGUILayout.BeginVertical("box"),
-                Drawer_TitleDefaultFrameSettings
-                ),
-            CED.Conditional(
-                (serialized, owner) => k_ExpandedState[Expandable.CameraFrameSettings],
-                CED.Select(
-                    (serialized, owner) => serialized.defaultFrameSettings,
-                    FrameSettingsUI.InspectorInnerbox(withOverride: false)
-                    )
-                ),
-            CED.Conditional(
-                (serialized, owner) => k_ExpandedState[Expandable.BakedOrCustomProbeFrameSettings],
-                CED.Select(
-                    (serialized, owner) => serialized.defaultBakedOrCustomReflectionFrameSettings,
-                    FrameSettingsUI.InspectorInnerbox(withOverride: false)
-                    )
-                ),
-            CED.Conditional(
-                (serialized, owner) => k_ExpandedState[Expandable.RealtimeProbeFrameSettings],
-                CED.Select(
-                    (serialized, owner) => serialized.defaultRealtimeReflectionFrameSettings,
-                    FrameSettingsUI.InspectorInnerbox(withOverride: false)
-                    )
-                ),
-            CED.Group((serialized, owner) => EditorGUILayout.EndVertical())
-            );*/
-
-        static public void ApplyChangedDisplayedFrameSettings(SerializedHDRenderPipelineAsset serialized, Editor owner)
-        {
-            k_ExpandedState.SetExpandedAreas(Expandable.CameraFrameSettings | Expandable.BakedOrCustomProbeFrameSettings | Expandable.RealtimeProbeFrameSettings, false);
-            switch (selectedFrameSettings)
-            {
-                case SelectedFrameSettings.Camera:
-                    k_ExpandedState.SetExpandedAreas(Expandable.CameraFrameSettings, true);
-                    break;
-                case SelectedFrameSettings.BakedOrCustomReflection:
-                    k_ExpandedState.SetExpandedAreas(Expandable.BakedOrCustomProbeFrameSettings, true);
-                    break;
-                case SelectedFrameSettings.RealtimeReflection:
-                    k_ExpandedState.SetExpandedAreas(Expandable.RealtimeProbeFrameSettings, true);
-                    break;
-            }
-        }
-
-        static void Drawer_TitleDefaultFrameSettings(SerializedHDRenderPipelineAsset serialized, Editor owner)
-        {
-            GUILayout.BeginHorizontal();
-            EditorGUILayout.LabelField(Styles.defaultFrameSettingsContent, EditorStyles.boldLabel);
-            EditorGUI.BeginChangeCheck();
-            selectedFrameSettings = (SelectedFrameSettings)EditorGUILayout.EnumPopup(selectedFrameSettings);
-            if (EditorGUI.EndChangeCheck())
-                ApplyChangedDisplayedFrameSettings(serialized, owner);
-            GUILayout.EndHorizontal();
-        }
 
         static void Drawer_SectionGeneral(SerializedHDRenderPipelineAsset serialized, Editor owner)
         {

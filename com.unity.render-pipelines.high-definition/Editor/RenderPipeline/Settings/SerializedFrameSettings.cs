@@ -59,16 +59,16 @@ namespace UnityEditor.Rendering.HighDefinition
             if (obj is HDProbe)
                 return ref (obj as HDProbe).frameSettings;
             if (obj is HDDefaultSettings)
-                switch (HDRenderPipelineUI.selectedFrameSettings)
+                switch (DefaultSettingsPanelIMGUI.selectedFrameSettings)
                 {
-                    case HDRenderPipelineUI.SelectedFrameSettings.Camera:
+                    case DefaultSettingsPanelIMGUI.SelectedFrameSettings.Camera:
                         return ref (obj as HDDefaultSettings).GetDefaultFrameSettings(FrameSettingsRenderType.Camera);
-                    case HDRenderPipelineUI.SelectedFrameSettings.BakedOrCustomReflection:
+                    case DefaultSettingsPanelIMGUI.SelectedFrameSettings.BakedOrCustomReflection:
                         return ref (obj as HDDefaultSettings).GetDefaultFrameSettings(FrameSettingsRenderType.CustomOrBakedReflection);
-                    case HDRenderPipelineUI.SelectedFrameSettings.RealtimeReflection:
+                    case DefaultSettingsPanelIMGUI.SelectedFrameSettings.RealtimeReflection:
                         return ref (obj as HDDefaultSettings).GetDefaultFrameSettings(FrameSettingsRenderType.RealtimeReflection);
                     default:
-                        throw new System.ArgumentException("Unknown kind of HDRenderPipelineUI.SelectedFrameSettings");
+                        throw new System.ArgumentException("Unknown kind of DefaultSettingsPanelIMGUI.SelectedFrameSettings");
                 }
             throw new System.ArgumentException("Unknown kind of object");
         }

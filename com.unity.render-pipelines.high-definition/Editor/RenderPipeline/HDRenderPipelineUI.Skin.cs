@@ -72,8 +72,6 @@ namespace UnityEditor.Rendering.HighDefinition
             public static readonly GUIContent SSRSettingsSubTitle = EditorGUIUtility.TrTextContent("Screen Space Reflection");
             public static readonly GUIContent SSRMaxRaySteps = EditorGUIUtility.TrTextContent("Max Ray Steps");
 
-            public static readonly GUIContent defaultFrameSettingsContent = EditorGUIUtility.TrTextContent("Default Frame Settings For");
-
             public static readonly GUIContent materialQualityLevelContent = EditorGUIUtility.TrTextContent("Default Material Quality Level", "");
             public static readonly GUIContent diffusionProfileSettingsContent = EditorGUIUtility.TrTextContent("Diffusion Profile List");
             public static readonly GUIContent SRPBatcher = EditorGUIUtility.TrTextContent("SRP Batcher", "When enabled, the render pipeline uses the SRP batcher.");
