@@ -3,6 +3,24 @@ using UnityEngine.Rendering;using UnityEditor;using UnityEditor.Rendering;usi
 using UnityEditorInternal;
 #endif
 namespace UnityEngine.Rendering.HighDefinition{
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /// <summary>    /// High Definition Render Pipeline Default Settings.    /// Default settings are unique per Render Pipeline type. In HD, Default Settings contain:    /// - a default Volume (Global) combined with its Default Profile (defines which components are active by default)    /// - this Volume's profile    /// - the LookDev Volume Profile    /// - Frame Settings    /// - Various resources for runtime, editor-only, and raytracing    /// </summary>    public partial class HDDefaultSettings:RenderPipelineDefaultSettings    {        private static HDDefaultSettings cachedInstance = null;        public static HDDefaultSettings instance
         {
             get
@@ -21,7 +39,7 @@ namespace UnityEngine.Rendering.HighDefinition{
             cachedInstance = newSettings;
         }
 
-        #if UNITY_EDITOR
+#if UNITY_EDITOR
         //Making sure there is at least one HDDefaultSettings instance in the project
         static public void Ensure()
         {
@@ -33,20 +51,22 @@ namespace UnityEngine.Rendering.HighDefinition{
             assetCreated = AssetDatabase.LoadAssetAtPath<HDDefaultSettings>(path);
             if(assetCreated == null)
             {
-                //TODOJENNY do something less expensive?
                 var guidHDDefaultAssets = AssetDatabase.FindAssets("t:HDDefaultSettings");
+                //If we could not find the asset at the default path, find the first one
                 if(guidHDDefaultAssets.Length > 0)
                 {
                     var curGUID = guidHDDefaultAssets[0];
                     path = AssetDatabase.GUIDToAssetPath(curGUID);
                     assetCreated = AssetDatabase.LoadAssetAtPath<HDDefaultSettings>(path);
                 }
-                else
+                else // or create one altogether
                 {
                     if(!AssetDatabase.IsValidFolder("Assets/HDRPDefaultResources/"))
                         AssetDatabase.CreateFolder("Assets","HDRPDefaultResources");
                     assetCreated = ScriptableObject.CreateInstance<HDDefaultSettings>();
                     AssetDatabase.CreateAsset(assetCreated,path);
+                    //TODOJENNY - hack BRGRGRGR
+                    assetCreated.Init();
                     AssetDatabase.SaveAssets();
                     AssetDatabase.Refresh();
                 }
@@ -54,25 +74,34 @@ namespace UnityEngine.Rendering.HighDefinition{
             Debug.Assert(assetCreated,"Could not create HD Default Settings - HDRP may not work correctly - Open the Graphics Window for additional help.");
             UpdateGraphicsSettings(assetCreated);
         }
+        void Init()
+        {
+            if(beforeTransparentCustomPostProcesses == null)
+            {
+                beforeTransparentCustomPostProcesses = new List<string>();
+                beforePostProcessCustomPostProcesses = new List<string>();
+                afterPostProcessCustomPostProcesses = new List<string>();
+                beforeTAACustomPostProcesses = new List<string>();
+            }
+        }
         #endif
 
-        #region Volume
-        [SerializeField]        private Volume s_DefaultVolume = null;        internal Volume GetOrCreateDefaultVolume()        {            GetOrCreateDefaultVolumeProfile(); //TODOJENNY: investigate why I happen to have a null defaultProfile in some cases (UpdateCurrentStaticLightingSky)            if (s_DefaultVolume == null || s_DefaultVolume.Equals(null))            {                var go = new GameObject("Default Volume") { hideFlags = HideFlags.HideAndDontSave }; //TODO: does this leak?                s_DefaultVolume = go.AddComponent<Volume>();                s_DefaultVolume.isGlobal = true;                s_DefaultVolume.priority = float.MinValue;                s_DefaultVolume.sharedProfile = defaultVolumeProfile;
+        #region Volume        private Volume s_DefaultVolume = null;        internal Volume GetOrCreateDefaultVolume()        {            //TODOJENNY: investigate why I happen to have a null defaultProfile in some cases (UpdateCurrentStaticLightingSky)            if (s_DefaultVolume == null || s_DefaultVolume.Equals(null))            {                var go = new GameObject("Default Volume") { hideFlags = HideFlags.HideAndDontSave }; //TODOJENNY: does this leak?                s_DefaultVolume = go.AddComponent<Volume>();                s_DefaultVolume.isGlobal = true;                s_DefaultVolume.priority = float.MinValue;                s_DefaultVolume.sharedProfile = GetOrCreateDefaultVolumeProfile();
 #if UNITY_EDITOR            UnityEditor.AssemblyReloadEvents.beforeAssemblyReload += () =>                             {                                 DestroyDefaultVolume();                             };
-#endif            }            if (                // In case the asset was deleted or the reference removed                s_DefaultVolume.sharedProfile == null || s_DefaultVolume.sharedProfile.Equals(null)#if UNITY_EDITOR                // In case the serialization recreated an empty volume sharedProfile                || !UnityEditor.AssetDatabase.Contains(s_DefaultVolume.sharedProfile)#endif            )            {                s_DefaultVolume.sharedProfile = defaultVolumeProfile;            }            if (s_DefaultVolume.sharedProfile != defaultVolumeProfile)            {                s_DefaultVolume.sharedProfile = defaultVolumeProfile;            }            if(s_DefaultVolume == null)            {                Debug.LogError("[HDRP] Cannot Create Default Volume.");            }            return s_DefaultVolume;        }        private void DestroyDefaultVolume()        {            if (s_DefaultVolume != null && !s_DefaultVolume.Equals(null))            {                CoreUtils.Destroy(s_DefaultVolume.gameObject);                s_DefaultVolume = null;            }        }                #endregion        #region VolumeProfile        [SerializeField] private VolumeProfile m_DefaultVolumeProfile;        internal VolumeProfile defaultVolumeProfile        {            get => m_DefaultVolumeProfile;            set => m_DefaultVolumeProfile = value;        }        internal VolumeProfile GetOrCreateDefaultVolumeProfile()        {            if (defaultVolumeProfile == null || defaultVolumeProfile.Equals(null))            {                defaultVolumeProfile = renderPipelineEditorResources.defaultSettingsVolumeProfile; //TODOJENNY should it be moved to this class?            }            return defaultVolumeProfile;        }
+#endif            }            if (                // In case the asset was deleted or the reference removed                s_DefaultVolume.sharedProfile == null || s_DefaultVolume.sharedProfile.Equals(null)#if UNITY_EDITOR                // In case the serialization recreated an empty volume sharedProfile                || !UnityEditor.AssetDatabase.Contains(s_DefaultVolume.sharedProfile)#endif            )            {                s_DefaultVolume.sharedProfile = volumeProfile;            }            if (s_DefaultVolume.sharedProfile != volumeProfile)            {                s_DefaultVolume.sharedProfile = volumeProfile;            }            if(s_DefaultVolume == null)            {                Debug.LogError("[HDRP] Cannot Create Default Volume.");            }            return s_DefaultVolume;        }        private void DestroyDefaultVolume()        {            if (s_DefaultVolume != null && !s_DefaultVolume.Equals(null))            {                CoreUtils.Destroy(s_DefaultVolume.gameObject);                s_DefaultVolume = null;            }        }                #endregion        #region VolumeProfile        [SerializeField] private VolumeProfile m_VolumeProfileDefault;        internal VolumeProfile volumeProfile        {            get => m_VolumeProfileDefault;            set => m_VolumeProfileDefault = value;        }        internal VolumeProfile GetOrCreateDefaultVolumeProfile()        {            if (volumeProfile == null || volumeProfile.Equals(null))            {                volumeProfile = renderPipelineEditorResources.defaultSettingsVolumeProfile; //TODOJENNY should it be moved to this class?            }            return volumeProfile;        }
         #endregion
 
         #region Look Dev Profile
-#if UNITY_EDITOR        [SerializeField] private VolumeProfile m_DefaultLookDevProfile;
+#if UNITY_EDITOR        [SerializeField] private VolumeProfile m_VolumeProfileLookDev;
 
-       internal VolumeProfile defaultLookDevProfile {            get => m_DefaultLookDevProfile;            set => m_DefaultLookDevProfile = value;        }        internal VolumeProfile GetOrAssignLookDevVolumeProfile() 
+       internal VolumeProfile volumeProfileLookDev {            get => m_VolumeProfileLookDev;            set => m_VolumeProfileLookDev = value;        }        internal VolumeProfile GetOrAssignLookDevVolumeProfile() 
        {
-           if(HDDefaultSettings.instance.defaultLookDevProfile == null || HDDefaultSettings.instance.defaultLookDevProfile.Equals(null)) 
+           if(HDDefaultSettings.instance.volumeProfileLookDev == null || HDDefaultSettings.instance.volumeProfileLookDev.Equals(null)) 
            { 
-               HDDefaultSettings.instance.defaultLookDevProfile =
+               HDDefaultSettings.instance.volumeProfileLookDev =
                   HDDefaultSettings.instance.renderPipelineEditorResources.lookDev.defaultLookDevVolumeProfile;
            }
-           return HDDefaultSettings.instance.defaultLookDevProfile;        }
+           return HDDefaultSettings.instance.volumeProfileLookDev;        }
 #endif
        #endregion
               #region Camera's FrameSettings        // To be able to turn on/off FrameSettings properties at runtime for debugging purpose without affecting the original one

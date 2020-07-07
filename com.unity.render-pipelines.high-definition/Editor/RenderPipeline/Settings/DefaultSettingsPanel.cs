@@ -372,11 +372,11 @@ namespace UnityEditor.Rendering.HighDefinition
             {
                 case Kind.Default:
                     if(settings != null)
-                        settings.defaultVolumeProfile = profile;
+                        settings.volumeProfile = profile;
                     break;
                 case Kind.LookDev:
                     if(settings != null)
-                        settings.defaultLookDevProfile = profile;
+                        settings.volumeProfileLookDev = profile;
                     break;
             }
             EditorUtility.SetDirty(settings);

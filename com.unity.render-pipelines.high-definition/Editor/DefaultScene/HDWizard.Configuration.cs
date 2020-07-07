@@ -500,7 +500,7 @@ namespace UnityEditor.Rendering.HighDefinition
         bool IsDefaultVolumeProfileAssigned()
         {
             return IsHdrpAssetUsedCorrect()
-               && HDDefaultSettings.instance ? HDDefaultSettings.instance.defaultVolumeProfile : false;
+               && HDDefaultSettings.instance ? HDDefaultSettings.instance.volumeProfile : false;
         }
         void FixDefaultVolumeProfileAssigned(bool fromAsyncUnused)
         {
