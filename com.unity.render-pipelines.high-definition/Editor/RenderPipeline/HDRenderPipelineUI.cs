@@ -98,6 +98,7 @@ namespace UnityEditor.Rendering.HighDefinition
 
         public static readonly CED.IDrawer Inspector;
 
+        // TODOJENNY - move this to Graphics Window
         public static readonly CED.IDrawer GeneralSection = CED.Group(Drawer_SectionGeneral);
 
         static void Drawer_SectionGeneral(SerializedHDRenderPipelineAsset serialized, Editor owner)
