@@ -3,7 +3,6 @@ using UnityEngine.Serialization;
 using UnityEditor;
 using System.Collections.Generic; //needed for list of Custom Post Processes injections
 
-//TODOJENNY - should it be editor only code?
 namespace UnityEngine.Rendering.HighDefinition
 {
     public partial class HDRenderPipelineAsset : IVersionable<HDRenderPipelineAsset.Version>
@@ -30,47 +29,47 @@ namespace UnityEngine.Rendering.HighDefinition
         }
 
         static readonly MigrationDescription<Version, HDRenderPipelineAsset> k_Migration = MigrationDescription.New(
-            /* TODOJENNY - once i know which settings need to be moved to the Default Settings
+            /* TODOJENNY - once i know which settings need to be moved to the Default Settings */
             MigrationStep.New(Version.UpgradeFrameSettingsToStruct,(HDRenderPipelineAsset data) =>
             {
 #pragma warning disable 618 // Type or member is obsolete
                 FrameSettingsOverrideMask unusedMaskForDefault = new FrameSettingsOverrideMask();
                 if(data.m_ObsoleteFrameSettings != null)
-                    FrameSettings.MigrateFromClassVersion(ref data.m_ObsoleteFrameSettings,ref data.m_RenderingPathDefaultCameraFrameSettings,ref unusedMaskForDefault);
+                    FrameSettings.MigrateFromClassVersion(ref data.m_ObsoleteFrameSettings,ref data.m_FrameSettingsMovedToDefaultSettings,ref unusedMaskForDefault);
                 if(data.m_ObsoleteBakedOrCustomReflectionFrameSettings != null)
-                    FrameSettings.MigrateFromClassVersion(ref data.m_ObsoleteBakedOrCustomReflectionFrameSettings,ref data.m_RenderingPathDefaultBakedOrCustomReflectionFrameSettings,ref unusedMaskForDefault);
+                    FrameSettings.MigrateFromClassVersion(ref data.m_ObsoleteBakedOrCustomReflectionFrameSettings,ref data.m_BakedOrCustomReflectionFrameSettingsMovedToDefaultSettings,ref unusedMaskForDefault);
                 if(data.m_ObsoleteRealtimeReflectionFrameSettings != null)
-                    FrameSettings.MigrateFromClassVersion(ref data.m_ObsoleteRealtimeReflectionFrameSettings,ref data.m_RenderingPathDefaultRealtimeReflectionFrameSettings,ref unusedMaskForDefault);
+                    FrameSettings.MigrateFromClassVersion(ref data.m_ObsoleteRealtimeReflectionFrameSettings,ref data.m_RealtimeReflectionFrameSettingsMovedToDefaultSettings,ref unusedMaskForDefault);
 #pragma warning restore 618
             }), 
             MigrationStep.New(Version.AddAfterPostProcessFrameSetting, (HDRenderPipelineAsset data) =>
             {
-                FrameSettings.MigrateToAfterPostprocess(ref data.m_RenderingPathDefaultCameraFrameSettings);
+                FrameSettings.MigrateToAfterPostprocess(ref data.m_FrameSettingsMovedToDefaultSettings);
             }),
             MigrationStep.New(Version.AddReflectionSettings, (HDRenderPipelineAsset data) =>
             {
-                FrameSettings.MigrateToDefaultReflectionSettings(ref data.m_RenderingPathDefaultCameraFrameSettings);
-                FrameSettings.MigrateToNoReflectionSettings(ref data.m_RenderingPathDefaultBakedOrCustomReflectionFrameSettings);
-                FrameSettings.MigrateToNoReflectionRealtimeSettings(ref data.m_RenderingPathDefaultRealtimeReflectionFrameSettings);
+                FrameSettings.MigrateToDefaultReflectionSettings(ref data.m_FrameSettingsMovedToDefaultSettings);
+                FrameSettings.MigrateToNoReflectionSettings(ref data.m_BakedOrCustomReflectionFrameSettingsMovedToDefaultSettings);
+                FrameSettings.MigrateToNoReflectionRealtimeSettings(ref data.m_RealtimeReflectionFrameSettingsMovedToDefaultSettings);
             }),
             MigrationStep.New(Version.AddPostProcessFrameSettings, (HDRenderPipelineAsset data) =>
             {
-                FrameSettings.MigrateToPostProcess(ref data.m_RenderingPathDefaultCameraFrameSettings);
+                FrameSettings.MigrateToPostProcess(ref data.m_FrameSettingsMovedToDefaultSettings);
             }),
             MigrationStep.New(Version.AddRayTracingFrameSettings, (HDRenderPipelineAsset data) =>
             {
-                FrameSettings.MigrateToRayTracing(ref data.m_RenderingPathDefaultCameraFrameSettings);
+                FrameSettings.MigrateToRayTracing(ref data.m_FrameSettingsMovedToDefaultSettings);
             }),
             MigrationStep.New(Version.AddFrameSettingDirectSpecularLighting, (HDRenderPipelineAsset data) =>
             {
-                FrameSettings.MigrateToDirectSpecularLighting(ref data.m_RenderingPathDefaultCameraFrameSettings);
-                FrameSettings.MigrateToNoDirectSpecularLighting(ref data.m_RenderingPathDefaultBakedOrCustomReflectionFrameSettings);
-                FrameSettings.MigrateToDirectSpecularLighting(ref data.m_RenderingPathDefaultRealtimeReflectionFrameSettings);
+                FrameSettings.MigrateToDirectSpecularLighting(ref data.m_FrameSettingsMovedToDefaultSettings);
+                FrameSettings.MigrateToNoDirectSpecularLighting(ref data.m_BakedOrCustomReflectionFrameSettingsMovedToDefaultSettings);
+                FrameSettings.MigrateToDirectSpecularLighting(ref data.m_RealtimeReflectionFrameSettingsMovedToDefaultSettings);
             }),
             MigrationStep.New(Version.AddCustomPostprocessAndCustomPass, (HDRenderPipelineAsset data) =>
             {
-                FrameSettings.MigrateToCustomPostprocessAndCustomPass(ref data.m_RenderingPathDefaultCameraFrameSettings);
-            }),*/
+                FrameSettings.MigrateToCustomPostprocessAndCustomPass(ref data.m_FrameSettingsMovedToDefaultSettings);
+            }),
             MigrationStep.New(Version.ScalableSettingsRefactor, (HDRenderPipelineAsset data) =>
             {
                 ref var shadowInit = ref data.m_RenderPipelineSettings.hdShadowInitParams;
@@ -82,11 +81,11 @@ namespace UnityEngine.Rendering.HighDefinition
             {
                 ref var shadowInit = ref data.m_RenderPipelineSettings.hdShadowInitParams;
                 shadowInit.shadowFilteringQuality = shadowInit.shadowFilteringQuality > HDShadowFilteringQuality.High ? HDShadowFilteringQuality.High : shadowInit.shadowFilteringQuality;
-            }),/*
+            }),
             MigrationStep.New(Version.SeparateColorGradingAndTonemappingFrameSettings, (HDRenderPipelineAsset data) =>
             {
-                FrameSettings.MigrateToSeparateColorGradingAndTonemapping(ref data.m_RenderingPathDefaultCameraFrameSettings);
-            }),*/
+                FrameSettings.MigrateToSeparateColorGradingAndTonemapping(ref data.m_FrameSettingsMovedToDefaultSettings);
+            }),
             MigrationStep.New(Version.ReplaceTextureArraysByAtlasForCookieAndPlanar, (HDRenderPipelineAsset data) =>
             {
                 ref var lightLoopSettings = ref data.m_RenderPipelineSettings.lightLoopSettings;
@@ -112,11 +111,9 @@ namespace UnityEngine.Rendering.HighDefinition
             #pragma warning disable 618 // Type or member is obsolete
                 bool previouslyHighQuality = data.m_RenderPipelineSettings.m_ObsoleteincreaseSssSampleCount;
             #pragma warning restore 618
-                /*
-                FrameSettings.MigrateSubsurfaceParams(ref data.m_RenderingPathDefaultCameraFrameSettings,                  previouslyHighQuality);
-                FrameSettings.MigrateSubsurfaceParams(ref data.m_RenderingPathDefaultBakedOrCustomReflectionFrameSettings, previouslyHighQuality);
-                FrameSettings.MigrateSubsurfaceParams(ref data.m_RenderingPathDefaultRealtimeReflectionFrameSettings,      previouslyHighQuality);
-                */
+                FrameSettings.MigrateSubsurfaceParams(ref data.m_FrameSettingsMovedToDefaultSettings,                  previouslyHighQuality);
+                FrameSettings.MigrateSubsurfaceParams(ref data.m_BakedOrCustomReflectionFrameSettingsMovedToDefaultSettings, previouslyHighQuality);
+                FrameSettings.MigrateSubsurfaceParams(ref data.m_RealtimeReflectionFrameSettingsMovedToDefaultSettings,      previouslyHighQuality);
             }),
             MigrationStep.New(Version.RemoveCookieCubeAtlasToOctahedral2D, (HDRenderPipelineAsset data) =>
             {
@@ -134,52 +131,15 @@ namespace UnityEngine.Rendering.HighDefinition
             }),
             MigrationStep.New(Version.DefaultSettingsAsAnAsset,(HDRenderPipelineAsset data) =>
             {
-#pragma warning disable 618 // Type or member is obsolete
-
                 // 2/ it acted as the definition of the Default Settings - now migrated to its own asset
                 if(data == GraphicsSettings.defaultRenderPipeline)
                 {
-                    HDDefaultSettings.Ensure();
-                    if(data.m_ObsoleteDefaultVolumeProfile != null)
-                        HDDefaultSettings.instance.volumeProfile = data.m_ObsoleteDefaultVolumeProfile;
-                    data.m_ObsoleteDefaultVolumeProfile = null;
-
-                    if(data.m_ObsoleteDefaultLookDevProfile != null)
-                        HDDefaultSettings.instance.volumeProfileLookDev = data.m_ObsoleteDefaultLookDevProfile;
-                    data.m_ObsoleteDefaultLookDevProfile = null;
-                    
-                    FrameSettingsOverrideMask unusedMaskForDefault = new FrameSettingsOverrideMask();
-                    if(data.m_ObsoleteFrameSettings != null)
-                        FrameSettings.MigrateFromClassVersion(ref data.m_ObsoleteFrameSettings,ref HDDefaultSettings.instance.GetDefaultFrameSettings(FrameSettingsRenderType.Camera),ref unusedMaskForDefault);
-                    if(data.m_ObsoleteBakedOrCustomReflectionFrameSettings != null)
-                        FrameSettings.MigrateFromClassVersion(ref data.m_ObsoleteBakedOrCustomReflectionFrameSettings,ref HDDefaultSettings.instance.GetDefaultFrameSettings(FrameSettingsRenderType.CustomOrBakedReflection),ref unusedMaskForDefault);
-                    if(data.m_ObsoleteRealtimeReflectionFrameSettings != null)
-                        FrameSettings.MigrateFromClassVersion(ref data.m_ObsoleteRealtimeReflectionFrameSettings,ref HDDefaultSettings.instance.GetDefaultFrameSettings(FrameSettingsRenderType.CustomOrBakedReflection),ref unusedMaskForDefault);
-                  
-                    HDDefaultSettings.instance.renderPipelineResources = data.m_ObsoleteRenderPipelineResources;
-                    data.m_ObsoleteRenderPipelineResources = null;
-
-                    HDDefaultSettings.instance.renderPipelineEditorResources = data.m_ObsoleteRenderPipelineEditorResources;
-                    data.m_ObsoleteRenderPipelineEditorResources = null;
-
-                    HDDefaultSettings.instance.renderPipelineRayTracingResources = data.m_ObsoleteRenderPipelineRayTracingResources;
-                    data.m_ObsoleteRenderPipelineRayTracingResources = null;
-
-                    HDDefaultSettings.instance.beforeTransparentCustomPostProcesses.AddRange(data.m_ObsoleteBeforeTransparentCustomPostProcesses);
-                    data.m_ObsoleteBeforeTransparentCustomPostProcesses = null;
-
-                    HDDefaultSettings.instance.beforePostProcessCustomPostProcesses.AddRange(data.m_ObsoleteBeforePostProcessCustomPostProcesses);
-                    data.m_ObsoleteBeforePostProcessCustomPostProcesses = null;
-
-                    HDDefaultSettings.instance.afterPostProcessCustomPostProcesses.AddRange(data.m_ObsoleteAfterPostProcessCustomPostProcesses);
-                    data.m_ObsoleteAfterPostProcessCustomPostProcesses = null;
-
-                    HDDefaultSettings.instance.beforeTAACustomPostProcesses.AddRange(data.m_ObsoleteBeforeTAACustomPostProcesses);
-                    data.m_ObsoleteBeforeTAACustomPostProcesses = null;
-
-                    EditorUtility.SetDirty(HDDefaultSettings.instance);
-                }
+#pragma warning disable 618 // Type or member is obsolete
+                    HDDefaultSettings defaultSettings = HDDefaultSettings.MigrateFromHDRPAsset(data, true);
 #pragma warning restore 618
+                    HDDefaultSettings.UpdateGraphicsSettings(defaultSettings);
+                    EditorUtility.SetDirty(defaultSettings);
+                }
             })
         );
 
@@ -191,51 +151,57 @@ namespace UnityEngine.Rendering.HighDefinition
 
 #pragma warning disable 618 // Type or member is obsolete
         [SerializeField]
-        [FormerlySerializedAs("serializedFrameSettings"), FormerlySerializedAs("m_FrameSettings"), FormerlySerializedAs("m_RenderingPathDefaultCameraFrameSettings"), Obsolete("For data migration")]
+        [FormerlySerializedAs("serializedFrameSettings"), FormerlySerializedAs("m_FrameSettings"),Obsolete("For data migration")]
         ObsoleteFrameSettings m_ObsoleteFrameSettings;
         [SerializeField]
-        [FormerlySerializedAs("m_BakedOrCustomReflectionFrameSettings"), FormerlySerializedAs("m_RenderingPathDefaultBakedOrCustomReflectionFrameSettings"), Obsolete("For data migration")]
+        [FormerlySerializedAs("m_BakedOrCustomReflectionFrameSettings"), Obsolete("For data migration")]
         ObsoleteFrameSettings m_ObsoleteBakedOrCustomReflectionFrameSettings;
         [SerializeField]
-        [FormerlySerializedAs("m_RealtimeReflectionFrameSettings"), FormerlySerializedAs("m_RenderingPathDefaultRealtimeReflectionFrameSettings"), Obsolete("For data migration")]
+        [FormerlySerializedAs("m_RealtimeReflectionFrameSettings"), Obsolete("For data migration")]
         ObsoleteFrameSettings m_ObsoleteRealtimeReflectionFrameSettings;
+
+        #region Settings Moved from the HDRP Asset to HDDefaultSettings
         [SerializeField]
-        [FormerlySerializedAs("defaultVolumeProfile"), FormerlySerializedAs("m_DefaultVolumeProfile"), Obsolete("For data migration")]
-        VolumeProfile m_ObsoleteDefaultVolumeProfile;
+        [FormerlySerializedAs("defaultVolumeProfile"), Obsolete("For data migration")]
+        internal VolumeProfile m_ObsoleteDefaultVolumeProfile;
         [SerializeField]
-        [FormerlySerializedAs("defaultLookDevProfile"), FormerlySerializedAs("m_DefaultLookDevProfile"), Obsolete("For data migration")]
-        VolumeProfile m_ObsoleteDefaultLookDevProfile;
+        [FormerlySerializedAs("defaultLookDevProfile"), Obsolete("For data migration")]
+        internal VolumeProfile m_ObsoleteDefaultLookDevProfile;
+
+        [SerializeField]
+        [FormerlySerializedAs("m_RenderingPathDefaultCameraFrameSettings"), Obsolete("For data migration")]
+        internal FrameSettings m_FrameSettingsMovedToDefaultSettings;
+        [SerializeField]
+        [FormerlySerializedAs("m_RenderingPathDefaultBakedOrCustomReflectionFrameSettings"), Obsolete("For data migration")]
+        internal FrameSettings m_BakedOrCustomReflectionFrameSettingsMovedToDefaultSettings;
+        [SerializeField]
+        [FormerlySerializedAs("m_RenderingPathDefaultRealtimeReflectionFrameSettings"), Obsolete("For data migration")]
+        internal FrameSettings m_RealtimeReflectionFrameSettingsMovedToDefaultSettings;
+
         [SerializeField]
         [FormerlySerializedAs("renderPipelineResources"), Obsolete("For data migration")]
-        RenderPipelineResources m_ObsoleteRenderPipelineResources;
+        internal RenderPipelineResources m_ObsoleteRenderPipelineResources;
         [SerializeField]
         [FormerlySerializedAs("renderPipelineEditorResources"), Obsolete("For data migration")]
-        HDRenderPipelineEditorResources m_ObsoleteRenderPipelineEditorResources;
+        internal HDRenderPipelineEditorResources m_ObsoleteRenderPipelineEditorResources;
         [SerializeField]
         [FormerlySerializedAs("renderPipelineRayTracingResources"), Obsolete("For data migration")]
-        HDRenderPipelineRayTracingResources m_ObsoleteRenderPipelineRayTracingResources;
+        internal HDRenderPipelineRayTracingResources m_ObsoleteRenderPipelineRayTracingResources;
+
         [SerializeField]
         [FormerlySerializedAs("beforeTransparentCustomPostProcesses"), Obsolete("For data migration")]
-        List<string> m_ObsoleteBeforeTransparentCustomPostProcesses;
+        internal List<string> m_ObsoleteBeforeTransparentCustomPostProcesses;
         [SerializeField]
         [FormerlySerializedAs("beforePostProcessCustomPostProcesses"), Obsolete("For data migration")]
-        List<string> m_ObsoleteBeforePostProcessCustomPostProcesses;
+        internal List<string> m_ObsoleteBeforePostProcessCustomPostProcesses;
         [SerializeField]
         [FormerlySerializedAs("afterPostProcessCustomPostProcesses"), Obsolete("For data migration")]
-        List<string> m_ObsoleteAfterPostProcessCustomPostProcesses;
+        internal List<string> m_ObsoleteAfterPostProcessCustomPostProcesses;
         [SerializeField]
         [FormerlySerializedAs("beforeTAACustomPostProcesses"), Obsolete("For data migration")]
-        List<string> m_ObsoleteBeforeTAACustomPostProcesses;
+        internal List<string> m_ObsoleteBeforeTAACustomPostProcesses;
+        #endregion
 
-        //TODOJENNY m_RenderPipelineResources
-        //TODOJENNY m_RenderPipelineRayTracingResources
-
-        /*
-        [SerializeField]
-                [FormerlySerializedAs(""), Obsolete("For data migration")]
-                ObsoleteFrameSettings m_Obsolete;
-        */
-        // TODOJENNY
 #pragma warning restore 618
 
     }

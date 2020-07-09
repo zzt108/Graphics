@@ -3,24 +3,6 @@ using UnityEngine.Rendering;using UnityEditor;using UnityEditor.Rendering;usi
 using UnityEditorInternal;
 #endif
 namespace UnityEngine.Rendering.HighDefinition{
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     /// <summary>    /// High Definition Render Pipeline Default Settings.    /// Default settings are unique per Render Pipeline type. In HD, Default Settings contain:    /// - a default Volume (Global) combined with its Default Profile (defines which components are active by default)    /// - this Volume's profile    /// - the LookDev Volume Profile    /// - Frame Settings    /// - Various resources for runtime, editor-only, and raytracing    /// </summary>    public partial class HDDefaultSettings:RenderPipelineDefaultSettings    {        private static HDDefaultSettings cachedInstance = null;        public static HDDefaultSettings instance
         {
             get
@@ -47,7 +29,7 @@ namespace UnityEngine.Rendering.HighDefinition{
                 return;
 
             HDDefaultSettings assetCreated = null;
-            string path = "Assets/HDRPDefaultResources/DefaultSettings.asset";
+            string path = "Assets/HDRPDefaultResources/HDGraphicsSettings.asset";
             assetCreated = AssetDatabase.LoadAssetAtPath<HDDefaultSettings>(path);
             if(assetCreated == null)
             {
@@ -65,7 +47,6 @@ namespace UnityEngine.Rendering.HighDefinition{
                         AssetDatabase.CreateFolder("Assets","HDRPDefaultResources");
                     assetCreated = ScriptableObject.CreateInstance<HDDefaultSettings>();
                     AssetDatabase.CreateAsset(assetCreated,path);
-                    //TODOJENNY - hack BRGRGRGR
                     assetCreated.Init();
                     AssetDatabase.SaveAssets();
                     AssetDatabase.Refresh();
@@ -74,7 +55,7 @@ namespace UnityEngine.Rendering.HighDefinition{
             Debug.Assert(assetCreated,"Could not create HD Default Settings - HDRP may not work correctly - Open the Graphics Window for additional help.");
             UpdateGraphicsSettings(assetCreated);
         }
-        void Init()
+        void Init() //TODOJENNY - hack BRGRGRGR
         {
             if(beforeTransparentCustomPostProcesses == null)
             {
@@ -84,6 +65,68 @@ namespace UnityEngine.Rendering.HighDefinition{
                 beforeTAACustomPostProcesses = new List<string>();
             }
         }
+
+        internal static HDDefaultSettings MigrateFromHDRPAsset(HDRenderPipelineAsset oldAsset, bool bClearObsoleteFields = true)
+        {
+            string path = "Assets/HDRPDefaultResources/HDGraphicsSettings.asset";
+            return MigrateFromHDRPAsset(oldAsset,path,bClearObsoleteFields);
+        }
+
+        internal static HDDefaultSettings MigrateFromHDRPAsset(HDRenderPipelineAsset oldAsset, string path, bool bClearObsoleteFields = true)
+        {
+            HDDefaultSettings assetCreated = null;
+
+            // 1. Load or Create the HDAsset and save it on disk
+            assetCreated = AssetDatabase.LoadAssetAtPath<HDDefaultSettings>(path);
+            if(assetCreated == null)
+            {
+                if(!AssetDatabase.IsValidFolder("Assets/HDRPDefaultResources/"))
+                    AssetDatabase.CreateFolder("Assets","HDRPDefaultResources");
+                assetCreated = ScriptableObject.CreateInstance<HDDefaultSettings>();
+                AssetDatabase.CreateAsset(assetCreated,path);
+                assetCreated.Init();
+                AssetDatabase.SaveAssets();
+                AssetDatabase.Refresh();
+            }
+
+#pragma warning disable 618 // Type or member is obsolete
+            //2. Migrate obsolete assets (version DefaultSettingsAsAnAsset)
+            assetCreated.volumeProfile        = oldAsset.m_ObsoleteDefaultVolumeProfile;
+            assetCreated.volumeProfileLookDev = oldAsset.m_ObsoleteDefaultLookDevProfile;
+
+            assetCreated.m_RenderingPathDefaultCameraFrameSettings                  = oldAsset.m_FrameSettingsMovedToDefaultSettings;
+            assetCreated.m_RenderingPathDefaultBakedOrCustomReflectionFrameSettings = oldAsset.m_BakedOrCustomReflectionFrameSettingsMovedToDefaultSettings;
+            assetCreated.m_RenderingPathDefaultRealtimeReflectionFrameSettings      = oldAsset.m_RealtimeReflectionFrameSettingsMovedToDefaultSettings;
+
+            assetCreated.m_RenderPipelineResources           = oldAsset.m_ObsoleteRenderPipelineResources;
+            assetCreated.m_RenderPipelineEditorResources     = oldAsset.m_ObsoleteRenderPipelineEditorResources;
+            assetCreated.m_RenderPipelineRayTracingResources = oldAsset.m_ObsoleteRenderPipelineRayTracingResources;
+
+            assetCreated.beforeTransparentCustomPostProcesses.AddRange(oldAsset.m_ObsoleteBeforeTransparentCustomPostProcesses);
+            assetCreated.beforePostProcessCustomPostProcesses.AddRange(oldAsset.m_ObsoleteBeforePostProcessCustomPostProcesses);
+            assetCreated.afterPostProcessCustomPostProcesses.AddRange(oldAsset.m_ObsoleteAfterPostProcessCustomPostProcesses);
+            assetCreated.beforeTAACustomPostProcesses.AddRange(oldAsset.m_ObsoleteBeforeTAACustomPostProcesses);
+
+            //3. Clear obsolete fields
+            if(bClearObsoleteFields)
+            {
+                oldAsset.m_ObsoleteDefaultVolumeProfile = null;
+                oldAsset.m_ObsoleteDefaultLookDevProfile = null;
+
+                oldAsset.m_ObsoleteRenderPipelineResources = null;
+                oldAsset.m_ObsoleteRenderPipelineEditorResources = null;
+                oldAsset.m_ObsoleteRenderPipelineRayTracingResources = null;
+
+                oldAsset.m_ObsoleteBeforeTransparentCustomPostProcesses = null;
+                oldAsset.m_ObsoleteBeforePostProcessCustomPostProcesses = null;
+                oldAsset.m_ObsoleteAfterPostProcessCustomPostProcesses = null;
+                oldAsset.m_ObsoleteBeforeTAACustomPostProcesses = null;
+            }
+#pragma warning restore 618
+
+            return assetCreated;
+        }
+
         #endif
 
         #region Volume        private Volume s_DefaultVolume = null;        internal Volume GetOrCreateDefaultVolume()        {            //TODOJENNY: investigate why I happen to have a null defaultProfile in some cases (UpdateCurrentStaticLightingSky)            if (s_DefaultVolume == null || s_DefaultVolume.Equals(null))            {                var go = new GameObject("Default Volume") { hideFlags = HideFlags.HideAndDontSave }; //TODOJENNY: does this leak?                s_DefaultVolume = go.AddComponent<Volume>();                s_DefaultVolume.isGlobal = true;                s_DefaultVolume.priority = float.MinValue;                s_DefaultVolume.sharedProfile = GetOrCreateDefaultVolumeProfile();
