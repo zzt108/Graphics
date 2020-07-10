@@ -10,7 +10,8 @@ Material:
   m_Name: DecalExposureNodeGraph
   m_Shader: {fileID: -6465566751694194690, guid: 2aa8860c6c0636e4688a405de11f9c25,
     type: 3}
-  m_ShaderKeywords: 
+  m_ShaderKeywords: _MATERIAL_AFFECTS_ALBEDO _MATERIAL_AFFECTS_EMISSION _MATERIAL_AFFECTS_MASKMAP
+    _MATERIAL_AFFECTS_NORMAL
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
@@ -40,11 +41,23 @@ Material:
         m_Texture: {fileID: 2800000, guid: fcecce6d2c9be8d418a27f0658a2210d, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _SampleTexture2D_b263844e392b4f01aee46e30f4a604d3_Texture_1:
+        m_Texture: {fileID: 2800000, guid: fcecce6d2c9be8d418a27f0658a2210d, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _SampleTexture2D_d253ca27df4f4ed09780b96604e978ba_Texture_1:
         m_Texture: {fileID: 2800000, guid: fcecce6d2c9be8d418a27f0658a2210d, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
+    - _AffectsAO: 1
+    - _AffectsAlbedo: 1
+    - _AffectsEmission: 1
+    - _AffectsMetal: 1
+    - _AffectsNormal: 1
+    - _AffectsSmoothness: 1
+    - _DecalColorMask2: 15
+    - _DecalColorMask3: 12
     - _DecalMeshDepthBias: 0
     - _DrawOrder: 0
     m_Colors: []
@@ -61,4 +74,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da692e001514ec24dbc4cca1949ff7e8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  version: 7
+  version: 8
