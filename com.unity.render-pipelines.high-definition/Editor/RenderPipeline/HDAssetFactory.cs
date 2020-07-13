@@ -97,23 +97,22 @@ namespace UnityEditor.Rendering.HighDefinition
             ProjectWindowUtil.StartNameEditingIfProjectWindowExists(0, ScriptableObject.CreateInstance<DoCreateNewAssetHDRenderPipelineEditorResources>(), "New HDRenderPipelineEditorResources.asset", icon, null);
         }
 
-        class HDDefaultSettingsCreator:UnityEditor.ProjectWindowCallback.EndNameEditAction
+        internal class HDDefaultSettingsCreator:UnityEditor.ProjectWindowCallback.EndNameEditAction
         {
             public override void Action(int instanceId,string pathName,string resourceFile)
             {
-                var newAsset = CreateInstance<HDDefaultSettings>();
-                newAsset.name = Path.GetFileName(pathName);
-
-                // why is this needed?
-                // Load default renderPipelineResources / Material / Shader
-                newAsset.EnsureResources(forceReload: false);
-                newAsset.GetOrCreateDefaultVolumeProfile();
-
-                AssetDatabase.CreateAsset(newAsset,pathName);
-                AssetDatabase.SaveAssets();
-                AssetDatabase.Refresh();
+                var newAsset = HDDefaultSettings.Create(pathName, settings);
                 ProjectWindowUtil.ShowCreatedAsset(newAsset);
-                HDDefaultSettings.UpdateGraphicsSettings(newAsset);
+            }
+
+            static HDDefaultSettings settings;
+            public static void Clone(HDDefaultSettings src)
+            {
+                settings = src;
+                var icon = EditorGUIUtility.FindTexture("ScriptableObject Icon");
+                var assetCreator = ScriptableObject.CreateInstance<HDDefaultSettingsCreator>();
+                ProjectWindowUtil.StartNameEditingIfProjectWindowExists(assetCreator.GetInstanceID(),assetCreator,$"Assets/{HDProjectSettings.projectSettingsFolderPath}/New HDDefaultSettings.asset",icon,null);
+
             }
         }
 

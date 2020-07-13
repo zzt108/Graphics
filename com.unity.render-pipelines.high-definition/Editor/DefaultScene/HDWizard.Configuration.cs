@@ -377,20 +377,6 @@ namespace UnityEditor.Rendering.HighDefinition
                 FixHdrpAssetUsed(fromAsync: false);
 
             HDDefaultSettings.instance.EnsureResources(forceReload: true);
-/* TODOJENNY
-
-            var editorResourcesPath = HDUtils.GetHDRenderPipelinePath() + "Editor/RenderPipelineResources/HDRenderPipelineEditorResources.asset";
-            var objs = InternalEditorUtility.LoadSerializedFileAndForget(editorResourcesPath);
-            hdrpAsset.renderPipelineEditorResources = objs != null && objs.Length > 0 ? objs.First() as HDRenderPipelineEditorResources : null;
-            if (ResourceReloader.ReloadAllNullIn(HDRenderPipeline.defaultAsset.renderPipelineEditorResources,
-                HDUtils.GetHDRenderPipelinePath()))
-            {
-                InternalEditorUtility.SaveToSerializedFileAndForget(
-                    new UnityEngine.Object[] { HDRenderPipeline.defaultAsset.renderPipelineEditorResources },
-                    editorResourcesPath,
-                    true);
-            }
-*/
         }
 
         bool IsHdrpAssetEditorResourcesCorrect()

@@ -311,14 +311,17 @@ namespace UnityEngine.Rendering.HighDefinition
         /// </summary>
         /// <param name="asset">Source HDRenderPipelineAsset.</param>
         /// <param name="defaultAsset">Defauklt HDRenderPipelineAsset. [Obsolete]</param>
-        public HDRenderPipeline(HDRenderPipelineAsset asset,HDRenderPipelineAsset obsolete_defaultAsset) :  this(asset)
+        public HDRenderPipeline(HDRenderPipelineAsset asset, HDRenderPipelineAsset obsolete_defaultAsset) : this(asset)
         {
         }
 
         public HDRenderPipeline(HDRenderPipelineAsset asset)
         {
+#if UNITY_EDITOR
+            m_defaultSettings = HDDefaultSettings.Ensure();
+#else
             m_defaultSettings = HDDefaultSettings.instance;
-            Debug.AssertFormat(m_defaultSettings != null,"HD Default Settings are not loaded");
+#endif
             m_Asset = asset;
             HDProbeSystem.Parameters = asset.reflectionSystemParameters;
 

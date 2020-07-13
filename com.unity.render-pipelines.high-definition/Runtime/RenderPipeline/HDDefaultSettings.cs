@@ -1,4 +1,5 @@
 using UnityEngine.Rendering;using UnityEditor;using UnityEditor.Rendering;using UnityEditor.Rendering.HighDefinition;using System.Collections.Generic; //needed for list of Custom Post Processes injections
+using System.IO;
 #if UNITY_EDITOR
 using UnityEditorInternal;
 #endif
@@ -23,10 +24,10 @@ namespace UnityEngine.Rendering.HighDefinition{
 
 #if UNITY_EDITOR
         //Making sure there is at least one HDDefaultSettings instance in the project
-        static public void Ensure()
+        static public HDDefaultSettings Ensure()
         {
             if(HDDefaultSettings.instance)
-                return;
+                return HDDefaultSettings.instance;
 
             HDDefaultSettings assetCreated = null;
             string path = "Assets/HDRPDefaultResources/HDGraphicsSettings.asset";
@@ -54,6 +55,7 @@ namespace UnityEngine.Rendering.HighDefinition{
             }
             Debug.Assert(assetCreated,"Could not create HD Default Settings - HDRP may not work correctly - Open the Graphics Window for additional help.");
             UpdateGraphicsSettings(assetCreated);
+            return HDDefaultSettings.instance;
         }
         void Init() //TODOJENNY - hack BRGRGRGR
         {
@@ -72,7 +74,7 @@ namespace UnityEngine.Rendering.HighDefinition{
             return MigrateFromHDRPAsset(oldAsset,path,bClearObsoleteFields);
         }
 
-        internal static HDDefaultSettings MigrateFromHDRPAsset(HDRenderPipelineAsset oldAsset, string path, bool bClearObsoleteFields = true)
+        internal static HDDefaultSettings MigrateFromHDRPAsset(HDRenderPipelineAsset oldAsset,string path,bool bClearObsoleteFields = true)
         {
             HDDefaultSettings assetCreated = null;
 
@@ -127,7 +129,59 @@ namespace UnityEngine.Rendering.HighDefinition{
             return assetCreated;
         }
 
-        #endif
+
+        internal static HDDefaultSettings Create(string path, HDDefaultSettings src = null)
+        {
+            HDDefaultSettings assetCreated = null;
+
+            // make sure the asset does not already exists
+            assetCreated = AssetDatabase.LoadAssetAtPath<HDDefaultSettings>(path);
+            if(assetCreated == null)
+            {
+                assetCreated = ScriptableObject.CreateInstance<HDDefaultSettings>();
+                AssetDatabase.CreateAsset(assetCreated,path);
+                assetCreated.Init();
+                if(assetCreated != null)
+                {
+                    assetCreated.name = Path.GetFileName(path);
+                }
+            }
+
+            if(assetCreated)
+            {
+                if(src != null)
+                {
+                    assetCreated.renderPipelineResources = src.renderPipelineResources;
+                    assetCreated.renderPipelineEditorResources = src.renderPipelineEditorResources;
+                    assetCreated.renderPipelineRayTracingResources = src.renderPipelineRayTracingResources;
+
+                    assetCreated.volumeProfile = src.volumeProfile;
+                    assetCreated.volumeProfileLookDev = src.volumeProfileLookDev;
+
+                    assetCreated.m_RenderingPathDefaultCameraFrameSettings = src.m_RenderingPathDefaultCameraFrameSettings;
+                    assetCreated.m_RenderingPathDefaultBakedOrCustomReflectionFrameSettings = src.m_RenderingPathDefaultBakedOrCustomReflectionFrameSettings;
+                    assetCreated.m_RenderingPathDefaultRealtimeReflectionFrameSettings = src.m_RenderingPathDefaultRealtimeReflectionFrameSettings;
+
+                    assetCreated.beforeTransparentCustomPostProcesses.AddRange(assetCreated.beforeTransparentCustomPostProcesses);
+                    assetCreated.beforePostProcessCustomPostProcesses.AddRange(assetCreated.beforePostProcessCustomPostProcesses);
+                    assetCreated.afterPostProcessCustomPostProcesses.AddRange(assetCreated.afterPostProcessCustomPostProcesses);
+                    assetCreated.beforeTAACustomPostProcesses.AddRange(assetCreated.beforeTAACustomPostProcesses);
+                }
+                else
+                {
+                    assetCreated.EnsureResources(forceReload: false);
+                    assetCreated.EnsureEditorResources(forceReload: false);
+                    assetCreated.GetOrCreateDefaultVolumeProfile();
+                    assetCreated.GetOrAssignLookDevVolumeProfile();
+                }
+                AssetDatabase.SaveAssets();
+                AssetDatabase.Refresh();
+            }
+
+            return assetCreated;
+        }
+
+#endif
 
         #region Volume        private Volume s_DefaultVolume = null;        internal Volume GetOrCreateDefaultVolume()        {            //TODOJENNY: investigate why I happen to have a null defaultProfile in some cases (UpdateCurrentStaticLightingSky)            if (s_DefaultVolume == null || s_DefaultVolume.Equals(null))            {                var go = new GameObject("Default Volume") { hideFlags = HideFlags.HideAndDontSave }; //TODOJENNY: does this leak?                s_DefaultVolume = go.AddComponent<Volume>();                s_DefaultVolume.isGlobal = true;                s_DefaultVolume.priority = float.MinValue;                s_DefaultVolume.sharedProfile = GetOrCreateDefaultVolumeProfile();
 #if UNITY_EDITOR            UnityEditor.AssemblyReloadEvents.beforeAssemblyReload += () =>                             {                                 DestroyDefaultVolume();                             };

@@ -114,22 +114,28 @@ namespace UnityEditor.Rendering.HighDefinition
             var oldWidth = EditorGUIUtility.labelWidth;
             EditorGUIUtility.labelWidth = Styles.labelWidth;
 
-            EditorGUILayout.BeginHorizontal();
-
-            EditorGUI.BeginChangeCheck();
-            var newAsset = (HDDefaultSettings)EditorGUILayout.ObjectField(Styles.defaultSettingsAssetLabel,serialized.serializedObject.targetObject,typeof(HDDefaultSettings),false);
-            if(EditorGUI.EndChangeCheck())
+            using(new EditorGUILayout.HorizontalScope())
             {
-                HDDefaultSettings.UpdateGraphicsSettings(newAsset);
-                EditorUtility.SetDirty(serialized.serializedObject.targetObject);
-            }
+                EditorGUI.BeginChangeCheck();
+                var newAsset = (HDDefaultSettings)EditorGUILayout.ObjectField(Styles.defaultSettingsAssetLabel,serialized.serializedObject.targetObject,typeof(HDDefaultSettings),false);
+                if(EditorGUI.EndChangeCheck())
+                {
+                    HDDefaultSettings.UpdateGraphicsSettings(newAsset);
+                    EditorUtility.SetDirty(serialized.serializedObject.targetObject);
+                }
 
-            if(GUILayout.Button(EditorGUIUtility.TrTextContent("New","Create a HD Default Settings Asset in your default resource folder (defined in Wizard)"),GUILayout.Width(38),GUILayout.Height(18)))
-            {
-                HDAssetFactory.CreateHDDefaultSettings();
-            }
-            EditorGUILayout.EndHorizontal();
+                if(GUILayout.Button(EditorGUIUtility.TrTextContent("New","Create a HD Default Settings Asset in your default resource folder (defined in Wizard)"),GUILayout.Width(38),GUILayout.Height(18)))
+                {
+                    HDAssetFactory.CreateHDDefaultSettings();
+                    HDDefaultSettings.UpdateGraphicsSettings(newAsset);
+                }
 
+                if(GUILayout.Button(EditorGUIUtility.TrTextContent("Clone","Clone a HD Default Settings Asset in your default resource folder (defined in Wizard)"),GUILayout.Width(38),GUILayout.Height(18)))
+                {
+                    HDAssetFactory.HDDefaultSettingsCreator.Clone(serialized.serializedObject.targetObject as HDDefaultSettings);
+                    HDDefaultSettings.UpdateGraphicsSettings(newAsset);
+                }
+            }
             // TODOJENNY:  move shader log level to default settings?
             /*if(HDRenderPipeline.currentAsset != null)
             {
@@ -212,7 +218,6 @@ namespace UnityEditor.Rendering.HighDefinition
 
         static void Drawer_TitleDefaultFrameSettings(SerializedHDDefaultSettings serialized,Editor owner)
         {
-
             using(new EditorGUILayout.HorizontalScope())
             {
                 EditorGUILayout.LabelField(Styles.defaultFrameSettingsContent,EditorStyles.boldLabel);
