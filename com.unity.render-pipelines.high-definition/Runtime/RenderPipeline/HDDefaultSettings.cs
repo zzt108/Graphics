@@ -193,12 +193,11 @@ namespace UnityEngine.Rendering.HighDefinition{
 
        internal VolumeProfile volumeProfileLookDev {            get => m_VolumeProfileLookDev;            set => m_VolumeProfileLookDev = value;        }        internal VolumeProfile GetOrAssignLookDevVolumeProfile() 
        {
-           if(HDDefaultSettings.instance.volumeProfileLookDev == null || HDDefaultSettings.instance.volumeProfileLookDev.Equals(null)) 
+           if(volumeProfileLookDev == null || volumeProfileLookDev.Equals(null)) 
            { 
-               HDDefaultSettings.instance.volumeProfileLookDev =
-                  HDDefaultSettings.instance.renderPipelineEditorResources.lookDev.defaultLookDevVolumeProfile;
+               volumeProfileLookDev = renderPipelineEditorResources.lookDev.defaultLookDevVolumeProfile;
            }
-           return HDDefaultSettings.instance.volumeProfileLookDev;        }
+           return volumeProfileLookDev;        }
 #endif
        #endregion
               #region Camera's FrameSettings        // To be able to turn on/off FrameSettings properties at runtime for debugging purpose without affecting the original one

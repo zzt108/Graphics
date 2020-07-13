@@ -124,16 +124,14 @@ namespace UnityEditor.Rendering.HighDefinition
                     EditorUtility.SetDirty(serialized.serializedObject.targetObject);
                 }
 
-                if(GUILayout.Button(EditorGUIUtility.TrTextContent("New","Create a HD Default Settings Asset in your default resource folder (defined in Wizard)"),GUILayout.Width(38),GUILayout.Height(18)))
+                if(GUILayout.Button(EditorGUIUtility.TrTextContent("New","Create a HD Default Settings Asset in your default resource folder (defined in Wizard)"),GUILayout.Width(45),GUILayout.Height(18)))
                 {
                     HDAssetFactory.CreateHDDefaultSettings();
-                    HDDefaultSettings.UpdateGraphicsSettings(newAsset);
                 }
 
-                if(GUILayout.Button(EditorGUIUtility.TrTextContent("Clone","Clone a HD Default Settings Asset in your default resource folder (defined in Wizard)"),GUILayout.Width(38),GUILayout.Height(18)))
+                if(GUILayout.Button(EditorGUIUtility.TrTextContent("Clone","Clone a HD Default Settings Asset in your default resource folder (defined in Wizard)"),GUILayout.Width(45),GUILayout.Height(18)))
                 {
                     HDAssetFactory.HDDefaultSettingsCreator.Clone(serialized.serializedObject.targetObject as HDDefaultSettings);
-                    HDDefaultSettings.UpdateGraphicsSettings(newAsset);
                 }
             }
             // TODOJENNY:  move shader log level to default settings?

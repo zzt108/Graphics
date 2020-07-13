@@ -102,6 +102,7 @@ namespace UnityEditor.Rendering.HighDefinition
             public override void Action(int instanceId,string pathName,string resourceFile)
             {
                 var newAsset = HDDefaultSettings.Create(pathName, settings);
+                HDDefaultSettings.UpdateGraphicsSettings(newAsset);
                 ProjectWindowUtil.ShowCreatedAsset(newAsset);
             }
 
