@@ -85,31 +85,28 @@ namespace UnityEditor.Rendering.HighDefinition
         HDDefaultSettings settingsSerialized;
         public void OnGUI(string searchContext)
         {
-            using(var scrollScope = new EditorGUILayout.ScrollViewScope(m_ScrollViewPosition))
+            if(HDRenderPipeline.currentPipeline == null)
             {
-                if(HDRenderPipeline.currentPipeline == null)
-                {
-                    EditorGUILayout.HelpBox("No HDRP pipeline currently active (see Quality Settings active level).",MessageType.Warning);
-                }
-                if((serializedSettings == null) || (settingsSerialized != HDDefaultSettings.instance))
-                {
-                    settingsSerialized = HDDefaultSettings.instance;
-                    var serializedObject = new SerializedObject(settingsSerialized);
-                    serializedSettings = new SerializedHDDefaultSettings(serializedObject);
-                }
-                else
-                {
-                    serializedSettings.serializedObject.Update();
-                }
-                Draw_AssetSelection(ref serializedSettings,null);
-
-                if(settingsSerialized != null && serializedSettings != null)
-                {
-                    EditorGUILayout.Space();
-                    Inspector.Draw(serializedSettings, null);
-                }
-                serializedSettings.serializedObject.ApplyModifiedProperties();
+                EditorGUILayout.HelpBox("No HDRP pipeline currently active (see Quality Settings active level).",MessageType.Warning);
             }
+            if((serializedSettings == null) || (settingsSerialized != HDDefaultSettings.instance))
+            {
+                settingsSerialized = HDDefaultSettings.instance;
+                var serializedObject = new SerializedObject(settingsSerialized);
+                serializedSettings = new SerializedHDDefaultSettings(serializedObject);
+            }
+            else
+            {
+                serializedSettings.serializedObject.Update();
+            }
+            Draw_AssetSelection(ref serializedSettings,null);
+
+            if(settingsSerialized != null && serializedSettings != null)
+            {
+                EditorGUILayout.Space();
+                Inspector.Draw(serializedSettings,null);
+            }
+            serializedSettings.serializedObject.ApplyModifiedProperties();
         }
 
         /// <summary>
