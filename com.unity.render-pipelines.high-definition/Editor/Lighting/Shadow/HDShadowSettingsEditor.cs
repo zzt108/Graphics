@@ -108,8 +108,13 @@ namespace UnityEditor.Rendering.HighDefinition
                 EditorGUI.indentLevel--;
             }
 
-            HDRenderPipeline hdrp = UnityEngine.Rendering.RenderPipelineManager.currentPipeline as HDRenderPipeline;
+            HDRenderPipeline hdrp = HDRenderPipeline.currentPipeline;
             if (hdrp == null)
+                return;
+
+            // the VisualizeCascades option is a Debug utility
+            // Requiring Debug Settings - assigned on the first Render(), can be null before
+            if(hdrp.m_CurrentDebugDisplaySettings == null)
                 return;
 
             Rect visualizeCascade = firstLine;

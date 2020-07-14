@@ -156,6 +156,16 @@ namespace UnityEditor.Rendering.HighDefinition
                 FixHdrpAssetEditorResources(true);
         }
 
+
+        void CreateHDDefaultSettingsAsset()
+        {
+            if(!AssetDatabase.IsValidFolder("Assets/" + HDProjectSettings.projectSettingsFolderPath))
+                AssetDatabase.CreateFolder("Assets",HDProjectSettings.projectSettingsFolderPath);
+
+            var path = HDProjectSettings.projectSettingsFolderPath + "/HDDefaultSettings.asset";
+            var newSettings = HDDefaultSettings.Create(path);
+        }
+
         #endregion
 
         #region UIELEMENT

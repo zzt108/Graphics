@@ -13,7 +13,7 @@ namespace UnityEditor.Rendering.HighDefinition
 
             if (ShaderConfig.s_ProbeVolumesEvaluationMode != ProbeVolumesEvaluationModes.Disabled)
             {
-                if (!(GraphicsSettings.renderPipelineAsset as HDRenderPipelineAsset)
+                if (!(HDRenderPipeline.currentAsset)
                         ?.currentPlatformRenderPipelineSettings.supportProbeVolume ?? false)
                 {
                     EditorGUILayout.Space();

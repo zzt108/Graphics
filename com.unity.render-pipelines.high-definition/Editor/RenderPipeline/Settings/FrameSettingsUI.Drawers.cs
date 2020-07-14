@@ -44,6 +44,11 @@ namespace UnityEditor.Rendering.HighDefinition
         }
     }
 
+    interface IDefaultFrameSettingsType
+    {
+        FrameSettingsRenderType GetFrameSettingsType();
+    }
+
     partial class FrameSettingsUI
     {
         enum Expandable
@@ -112,18 +117,27 @@ namespace UnityEditor.Rendering.HighDefinition
                     }
                 }));
 
+        static HDRenderPipelineAsset GetHDRPAssetFor(Editor owner)
+        {
+            HDRenderPipelineAsset hdrpAsset;
+            if (owner is HDRenderPipelineEditor)
+            {
+                // When drawing the inspector of a selected HDRPAsset in Project windows, access HDRP by owner drawing itself
+                hdrpAsset = (owner as HDRenderPipelineEditor).target as HDRenderPipelineAsset;
+            }
+            else
+            {
+                // Else rely on GraphicsSettings are you should be in hdrp and owner could be probe or camera.
+                hdrpAsset = HDRenderPipeline.currentAsset;
+            }
+            return hdrpAsset;
+        }
 
         static FrameSettings GetDefaultFrameSettingsFor(Editor owner)
         {
-            //HDRenderPipelineAsset hdrpAsset = GetHDRPAssetFor(owner);
-            if (owner is IHDProbeEditor)
-            {
-                if ((owner as IHDProbeEditor).GetTarget(owner.target).mode == ProbeSettings.Mode.Realtime)
-                    return HDDefaultSettings.instance.GetDefaultFrameSettings(FrameSettingsRenderType.RealtimeReflection);
-                else
-                    return HDDefaultSettings.instance.GetDefaultFrameSettings(FrameSettingsRenderType.CustomOrBakedReflection);
-            }
-            return HDDefaultSettings.instance.GetDefaultFrameSettings(FrameSettingsRenderType.Camera);
+            return owner is IDefaultFrameSettingsType getType
+                ? HDDefaultSettings.instance.GetDefaultFrameSettings(getType.GetFrameSettingsType())
+                : HDDefaultSettings.instance.GetDefaultFrameSettings(FrameSettingsRenderType.Camera);
         }
 
         static void Drawer_SectionRenderingSettings(SerializedFrameSettings serialized, Editor owner, bool withOverride)
@@ -131,84 +145,77 @@ namespace UnityEditor.Rendering.HighDefinition
             bool isGUIenabled = GUI.enabled;
             FrameSettings defaultFrameSettings = GetDefaultFrameSettingsFor(owner);
             var area = OverridableFrameSettingsArea.GetGroupContent(0, defaultFrameSettings, serialized);
-            if(HDRenderPipeline.currentAsset)
+
+            RenderPipelineSettings hdrpSettings = GetHDRPAssetFor(owner).currentPlatformRenderPipelineSettings;
+            LitShaderMode defaultShaderLitMode;
+            switch (hdrpSettings.supportedLitShaderMode)
             {
-                RenderPipelineSettings hdrpSettings = HDRenderPipeline.currentAsset.currentPlatformRenderPipelineSettings;
-                LitShaderMode defaultShaderLitMode;
-                switch(hdrpSettings.supportedLitShaderMode)
+                case RenderPipelineSettings.SupportedLitShaderMode.ForwardOnly:
+                    defaultShaderLitMode = LitShaderMode.Forward;
+                    break;
+                case RenderPipelineSettings.SupportedLitShaderMode.DeferredOnly:
+                    defaultShaderLitMode = LitShaderMode.Deferred;
+                    break;
+                case RenderPipelineSettings.SupportedLitShaderMode.Both:
+                    defaultShaderLitMode = defaultFrameSettings.litShaderMode;
+                    break;
+                default:
+                    throw new System.ArgumentOutOfRangeException("Unknown ShaderLitMode");
+            }
+
+            area.AmmendInfo(FrameSettingsField.LitShaderMode,
+                overrideable: () => hdrpSettings.supportedLitShaderMode == RenderPipelineSettings.SupportedLitShaderMode.Both,
+                overridedDefaultValue: defaultShaderLitMode);
+
+            bool hdrpAssetSupportForward = hdrpSettings.supportedLitShaderMode != RenderPipelineSettings.SupportedLitShaderMode.DeferredOnly;
+            bool hdrpAssetSupportDeferred = hdrpSettings.supportedLitShaderMode != RenderPipelineSettings.SupportedLitShaderMode.ForwardOnly;
+            bool frameSettingsOverrideToForward = serialized.GetOverrides(FrameSettingsField.LitShaderMode) && serialized.litShaderMode == LitShaderMode.Forward;
+            bool frameSettingsOverrideToDeferred = serialized.GetOverrides(FrameSettingsField.LitShaderMode) && serialized.litShaderMode == LitShaderMode.Deferred;
+            bool defaultForwardUsed = !serialized.GetOverrides(FrameSettingsField.LitShaderMode) && defaultShaderLitMode == LitShaderMode.Forward;
+            bool defaultDefferedUsed = !serialized.GetOverrides(FrameSettingsField.LitShaderMode) && defaultShaderLitMode == LitShaderMode.Deferred;
+            bool msaaEnablable = hdrpAssetSupportForward && hdrpSettings.supportMSAA && (frameSettingsOverrideToForward || defaultForwardUsed);
+            bool depthPrepassEnablable = hdrpAssetSupportDeferred && (defaultDefferedUsed || frameSettingsOverrideToDeferred);
+            area.AmmendInfo(FrameSettingsField.MSAA,
+                overrideable: () => msaaEnablable,
+                overridedDefaultValue: msaaEnablable && defaultFrameSettings.IsEnabled(FrameSettingsField.MSAA),
+                customOverrideable: () =>
                 {
-                    case RenderPipelineSettings.SupportedLitShaderMode.ForwardOnly:
-                        defaultShaderLitMode = LitShaderMode.Forward;
-                        break;
-                    case RenderPipelineSettings.SupportedLitShaderMode.DeferredOnly:
-                        defaultShaderLitMode = LitShaderMode.Deferred;
-                        break;
-                    case RenderPipelineSettings.SupportedLitShaderMode.Both:
-                        defaultShaderLitMode = defaultFrameSettings.litShaderMode;
-                        break;
-                    default:
-                        throw new System.ArgumentOutOfRangeException("Unknown ShaderLitMode");
-                }
-
-                area.AmmendInfo(FrameSettingsField.LitShaderMode,
-                    overrideable: () => hdrpSettings.supportedLitShaderMode == RenderPipelineSettings.SupportedLitShaderMode.Both,
-                    overridedDefaultValue: defaultShaderLitMode);
-
-                bool hdrpAssetSupportForward = hdrpSettings.supportedLitShaderMode != RenderPipelineSettings.SupportedLitShaderMode.DeferredOnly;
-                bool hdrpAssetSupportDeferred = hdrpSettings.supportedLitShaderMode != RenderPipelineSettings.SupportedLitShaderMode.ForwardOnly;
-                bool frameSettingsOverrideToForward = serialized.GetOverrides(FrameSettingsField.LitShaderMode) && serialized.litShaderMode == LitShaderMode.Forward;
-                bool frameSettingsOverrideToDeferred = serialized.GetOverrides(FrameSettingsField.LitShaderMode) && serialized.litShaderMode == LitShaderMode.Deferred;
-                bool defaultForwardUsed = !serialized.GetOverrides(FrameSettingsField.LitShaderMode) && defaultShaderLitMode == LitShaderMode.Forward;
-                bool defaultDefferedUsed = !serialized.GetOverrides(FrameSettingsField.LitShaderMode) && defaultShaderLitMode == LitShaderMode.Deferred;
-                bool msaaEnablable = hdrpAssetSupportForward && hdrpSettings.supportMSAA && (frameSettingsOverrideToForward || defaultForwardUsed);
-                bool depthPrepassEnablable = hdrpAssetSupportDeferred && (defaultDefferedUsed || frameSettingsOverrideToDeferred);
-                area.AmmendInfo(FrameSettingsField.MSAA,
-                    overrideable: () => msaaEnablable,
-                    overridedDefaultValue: msaaEnablable && defaultFrameSettings.IsEnabled(FrameSettingsField.MSAA),
-                    customOverrideable: () =>
+                    switch (hdrpSettings.supportedLitShaderMode)
                     {
-                        switch(hdrpSettings.supportedLitShaderMode)
-                        {
-                            case RenderPipelineSettings.SupportedLitShaderMode.ForwardOnly:
-                                return false; //negative dependency
-                            case RenderPipelineSettings.SupportedLitShaderMode.DeferredOnly:
-                                return true; //negative dependency
-                            case RenderPipelineSettings.SupportedLitShaderMode.Both:
-                                return !(frameSettingsOverrideToForward || defaultForwardUsed); //negative dependency
-                            default:
-                                throw new System.ArgumentOutOfRangeException("Unknown ShaderLitMode");
-                        }
-                    });
-                area.AmmendInfo(FrameSettingsField.DepthPrepassWithDeferredRendering,
-                    overrideable: () => depthPrepassEnablable,
-                    overridedDefaultValue: depthPrepassEnablable && defaultFrameSettings.IsEnabled(FrameSettingsField.DepthPrepassWithDeferredRendering),
-                    customOverrideable: () =>
+                        case RenderPipelineSettings.SupportedLitShaderMode.ForwardOnly:
+                            return false; //negative dependency
+                        case RenderPipelineSettings.SupportedLitShaderMode.DeferredOnly:
+                            return true; //negative dependency
+                        case RenderPipelineSettings.SupportedLitShaderMode.Both:
+                            return !(frameSettingsOverrideToForward || defaultForwardUsed); //negative dependency
+                        default:
+                            throw new System.ArgumentOutOfRangeException("Unknown ShaderLitMode");
+                    }
+                });
+            area.AmmendInfo(FrameSettingsField.DepthPrepassWithDeferredRendering,
+                overrideable: () => depthPrepassEnablable,
+                overridedDefaultValue: depthPrepassEnablable && defaultFrameSettings.IsEnabled(FrameSettingsField.DepthPrepassWithDeferredRendering),
+                customOverrideable: () =>
+                {
+                    switch (hdrpSettings.supportedLitShaderMode)
                     {
-                        switch(hdrpSettings.supportedLitShaderMode)
-                        {
-                            case RenderPipelineSettings.SupportedLitShaderMode.ForwardOnly:
-                                return false;
-                            case RenderPipelineSettings.SupportedLitShaderMode.DeferredOnly:
-                                return true;
-                            case RenderPipelineSettings.SupportedLitShaderMode.Both:
-                                return frameSettingsOverrideToDeferred || defaultDefferedUsed;
-                            default:
-                                throw new System.ArgumentOutOfRangeException("Unknown ShaderLitMode");
-                        }
-                    });
+                        case RenderPipelineSettings.SupportedLitShaderMode.ForwardOnly:
+                            return false;
+                        case RenderPipelineSettings.SupportedLitShaderMode.DeferredOnly:
+                            return true;
+                        case RenderPipelineSettings.SupportedLitShaderMode.Both:
+                            return frameSettingsOverrideToDeferred || defaultDefferedUsed;
+                        default:
+                            throw new System.ArgumentOutOfRangeException("Unknown ShaderLitMode");
+                    }
+                });
 
-                area.AmmendInfo(FrameSettingsField.RayTracing,overrideable: () => hdrpSettings.supportRayTracing);
-                area.AmmendInfo(FrameSettingsField.MotionVectors,overrideable: () => hdrpSettings.supportMotionVectors);
-                area.AmmendInfo(FrameSettingsField.ObjectMotionVectors,overrideable: () => hdrpSettings.supportMotionVectors);
-                area.AmmendInfo(FrameSettingsField.TransparentsWriteMotionVector,overrideable: () => hdrpSettings.supportMotionVectors);
-                area.AmmendInfo(FrameSettingsField.Decals,overrideable: () => hdrpSettings.supportDecals);
-            area.AmmendInfo(FrameSettingsField.DecalLayers, overrideable: () => hdrpSettings.supportDecalLayers);
-                area.AmmendInfo(FrameSettingsField.Distortion,overrideable: () => hdrpSettings.supportDistortion);
-            }
-            else
-            {
-                GUI.enabled = false;
-            }
+            area.AmmendInfo(FrameSettingsField.RayTracing, overrideable: () => hdrpSettings.supportRayTracing);
+            area.AmmendInfo(FrameSettingsField.MotionVectors, overrideable: () => hdrpSettings.supportMotionVectors);
+            area.AmmendInfo(FrameSettingsField.ObjectMotionVectors, overrideable: () => hdrpSettings.supportMotionVectors);
+            area.AmmendInfo(FrameSettingsField.TransparentsWriteMotionVector, overrideable: () => hdrpSettings.supportMotionVectors);
+            area.AmmendInfo(FrameSettingsField.Decals, overrideable: () => hdrpSettings.supportDecals);
+            area.AmmendInfo(FrameSettingsField.Distortion, overrideable: () => hdrpSettings.supportDistortion);
 
             area.AmmendInfo(
                 FrameSettingsField.LODBiasMode,
@@ -269,72 +276,50 @@ namespace UnityEditor.Rendering.HighDefinition
         static void Drawer_SectionLightingSettings(SerializedFrameSettings serialized, Editor owner, bool withOverride)
         {
             bool isGUIenabled = GUI.enabled;
+            RenderPipelineSettings hdrpSettings = GetHDRPAssetFor(owner).currentPlatformRenderPipelineSettings;
             FrameSettings defaultFrameSettings = GetDefaultFrameSettingsFor(owner);
             var area = OverridableFrameSettingsArea.GetGroupContent(1, defaultFrameSettings, serialized);
+            area.AmmendInfo(FrameSettingsField.Shadowmask, overrideable: () => hdrpSettings.supportShadowMask);
+            area.AmmendInfo(FrameSettingsField.SSR, overrideable: () => hdrpSettings.supportSSR);
+            area.AmmendInfo(FrameSettingsField.TransparentSSR, overrideable: () => (hdrpSettings.supportSSR && hdrpSettings.supportSSRTransparent));
+            area.AmmendInfo(FrameSettingsField.SSAO, overrideable: () => hdrpSettings.supportSSAO);
 
-            if(HDRenderPipeline.currentAsset)
-            {
-                RenderPipelineSettings hdrpSettings = HDRenderPipeline.currentAsset.currentPlatformRenderPipelineSettings;
-                area.AmmendInfo(FrameSettingsField.Shadowmask,overrideable: () => hdrpSettings.supportShadowMask);
-                area.AmmendInfo(FrameSettingsField.SSR,overrideable: () => hdrpSettings.supportSSR);
-                area.AmmendInfo(FrameSettingsField.SSAO,overrideable: () => hdrpSettings.supportSSAO);
+            // SSS
+            area.AmmendInfo(
+                FrameSettingsField.SubsurfaceScattering,
+                overridedDefaultValue: hdrpSettings.supportSubsurfaceScattering,
+                overrideable: () => hdrpSettings.supportSubsurfaceScattering
+            );
+            area.AmmendInfo(
+                FrameSettingsField.SssQualityMode,
+                overridedDefaultValue: SssQualityMode.FromQualitySettings,
+                customGetter: () => serialized.sssQualityMode.GetEnumValue<SssQualityMode>(),
+                customSetter: v  => serialized.sssQualityMode.SetEnumValue((SssQualityMode)v),
+                customOverrideable: () => hdrpSettings.supportSubsurfaceScattering
+                                       && (serialized.IsEnabled(FrameSettingsField.SubsurfaceScattering) ?? false)
+            );
+            area.AmmendInfo(FrameSettingsField.SssQualityLevel,
+                overridedDefaultValue: ScalableLevel3ForFrameSettingsUIOnly.Low,
+                customGetter:       () => (ScalableLevel3ForFrameSettingsUIOnly)serialized.sssQualityLevel.intValue, // 3 levels
+                customSetter:       v  => serialized.sssQualityLevel.intValue = Math.Max(0, Math.Min((int)v, 2)),    // Levels 0-2
+                customOverrideable: () => hdrpSettings.supportSubsurfaceScattering
+                                       && (serialized.IsEnabled(FrameSettingsField.SubsurfaceScattering) ?? false)
+                                       && (serialized.sssQualityMode.GetEnumValue<SssQualityMode>() == SssQualityMode.FromQualitySettings)
+            );
+            area.AmmendInfo(FrameSettingsField.SssCustomSampleBudget,
+                overridedDefaultValue: (int)DefaultSssSampleBudgetForQualityLevel.Low,
+                customGetter:       () => serialized.sssCustomSampleBudget.intValue,
+                customSetter:       v  => serialized.sssCustomSampleBudget.intValue = Math.Max(1, Math.Min((int)v, (int)DefaultSssSampleBudgetForQualityLevel.Max)),
+                customOverrideable: () => hdrpSettings.supportSubsurfaceScattering
+                                       && (serialized.IsEnabled(FrameSettingsField.SubsurfaceScattering) ?? false)
+                                       && (serialized.sssQualityMode.GetEnumValue<SssQualityMode>() != SssQualityMode.FromQualitySettings)
+            );
 
-                // SSS
-                area.AmmendInfo(
-                    FrameSettingsField.SubsurfaceScattering,
-                    overridedDefaultValue: hdrpSettings.supportSubsurfaceScattering,
-                    overrideable: () => hdrpSettings.supportSubsurfaceScattering
-                );
-                area.AmmendInfo(
-                    FrameSettingsField.SssQualityMode,
-                    overridedDefaultValue: SssQualityMode.FromQualitySettings,
-                    customGetter: () => serialized.sssQualityMode.GetEnumValue<SssQualityMode>(),
-                    customSetter: v => serialized.sssQualityMode.SetEnumValue((SssQualityMode)v),
-                    customOverrideable: () => hdrpSettings.supportSubsurfaceScattering
-                                           && (serialized.IsEnabled(FrameSettingsField.SubsurfaceScattering) ?? false)
-                );
-                area.AmmendInfo(FrameSettingsField.SssQualityLevel,
-                    overridedDefaultValue: ScalableLevel3ForFrameSettingsUIOnly.Low,
-                    customGetter: () => (ScalableLevel3ForFrameSettingsUIOnly)serialized.sssQualityLevel.intValue, // 3 levels
-                    customSetter: v => serialized.sssQualityLevel.intValue = Math.Max(0,Math.Min((int)v,2)),    // Levels 0-2
-                    customOverrideable: () => hdrpSettings.supportSubsurfaceScattering
-                                           && (serialized.IsEnabled(FrameSettingsField.SubsurfaceScattering) ?? false)
-                                           && (serialized.sssQualityMode.GetEnumValue<SssQualityMode>() == SssQualityMode.FromQualitySettings)
-                );
-                area.AmmendInfo(FrameSettingsField.SssCustomSampleBudget,
-                    overridedDefaultValue: (int)DefaultSssSampleBudgetForQualityLevel.Low,
-                    customGetter: () => serialized.sssCustomSampleBudget.intValue,
-                    customSetter: v => serialized.sssCustomSampleBudget.intValue = Math.Max(1,Math.Min((int)v,(int)DefaultSssSampleBudgetForQualityLevel.Max)),
-                    customOverrideable: () => hdrpSettings.supportSubsurfaceScattering
-                                           && (serialized.IsEnabled(FrameSettingsField.SubsurfaceScattering) ?? false)
-                                           && (serialized.sssQualityMode.GetEnumValue<SssQualityMode>() != SssQualityMode.FromQualitySettings)
-                );
-
-                area.AmmendInfo(FrameSettingsField.Volumetrics,overrideable: () => hdrpSettings.supportVolumetrics);
-                area.AmmendInfo(FrameSettingsField.ReprojectionForVolumetrics,overrideable: () => hdrpSettings.supportVolumetrics);
-                area.AmmendInfo(FrameSettingsField.LightLayers,overrideable: () => hdrpSettings.supportLightLayers);
-                area.AmmendInfo(FrameSettingsField.ScreenSpaceShadows,overrideable: () => hdrpSettings.hdShadowInitParams.supportScreenSpaceShadows);
-            }
-            else
-            {
-                area.AmmendInfo(
-                    FrameSettingsField.SssQualityMode,
-                    overridedDefaultValue: SssQualityMode.FromQualitySettings,
-                    customGetter: () => serialized.sssQualityMode.GetEnumValue<SssQualityMode>(),
-                    customSetter: v => serialized.sssQualityMode.SetEnumValue((SssQualityMode)v)
-                );
-                area.AmmendInfo(FrameSettingsField.SssQualityLevel,
-                    overridedDefaultValue: ScalableLevel3ForFrameSettingsUIOnly.Low,
-                    customGetter: () => (ScalableLevel3ForFrameSettingsUIOnly)serialized.sssQualityLevel.intValue, // 3 levels
-                    customSetter: v => serialized.sssQualityLevel.intValue = Math.Max(0,Math.Min((int)v,2))    // Levels 0-2
-                );
-                area.AmmendInfo(FrameSettingsField.SssCustomSampleBudget,
-                    overridedDefaultValue: (int)DefaultSssSampleBudgetForQualityLevel.Low,
-                    customGetter: () => serialized.sssCustomSampleBudget.intValue,
-                    customSetter: v => serialized.sssCustomSampleBudget.intValue = Math.Max(1,Math.Min((int)v,(int)DefaultSssSampleBudgetForQualityLevel.Max))
-                );
-                GUI.enabled = false;
-            }
+            area.AmmendInfo(FrameSettingsField.Volumetrics, overrideable: () => hdrpSettings.supportVolumetrics);
+            area.AmmendInfo(FrameSettingsField.ReprojectionForVolumetrics, overrideable: () => hdrpSettings.supportVolumetrics);
+            area.AmmendInfo(FrameSettingsField.LightLayers, overrideable: () => hdrpSettings.supportLightLayers);
+            area.AmmendInfo(FrameSettingsField.ProbeVolume, overrideable: () => hdrpSettings.supportProbeVolume);
+            area.AmmendInfo(FrameSettingsField.ScreenSpaceShadows, overrideable: () => hdrpSettings.hdShadowInitParams.supportScreenSpaceShadows);
             area.Draw(withOverride);
             GUI.enabled = isGUIenabled;
         }

@@ -236,7 +236,7 @@ namespace UnityEditor.Rendering.HighDefinition
             EditorGUI.BeginProperty(rect, label, property);
 
             EditorGUI.BeginChangeCheck();
-            int changedValue = EditorGUI.MaskField(rect, label ?? GUIContent.none, property.intValue, HDRenderPipeline.defaultAsset.decalLayerNames);
+            int changedValue = EditorGUI.MaskField(rect, label ?? GUIContent.none, property.intValue, HDRenderPipeline.currentAsset.decalLayerNames);
             if (EditorGUI.EndChangeCheck())
                 property.intValue = changedValue;
 

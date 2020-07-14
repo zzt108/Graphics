@@ -283,9 +283,11 @@ namespace UnityEngine.Rendering.HighDefinition
 
         internal bool showCascade
         {
-            get => m_CurrentDebugDisplaySettings.GetDebugLightingMode() == DebugLightingMode.VisualizeCascade;
+            get => m_CurrentDebugDisplaySettings != null && m_CurrentDebugDisplaySettings.GetDebugLightingMode() == DebugLightingMode.VisualizeCascade;
             set
             {
+                if(m_CurrentDebugDisplaySettings == null)
+                    return;
                 if (value)
                     m_CurrentDebugDisplaySettings.SetDebugLightingMode(DebugLightingMode.VisualizeCascade);
                 else
@@ -349,7 +351,7 @@ namespace UnityEngine.Rendering.HighDefinition
 
             //In case we are loading element in the asset pipeline (occurs when library is not fully constructed) the creation of the HDRenderPipeline is done at a time we cannot access resources.
             //So in this case, the reloader would fail and the resources cannot be validated. So skip validation here.
-            //The HDRenderPipeline will be reconstructed in a few frame which will fix this issue.
+            //The HDRenderPipeline will be reconstructed in a few frame which will fix this issue. TODOJENNY
             if ( m_defaultSettings.renderPipelineResources == null
                 || m_defaultSettings.renderPipelineEditorResources == null
                 || (m_RayTracingSupported && m_defaultSettings.renderPipelineRayTracingResources == null))
@@ -358,6 +360,7 @@ namespace UnityEngine.Rendering.HighDefinition
                 m_ResourcesInitialized = true;
 
             m_defaultSettings.EnsureShadersCompiled();
+            //TODOJENNY - ValidateResources(); is it the same thing as EnsureShadersCompiled?
 #endif
 
             // We need to call this after the resource initialization as we attempt to use them in checking the supported API.
@@ -540,51 +543,23 @@ namespace UnityEngine.Rendering.HighDefinition
         void UpgradeResourcesInAssetIfNeeded(HDRenderPipelineAsset asset)
         {
             // Check that the serialized Resources are not broken
-            if (asset.renderPipelineResources == null)
-                asset.renderPipelineResources
-                    = UnityEditor.AssetDatabase.LoadAssetAtPath<RenderPipelineResources>(HDUtils.GetHDRenderPipelinePath() + "Runtime/RenderPipelineResources/HDRenderPipelineResources.asset");
-#if UNITY_EDITOR_LINUX // Temp hack to be able to make linux test run. To clarify
-            ResourceReloader.TryReloadAllNullIn(asset.renderPipelineResources, HDUtils.GetHDRenderPipelinePath());
-#else
-            ResourceReloader.ReloadAllNullIn(asset.renderPipelineResources, HDUtils.GetHDRenderPipelinePath());
-#endif
+            HDDefaultSettings.instance.EnsureResources(forceReload: true);
 
             if (m_RayTracingSupported)
             {
-                if (asset.renderPipelineRayTracingResources == null)
-                    asset.renderPipelineRayTracingResources
-                        = UnityEditor.AssetDatabase.LoadAssetAtPath<HDRenderPipelineRayTracingResources>(HDUtils.GetHDRenderPipelinePath() + "Runtime/RenderPipelineResources/HDRenderPipelineRayTracingResources.asset");
-#if UNITY_EDITOR_LINUX // Temp hack to be able to make linux test run. To clarify
-                ResourceReloader.TryReloadAllNullIn(asset.renderPipelineRayTracingResources, HDUtils.GetHDRenderPipelinePath());
-#else
-                ResourceReloader.ReloadAllNullIn(asset.renderPipelineRayTracingResources, HDUtils.GetHDRenderPipelinePath());
-#endif
+                HDDefaultSettings.instance.EnsureRayTracingResources(forceReload: true);
             }
             else
             {
                 // If ray tracing is not enabled we do not want to have ray tracing resources referenced
-                asset.renderPipelineRayTracingResources = null;
+                HDDefaultSettings.instance.renderPipelineRayTracingResources = null;
             }
 
-            var editorResourcesPath = HDUtils.GetHDRenderPipelinePath() + "Editor/RenderPipelineResources/HDRenderPipelineEditorResources.asset";
-            if (asset.renderPipelineEditorResources == null)
-            {
-                var objs = InternalEditorUtility.LoadSerializedFileAndForget(editorResourcesPath);
-                asset.renderPipelineEditorResources = objs != null && objs.Length > 0 ? objs.First() as HDRenderPipelineEditorResources : null;
-            }
-
-            if (ResourceReloader.ReloadAllNullIn(asset.renderPipelineEditorResources,
-                HDUtils.GetHDRenderPipelinePath()))
-            {
-                InternalEditorUtility.SaveToSerializedFileAndForget(
-                    new Object[]{asset.renderPipelineEditorResources },
-                    editorResourcesPath,
-                    true);
-            }
+            HDDefaultSettings.instance.EnsureEditorResources(forceReload: true);
 
             // Upgrade the resources (re-import every references in RenderPipelineResources) if the resource version mismatches
             // It's done here because we know every HDRP assets have been imported before
-            asset.renderPipelineResources?.UpgradeIfNeeded();
+            HDDefaultSettings.instance.renderPipelineResources?.UpgradeIfNeeded();
         }
 
         void UpgradeResourcesIfNeeded()
@@ -593,7 +568,6 @@ namespace UnityEngine.Rendering.HighDefinition
             m_Asset.EvaluateSettings();
 // TODOJENNY - check why we added this for both current and default asset
 /*
-
             // Check and fix both the default and current HDRP asset
             UpgradeResourcesInAssetIfNeeded(HDRenderPipeline.defaultAsset);
             UpgradeResourcesInAssetIfNeeded(HDRenderPipeline.currentAsset);
@@ -614,23 +588,9 @@ namespace UnityEngine.Rendering.HighDefinition
             m_defaultSettings.EnsureEditorResources(forceReload:true);
         }
 
-            if (ResourceReloader.ReloadAllNullIn(HDRenderPipeline.defaultAsset.renderPipelineEditorResources,
-                HDUtils.GetHDRenderPipelinePath()))
-            {
-                InternalEditorUtility.SaveToSerializedFileAndForget(
-                    new Object[]{HDRenderPipeline.defaultAsset.renderPipelineEditorResources },
-                    editorResourcesPath,
-                    true);
-            }
-
-            // Upgrade the resources (re-import every references in RenderPipelineResources) if the resource version mismatches
-            // It's done here because we know every HDRP assets have been imported before
-            HDRenderPipeline.defaultAsset.renderPipelineResources?.UpgradeIfNeeded();
-        }
-
         void ValidateResources()
         {
-            var resources = HDRenderPipeline.defaultAsset.renderPipelineResources;
+            var resources = HDDefaultSettings.instance.renderPipelineResources;
 
             // We iterate over all compute shader to verify if they are all compiled, if it's not the case
             // then we throw an exception to avoid allocating resources and crashing later on by using a null
@@ -1503,7 +1463,7 @@ namespace UnityEngine.Rendering.HighDefinition
 
             // GetOrCreateDefaultVolume(); TODOJENNY - needed for sharedProfile access in UpdateSkyLightingSettings?
             m_defaultSettings.GetOrCreateDefaultVolume();
-            GetOrCreateDebugTextures();
+            GetOrCreateDebugTextures(); //TODOJENNY - move to default?
 
             // This function should be called once every render (once for all camera)
             LightLoopNewRender();
@@ -2688,11 +2648,11 @@ namespace UnityEngine.Rendering.HighDefinition
                     m_AmbientOcclusionSystem.Render(cmd, hdCamera, renderContext, m_SharedRTManager.GetDepthTexture(), m_SharedRTManager.GetNormalBuffer(), m_SharedRTManager.GetMotionVectorsBuffer(), m_ShaderVariablesRayTracingCB, m_FrameCount);
 
                 // Run the contact shadows here as they need the light list
-                    HDUtils.CheckRTCreated(m_ContactShadowBuffer);
-                    RenderContactShadows(hdCamera, cmd);
-                    PushFullScreenDebugTexture(hdCamera, cmd, m_ContactShadowBuffer, FullScreenDebugMode.ContactShadows);
+                HDUtils.CheckRTCreated(m_ContactShadowBuffer);
+                RenderContactShadows(hdCamera, cmd);
+                PushFullScreenDebugTexture(hdCamera, cmd, m_ContactShadowBuffer, FullScreenDebugMode.ContactShadows);
 
-                    RenderScreenSpaceShadows(hdCamera, cmd);
+                RenderScreenSpaceShadows(hdCamera, cmd);
 
                 if (hdCamera.frameSettings.VolumeVoxelizationRunsAsync())
                 {

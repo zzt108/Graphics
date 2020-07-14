@@ -57,7 +57,7 @@ namespace UnityEditor.Rendering.HighDefinition
                 VolumeSection,
                 CED.Group((serialized,owner) => EditorGUILayout.LabelField(Styles.customPostProcessOrderLabel,EditorStyles.boldLabel)),
                 CustomPostProcessesSection
-        );
+                );
             // fix init of selection along what is serialized
             if (k_ExpandedState[Expandable.BakedOrCustomProbeFrameSettings])
                 selectedFrameSettings = SelectedFrameSettings.BakedOrCustomReflection;
@@ -80,7 +80,7 @@ namespace UnityEditor.Rendering.HighDefinition
                 if((serializedSettings == null) || (settingsSerialized != HDDefaultSettings.instance))
                 {
                     settingsSerialized = HDDefaultSettings.instance;
-                    var serializedObject = new SerializedObject(HDDefaultSettings.instance);
+                    var serializedObject = new SerializedObject(settingsSerialized);
                     serializedSettings = new SerializedHDDefaultSettings(serializedObject);
                 }
                 else
@@ -89,7 +89,7 @@ namespace UnityEditor.Rendering.HighDefinition
                 }
                 Draw_AssetSelection(ref serializedSettings,null);
 
-                if(serializedSettings != null)
+                if(settingsSerialized != null && serializedSettings != null)
                 {
                     EditorGUILayout.Space();
                     Inspector.Draw(serializedSettings, null);
@@ -114,25 +114,31 @@ namespace UnityEditor.Rendering.HighDefinition
             var oldWidth = EditorGUIUtility.labelWidth;
             EditorGUIUtility.labelWidth = Styles.labelWidth;
 
+            if(settingsSerialized == null)
+            {
+                EditorGUILayout.HelpBox("No active settings for HDRP. Rendering may be broken until a new one is assigned.",MessageType.Warning);
+            }
             using(new EditorGUILayout.HorizontalScope())
             {
                 EditorGUI.BeginChangeCheck();
-                var newAsset = (HDDefaultSettings)EditorGUILayout.ObjectField(Styles.defaultSettingsAssetLabel,serialized.serializedObject.targetObject,typeof(HDDefaultSettings),false);
+                var newAsset = (HDDefaultSettings)EditorGUILayout.ObjectField(Styles.defaultSettingsAssetLabel,settingsSerialized ,typeof(HDDefaultSettings),false);
                 if(EditorGUI.EndChangeCheck())
                 {
                     HDDefaultSettings.UpdateGraphicsSettings(newAsset);
-                    EditorUtility.SetDirty(serialized.serializedObject.targetObject);
+                    EditorUtility.SetDirty(settingsSerialized);
                 }
 
                 if(GUILayout.Button(EditorGUIUtility.TrTextContent("New","Create a HD Default Settings Asset in your default resource folder (defined in Wizard)"),GUILayout.Width(45),GUILayout.Height(18)))
                 {
                     HDAssetFactory.CreateHDDefaultSettings();
                 }
-
+                bool guiEnabled = GUI.enabled;
+                GUI.enabled = guiEnabled && (settingsSerialized != null);
                 if(GUILayout.Button(EditorGUIUtility.TrTextContent("Clone","Clone a HD Default Settings Asset in your default resource folder (defined in Wizard)"),GUILayout.Width(45),GUILayout.Height(18)))
                 {
-                    HDAssetFactory.HDDefaultSettingsCreator.Clone(serialized.serializedObject.targetObject as HDDefaultSettings);
+                    HDAssetFactory.HDDefaultSettingsCreator.Clone(settingsSerialized);
                 }
+                GUI.enabled = guiEnabled;
             }
             // TODOJENNY:  move shader log level to default settings?
             /*if(HDRenderPipeline.currentAsset != null)
@@ -278,8 +284,8 @@ namespace UnityEditor.Rendering.HighDefinition
             var oldWidth = EditorGUIUtility.labelWidth;
             EditorGUIUtility.labelWidth = Styles.labelWidth;
 
+            HDDefaultSettings defaultSettings = serialized.serializedObject.targetObject as HDDefaultSettings;
             VolumeProfile asset = null;
-            var defaultSettings = (serialized.serializedObject.targetObject as HDDefaultSettings);
             using(new EditorGUILayout.HorizontalScope())
             {
                 var oldAssetValue = serialized.volumeProfileDefault.objectReferenceValue;
@@ -293,18 +299,19 @@ namespace UnityEditor.Rendering.HighDefinition
 
                 if(GUILayout.Button(EditorGUIUtility.TrTextContent("New","Create a new Volume Profile for default in your default resource folder (defined in Wizard)"),GUILayout.Width(38),GUILayout.Height(18)))
                 {
-                    VolumeProfileCreator.CreateAndAssign(VolumeProfileCreator.Kind.Default,serialized.serializedObject.targetObject as HDDefaultSettings);
+                    VolumeProfileCreator.CreateAndAssign(VolumeProfileCreator.Kind.Default, defaultSettings);
                 }
             }
 
-            // The state of the profile can change without the asset reference changing so in this case we need to reset the editor.
-            if(m_CurrentVolumeProfileInstanceID != asset.GetInstanceID() && m_CachedDefaultVolumeProfileEditor != null)
-            {
-                m_CurrentVolumeProfileInstanceID = asset.GetInstanceID();
-                m_CachedDefaultVolumeProfileEditor = null;
-            }
             if(asset != null)
             {
+                // The state of the profile can change without the asset reference changing so in this case we need to reset the editor.
+                if(m_CurrentVolumeProfileInstanceID != asset.GetInstanceID() && m_CachedDefaultVolumeProfileEditor != null)
+                {
+                    m_CurrentVolumeProfileInstanceID = asset.GetInstanceID();
+                    m_CachedDefaultVolumeProfileEditor = null;
+                }
+
                 Editor.CreateCachedEditor(asset,Type.GetType("UnityEditor.Rendering.VolumeProfileEditor"),ref m_CachedDefaultVolumeProfileEditor);
                 EditorGUIUtility.labelWidth -= 18;
                 bool oldEnabled = GUI.enabled;
@@ -330,10 +337,10 @@ namespace UnityEditor.Rendering.HighDefinition
 
                 if(GUILayout.Button(EditorGUIUtility.TrTextContent("New","Create a new Volume Profile for default in your default resource folder (defined in Wizard)"),GUILayout.Width(38),GUILayout.Height(18)))
                 {
-                    VolumeProfileCreator.CreateAndAssign(VolumeProfileCreator.Kind.LookDev,serialized.serializedObject.targetObject as HDDefaultSettings);
+                    VolumeProfileCreator.CreateAndAssign(VolumeProfileCreator.Kind.LookDev, defaultSettings);
                 }
             }
-            if(lookDevAsset)
+            if(lookDevAsset != null)
             {
                 Editor.CreateCachedEditor(lookDevAsset,Type.GetType("UnityEditor.Rendering.VolumeProfileEditor"),ref m_CachedLookDevVolumeProfileEditor);
                 EditorGUIUtility.labelWidth -= 18;

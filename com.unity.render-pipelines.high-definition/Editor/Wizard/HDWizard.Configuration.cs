@@ -156,7 +156,6 @@ namespace UnityEditor.Rendering.HighDefinition
                         new Entry(InclusiveScope.HDRPAsset, Style.hdrpAssetEditorResources, IsHdrpAssetEditorResourcesCorrect, FixHdrpAssetEditorResources),
                         new Entry(InclusiveScope.HDRPAsset, Style.hdrpBatcher, IsSRPBatcherCorrect, FixSRPBatcher),
                         new Entry(InclusiveScope.HDRPAsset, Style.hdrpAssetDiffusionProfile, IsHdrpAssetDiffusionProfileCorrect, FixHdrpAssetDiffusionProfile),
-                        new Entry(InclusiveScope.HDRP, Style.hdrpScene, IsDefaultSceneCorrect, FixDefaultScene),
                         new Entry(InclusiveScope.HDRP, Style.hdrpVolumeProfile, IsDefaultVolumeProfileAssigned, FixDefaultVolumeProfileAssigned),
 
                         new Entry(InclusiveScope.VR, Style.vrLegacyVRSystem, IsOldVRSystemForCurrentBuildTargetGroupCorrect, FixOldVRSystemForCurrentBuildTargetGroup),
@@ -433,63 +432,12 @@ namespace UnityEditor.Rendering.HighDefinition
             EditorUtility.SetDirty(hdrpAsset);
         }
 
-        void FixHdrpDefaultSettings(bool fromAsyncUnused) //TODJENNY - fix that function
-        {
-            if(HDDefaultSettings.instance)
-                return;
-
-            HDDefaultSettings assetCreated = null;
-
-            // 1. Upload the path stored by the HDRPipelineAsset
-            // 2. Fallback to the one provided by the package
-            // 3. Fallback to the first DefaultSettings asset found
-            // 4. If all of the above fail, create one.
-            string path = "Assets/HDRPDefaultResources/DefaultSettings.asset";
-            assetCreated = AssetDatabase.LoadAssetAtPath<HDDefaultSettings>(path);
-            if(assetCreated == null)
-            {
-                var guidHDDefaultAssets = AssetDatabase.FindAssets("t:HDDefaultSettings");
-                if(guidHDDefaultAssets.Length > 0)
-                {
-                    var curGUID = guidHDDefaultAssets[0];
-                    path = AssetDatabase.GUIDToAssetPath(curGUID);
-                    assetCreated = AssetDatabase.LoadAssetAtPath<HDDefaultSettings>(path);
-                }
-                else
-                {
-                    assetCreated = ScriptableObject.CreateInstance<HDDefaultSettings>();
-                    //Note: no need to GenerateUniqueAssetPath(path), since we know that LoadAssetAtPath failed at this path
-                    AssetDatabase.CreateAsset(assetCreated,path);
-                    AssetDatabase.SaveAssets();
-                    AssetDatabase.Refresh();
-                }
-            }
-
-            if(assetCreated != null)
-            {
-                GraphicsSettings.RegisterRenderPipelineSettings<HDRenderPipeline>(assetCreated as RenderPipelineDefaultSettings);
-            }
-        }
-
-        bool IsDefaultSceneCorrect()
-            => HDProjectSettings.defaultScenePrefab != null;
-        void FixDefaultScene(bool fromAsync)
-        {
-            if (ObjectSelector.opened)
-                return;
-            CreateOrLoadDefaultScene(fromAsync ? () => m_Fixer.Stop() : (Action)null, scene => HDProjectSettings.defaultScenePrefab = scene, forDXR: false);
-            m_DefaultScene.SetValueWithoutNotify(HDProjectSettings.defaultScenePrefab);
-        }
-
         bool IsDefaultVolumeProfileAssigned()
         {
             if (!IsHdrpAssetUsedCorrect())
                 return false;
 
-            var hdAsset = HDDefaultSettings.instance;
-            return hdAsset.defaultVolumeProfile != null
-                && !hdAsset.defaultVolumeProfile.Equals(null)
-                && hdAsset.defaultVolumeProfile != hdAsset.renderPipelineEditorResources.defaultSettingsVolumeProfile;
+            return HDDefaultSettings.instance.IsVolumeProfileFromResources();
         }
         void FixDefaultVolumeProfileAssigned(bool fromAsyncUnused)
         {
