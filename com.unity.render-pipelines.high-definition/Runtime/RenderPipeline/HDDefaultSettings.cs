@@ -162,10 +162,10 @@ namespace UnityEngine.Rendering.HighDefinition{
                     assetCreated.m_RenderingPathDefaultBakedOrCustomReflectionFrameSettings = src.m_RenderingPathDefaultBakedOrCustomReflectionFrameSettings;
                     assetCreated.m_RenderingPathDefaultRealtimeReflectionFrameSettings = src.m_RenderingPathDefaultRealtimeReflectionFrameSettings;
 
-                    assetCreated.beforeTransparentCustomPostProcesses.AddRange(assetCreated.beforeTransparentCustomPostProcesses);
-                    assetCreated.beforePostProcessCustomPostProcesses.AddRange(assetCreated.beforePostProcessCustomPostProcesses);
-                    assetCreated.afterPostProcessCustomPostProcesses.AddRange(assetCreated.afterPostProcessCustomPostProcesses);
-                    assetCreated.beforeTAACustomPostProcesses.AddRange(assetCreated.beforeTAACustomPostProcesses);
+                    assetCreated.beforeTransparentCustomPostProcesses.AddRange(src.beforeTransparentCustomPostProcesses);
+                    assetCreated.beforePostProcessCustomPostProcesses.AddRange(src.beforePostProcessCustomPostProcesses);
+                    assetCreated.afterPostProcessCustomPostProcesses.AddRange(src.afterPostProcessCustomPostProcesses);
+                    assetCreated.beforeTAACustomPostProcesses.AddRange(src.beforeTAACustomPostProcesses);
                 }
                 else
                 {
@@ -249,5 +249,4 @@ namespace UnityEngine.Rendering.HighDefinition{
         #region Custom Post Processes Injections
         // List of custom post process Types that will be executed in the project, in the order of the list (top to back)
         [SerializeField]        internal List<string> beforeTransparentCustomPostProcesses = new List<string>();        [SerializeField]        internal List<string> beforePostProcessCustomPostProcesses = new List<string>();        [SerializeField]        internal List<string> afterPostProcessCustomPostProcesses = new List<string>();        [SerializeField]        internal List<string> beforeTAACustomPostProcesses = new List<string>();
-
-        #endregion    }}
+        #endregion    }}

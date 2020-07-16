@@ -162,43 +162,43 @@ namespace UnityEngine.Rendering.HighDefinition
 
         #region Settings Moved from the HDRP Asset to HDDefaultSettings
         [SerializeField]
-        [FormerlySerializedAs("defaultVolumeProfile"), Obsolete("For data migration")]
+        [FormerlySerializedAs("defaultVolumeProfile"), Obsolete("Moved from HDRPAsset to HDDefault Settings")]
         internal VolumeProfile m_ObsoleteDefaultVolumeProfile;
         [SerializeField]
-        [FormerlySerializedAs("defaultLookDevProfile"), Obsolete("For data migration")]
+        [FormerlySerializedAs("defaultLookDevProfile"), Obsolete("Moved from HDRPAsset to HDDefault Settings")]
         internal VolumeProfile m_ObsoleteDefaultLookDevProfile;
 
         [SerializeField]
-        [FormerlySerializedAs("m_RenderingPathDefaultCameraFrameSettings"), Obsolete("For data migration")]
+        [FormerlySerializedAs("m_RenderingPathDefaultCameraFrameSettings"), Obsolete("Moved from HDRPAsset to HDDefault Settings")]
         internal FrameSettings m_FrameSettingsMovedToDefaultSettings;
         [SerializeField]
-        [FormerlySerializedAs("m_RenderingPathDefaultBakedOrCustomReflectionFrameSettings"), Obsolete("For data migration")]
+        [FormerlySerializedAs("m_RenderingPathDefaultBakedOrCustomReflectionFrameSettings"), Obsolete("Moved from HDRPAsset to HDDefault Settings")]
         internal FrameSettings m_BakedOrCustomReflectionFrameSettingsMovedToDefaultSettings;
         [SerializeField]
-        [FormerlySerializedAs("m_RenderingPathDefaultRealtimeReflectionFrameSettings"), Obsolete("For data migration")]
+        [FormerlySerializedAs("m_RenderingPathDefaultRealtimeReflectionFrameSettings"), Obsolete("Moved from HDRPAsset to HDDefault Settings")]
         internal FrameSettings m_RealtimeReflectionFrameSettingsMovedToDefaultSettings;
 
         [SerializeField]
-        [FormerlySerializedAs("renderPipelineResources"), Obsolete("For data migration")]
+        [FormerlySerializedAs("renderPipelineResources"), Obsolete("Moved from HDRPAsset to HDDefault Settings")]
         internal RenderPipelineResources m_ObsoleteRenderPipelineResources;
         [SerializeField]
-        [FormerlySerializedAs("renderPipelineEditorResources"), Obsolete("For data migration")]
+        [FormerlySerializedAs("renderPipelineEditorResources"), Obsolete("Moved from HDRPAsset to HDDefault Settings")]
         internal HDRenderPipelineEditorResources m_ObsoleteRenderPipelineEditorResources;
         [SerializeField]
-        [FormerlySerializedAs("renderPipelineRayTracingResources"), Obsolete("For data migration")]
+        [FormerlySerializedAs("renderPipelineRayTracingResources"), Obsolete("Moved from HDRPAsset to HDDefault Settings")]
         internal HDRenderPipelineRayTracingResources m_ObsoleteRenderPipelineRayTracingResources;
 
         [SerializeField]
-        [FormerlySerializedAs("beforeTransparentCustomPostProcesses"), Obsolete("For data migration")]
+        [FormerlySerializedAs("beforeTransparentCustomPostProcesses"), Obsolete("Moved from HDRPAsset to HDDefault Settings")]
         internal List<string> m_ObsoleteBeforeTransparentCustomPostProcesses;
         [SerializeField]
-        [FormerlySerializedAs("beforePostProcessCustomPostProcesses"), Obsolete("For data migration")]
+        [FormerlySerializedAs("beforePostProcessCustomPostProcesses"), Obsolete("Moved from HDRPAsset to HDDefault Settings")]
         internal List<string> m_ObsoleteBeforePostProcessCustomPostProcesses;
         [SerializeField]
-        [FormerlySerializedAs("afterPostProcessCustomPostProcesses"), Obsolete("For data migration")]
+        [FormerlySerializedAs("afterPostProcessCustomPostProcesses"), Obsolete("Moved from HDRPAsset to HDDefault Settings")]
         internal List<string> m_ObsoleteAfterPostProcessCustomPostProcesses;
         [SerializeField]
-        [FormerlySerializedAs("beforeTAACustomPostProcesses"), Obsolete("For data migration")]
+        [FormerlySerializedAs("beforeTAACustomPostProcesses"), Obsolete("Moved from HDRPAsset to HDDefault Settings")]
         internal List<string> m_ObsoleteBeforeTAACustomPostProcesses;
         #endregion
 
