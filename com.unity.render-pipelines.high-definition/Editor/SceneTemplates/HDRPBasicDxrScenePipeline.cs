@@ -4,6 +4,7 @@ using UnityEngine.SceneManagement;
 
 namespace UnityEditor.Rendering.HighDefinition
 {
+#if UNITY_2020_2_OR_NEWER
     class HDRPBasicDxrScenePipeline : ISceneTemplatePipeline
     {
         void ISceneTemplatePipeline.AfterTemplateInstantiation(SceneTemplateAsset sceneTemplateAsset, Scene scene, bool isAdditive, string sceneName)
@@ -20,4 +21,5 @@ namespace UnityEditor.Rendering.HighDefinition
             return hdrpAsset.currentPlatformRenderPipelineSettings.supportRayTracing;
         }
     }
+#endif
 }
