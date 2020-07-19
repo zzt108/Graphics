@@ -1473,11 +1473,13 @@ namespace UnityEngine.Rendering.HighDefinition
                     {
                         ctx.renderContext.ExecuteCommandBuffer(ctx.cmd);
                         ctx.cmd.Clear();
+#if UNITY_2020_2_OR_NEWER
                         ctx.renderContext.DrawWireOverlay(data.hdCamera.camera);
+#endif
                     });
                 }
             }
 #endif
-        }
+                    }
     }
 }

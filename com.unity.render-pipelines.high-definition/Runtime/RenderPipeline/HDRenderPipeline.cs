@@ -3359,12 +3359,14 @@ namespace UnityEngine.Rendering.HighDefinition
             {
                 renderContext.ExecuteCommandBuffer(cmd);
                 cmd.Clear();
+#if UNITY_2020_2_OR_NEWER
                 renderContext.DrawWireOverlay(camera);
+#endif
             }
         }
 #endif
 
-        static RendererListDesc CreateOpaqueRendererListDesc(
+                static RendererListDesc CreateOpaqueRendererListDesc(
             CullingResults cull,
             Camera camera,
             ShaderTagId passName,
