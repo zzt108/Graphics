@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
@@ -25,12 +25,12 @@ public class MoveBallsSystem : JobComponentSystem
         [ReadOnly] public ComponentTypeHandle<BallOriginalTranslation> BallOriginalTranslationType;
         public uint LastSystemVersion;
         public double ElapsedTime;
-        
+
         public void Execute(ArchetypeChunk chunk, int chunkIndex, int firstEntityIndex)
         {
             var chunkTranslation = chunk.GetNativeArray(TranslationType);
             var chunkOrigTranslation = chunk.GetNativeArray(BallOriginalTranslationType);
-            
+
             for (int i = 0; i < chunk.Count; i++)
             {
                 chunkTranslation[i] = new Translation { Value
@@ -58,13 +58,13 @@ public class MoveBallsSystem : JobComponentSystem
     protected override JobHandle OnUpdate(JobHandle inputDeps)
     {
         EntityCommandBuffer entityOriginsCommandBuffer = new EntityCommandBuffer(Allocator.TempJob, PlaybackPolicy.SinglePlayback );
-        Entities.WithNone<BallOriginalTranslation>().ForEach((Entity entity, Translation translation, SphereId sphereId) =>
+        Entities.WithNone<BallOriginalTranslation>().ForEach((Entity entity, in Translation translation, in SphereId sphereId) =>
         {
             entityOriginsCommandBuffer.AddComponent(entity, new BallOriginalTranslation{ Value = translation.Value });
         }).Run();
         entityOriginsCommandBuffer.Playback(EntityManager);
         entityOriginsCommandBuffer.Dispose();
-        
+
         var moveBallJob = new MoveBall
         {
             TranslationType = GetComponentTypeHandle<Translation>(),
