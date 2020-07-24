@@ -85,6 +85,10 @@ namespace UnityEngine.Rendering.HighDefinition{
             decalLayerName5 = "Decal Layer 5";
             decalLayerName6 = "Decal Layer 6";
             decalLayerName7 = "Decal Layer 7";
+
+        #if UNITY_EDITOR
+            EnsureEditorResources(forceReload: false);
+        #endif
         }
 
         internal static HDDefaultSettings MigrateFromHDRPAsset(HDRenderPipelineAsset oldAsset, bool bClearObsoleteFields = true)
@@ -187,9 +191,8 @@ namespace UnityEngine.Rendering.HighDefinition{
                 if(src != null)
                 {
                     assetCreated.renderPipelineResources = src.renderPipelineResources;
-                    assetCreated.renderPipelineEditorResources = src.renderPipelineEditorResources;
                     assetCreated.renderPipelineRayTracingResources = src.renderPipelineRayTracingResources;
-
+                    
                     assetCreated.volumeProfile = src.volumeProfile;
                     assetCreated.volumeProfileLookDev = src.volumeProfileLookDev;
 
@@ -223,7 +226,6 @@ namespace UnityEngine.Rendering.HighDefinition{
                 else
                 {
                     assetCreated.EnsureResources(forceReload: false);
-                    assetCreated.EnsureEditorResources(forceReload: false);
                     assetCreated.EnsureRayTracingResources(forceReload: false);
                     assetCreated.GetOrCreateDefaultVolumeProfile();
                     assetCreated.GetOrAssignLookDevVolumeProfile();
@@ -270,29 +272,52 @@ namespace UnityEngine.Rendering.HighDefinition{
 #endif
             }        }        internal bool AreResourcesCreated()        {            return (m_RenderPipelineResources != null && !m_RenderPipelineResources.Equals(null));        }
 
-#if UNITY_EDITOR        internal void EnsureShadersCompiled()        {            // We iterate over all compute shader to verify if they are all compiled, if it's not the case            // then we throw an exception to avoid allocating resources and crashing later on by using a null            // compute kernel.            foreach (var computeShader in m_RenderPipelineResources.shaders.GetAllComputeShaders())            {                foreach (var message in UnityEditor.ShaderUtil.GetComputeShaderMessages(computeShader))                {                    if (message.severity == UnityEditor.Rendering.ShaderCompilerMessageSeverity.Error)                    {                        // Will be catched by the try in HDRenderPipelineAsset.CreatePipeline()                        throw new System.Exception(System.String.Format("Compute Shader compilation error on platform {0} in file {1}:{2}: {3}{4}\n" +"HDRP will not run until the error is fixed.\n",message.platform, message.file, message.line, message.message, message.messageDetails));                    }                }            }        }
+#if UNITY_EDITOR        internal void EnsureShadersCompiled()        {
+            // We iterate over all compute shader to verify if they are all compiled, if it's not the case
+            // then we throw an exception to avoid allocating resources and crashing later on by using a null
+            // compute kernel.
+            foreach (var computeShader in m_RenderPipelineResources.shaders.GetAllComputeShaders())
+            {                foreach (var message in UnityEditor.ShaderUtil.GetComputeShaderMessages(computeShader))
+                {                    if (message.severity == UnityEditor.Rendering.ShaderCompilerMessageSeverity.Error)
+                    {
+                        // Will be catched by the try in HDRenderPipelineAsset.CreatePipeline()
+                        throw new System.Exception(System.String.Format(
+"Compute Shader compilation error on platform {0} in file {1}:{2}: {3}{4}\n" +
+"HDRP will not run until the error is fixed.\n",
+message.platform, message.file, message.line, message.message, message.messageDetails
+));                    }                }            }        }
 #endif //UNITY_EDITOR
         #endregion // Runtime Resources
 
-        #region Editor Resources
-#if UNITY_EDITOR        //[SerializeField]        HDRenderPipelineEditorResources m_RenderPipelineEditorResources;        internal HDRenderPipelineEditorResources renderPipelineEditorResources        {            get            {                //there is no clean way to load editor resources without having it serialized                // - impossible to load them at deserialization                // - constructor only called at asset creation                // - cannot rely on OnEnable                //thus fallback with lazy init for them                EnsureEditorResources(forceReload:false);                return m_RenderPipelineEditorResources;            }            set { m_RenderPipelineEditorResources = value; }        }        internal void EnsureEditorResources(bool forceReload)        {            if (AreEditorResourcesCreated())                return;            var editorResourcesPath = HDUtils.GetHDRenderPipelinePath() + "Editor/RenderPipelineResources/HDRenderPipelineEditorResources.asset";
-            var objs = InternalEditorUtility.LoadSerializedFileAndForget(editorResourcesPath);
-            m_RenderPipelineEditorResources = (objs != null && objs.Length > 0) ? objs[0] as HDRenderPipelineEditorResources : null;            if(forceReload)            {                if (ResourceReloader.ReloadAllNullIn(m_RenderPipelineEditorResources,HDUtils.GetHDRenderPipelinePath()))
+        #region Editor Resources (not serialized)
+#if UNITY_EDITOR        HDRenderPipelineEditorResources m_RenderPipelineEditorResources;        internal HDRenderPipelineEditorResources renderPipelineEditorResources        {            get            {                //there is no clean way to load editor resources without having it serialized                // - impossible to load them at deserialization                // - constructor only called at asset creation                // - cannot rely on OnEnable                //thus fallback with lazy init for them                EnsureEditorResources(forceReload:false);                return m_RenderPipelineEditorResources;            }        }        internal void EnsureEditorResources(bool forceReload)        {
+            if (AreEditorResourcesCreated())
+                return;
+
+            var editorResourcesPath = HDUtils.GetHDRenderPipelinePath() + "Editor/RenderPipelineResources/HDRenderPipelineEditorResources.asset";            var objs = InternalEditorUtility.LoadSerializedFileAndForget(editorResourcesPath);
+            m_RenderPipelineEditorResources = (objs != null && objs.Length > 0) ? objs[0] as HDRenderPipelineEditorResources : null;
+            if(forceReload)
+            {
+                if (ResourceReloader.ReloadAllNullIn(m_RenderPipelineEditorResources,HDUtils.GetHDRenderPipelinePath()))
                 {
                     InternalEditorUtility.SaveToSerializedFileAndForget(
                         new Object[]{ m_RenderPipelineEditorResources },
                         editorResourcesPath,
                         true);
-                }            }            else if (!EditorUtility.IsPersistent(m_RenderPipelineEditorResources))
+                }
+            }            else if (!EditorUtility.IsPersistent(m_RenderPipelineEditorResources))
             {
                 m_RenderPipelineEditorResources = AssetDatabase.LoadAssetAtPath<HDRenderPipelineEditorResources>(editorResourcesPath);
-            }        }        internal bool AreEditorResourcesCreated()        {            return (m_RenderPipelineEditorResources != null && !m_RenderPipelineEditorResources.Equals(null));        }
+            }
+        }        internal bool AreEditorResourcesCreated()        {            return (m_RenderPipelineEditorResources != null && !m_RenderPipelineEditorResources.Equals(null));        }
 #endif
 
         #endregion //Editor Resources
 
         #region Ray Tracing Resources
-#if UNITY_EDITOR        [SerializeField]        HDRenderPipelineRayTracingResources m_RenderPipelineRayTracingResources;        internal HDRenderPipelineRayTracingResources renderPipelineRayTracingResources        {            get { return m_RenderPipelineRayTracingResources; }            set { m_RenderPipelineRayTracingResources = value; }        }        internal void EnsureRayTracingResources(bool forceReload)        {            if (AreRayTracingResourcesCreated())                return;            m_RenderPipelineRayTracingResources = UnityEditor.AssetDatabase.LoadAssetAtPath<HDRenderPipelineRayTracingResources>(HDUtils.GetHDRenderPipelinePath() + "Runtime/RenderPipelineResources/HDRenderPipelineRayTracingResources.asset");            if (forceReload)            {
+#if UNITY_EDITOR        [SerializeField]        HDRenderPipelineRayTracingResources m_RenderPipelineRayTracingResources;
+        internal HDRenderPipelineRayTracingResources renderPipelineRayTracingResources        {            get { return m_RenderPipelineRayTracingResources; }            set { m_RenderPipelineRayTracingResources = value; }
+        }        internal void EnsureRayTracingResources(bool forceReload)        {            if (AreRayTracingResourcesCreated())                return;            m_RenderPipelineRayTracingResources = UnityEditor.AssetDatabase.LoadAssetAtPath<HDRenderPipelineRayTracingResources>(HDUtils.GetHDRenderPipelinePath() + "Runtime/RenderPipelineResources/HDRenderPipelineRayTracingResources.asset");            if (forceReload)            {
 #if UNITY_EDITOR_LINUX // Temp hack to be able to make linux test run. To clarify
                 ResourceReloader.TryReloadAllNullIn(m_RenderPipelineRayTracingResources, HDUtils.GetHDRenderPipelinePath());
 #else

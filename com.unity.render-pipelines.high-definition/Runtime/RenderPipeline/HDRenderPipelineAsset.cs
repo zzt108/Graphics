@@ -36,6 +36,7 @@ namespace UnityEngine.Rendering.HighDefinition
         /// <returns>A new HDRenderPipeline instance.</returns>
         protected override RenderPipeline CreatePipeline()
         {
+            // TODOJENNY - need try catch for shader compilation errors (see HDDefaultSettings.EnsureShadersCompiled)
             return new HDRenderPipeline(this);
         }
 

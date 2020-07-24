@@ -201,6 +201,8 @@ namespace UnityEditor.Rendering.HighDefinition
                 EditorGUIUtility.labelWidth = Styles.labelWidth;
 
                 EditorGUILayout.PropertyField(serialized.renderPipelineResources,Styles.renderPipelineResourcesContent);
+                bool oldGuiEnabled = GUI.enabled;
+                GUI.enabled = false;
                 /*
                 HDRenderPipeline hdrp = HDRenderPipeline.currentPipeline;
                 if(hdrp != null && hdrp.rayTracingSupported)*/
@@ -208,13 +210,12 @@ namespace UnityEditor.Rendering.HighDefinition
 
                 // Not serialized as editor only datas... Retrieve them in data
                 EditorGUI.showMixedValue = serialized.editorResourceHasMultipleDifferentValues;
-                EditorGUI.BeginChangeCheck();
                 var editorResources = EditorGUILayout.ObjectField(Styles.renderPipelineEditorResourcesContent,serialized.firstEditorResources,typeof(HDRenderPipelineEditorResources),allowSceneObjects: false) as HDRenderPipelineEditorResources;
-                if(EditorGUI.EndChangeCheck())
-                    serialized.SetEditorResource(editorResources);
+
                 //TODOJENNY check how to do this for default settings
                 EditorGUI.showMixedValue = false;
 
+                GUI.enabled = oldGuiEnabled;
                 EditorGUIUtility.labelWidth = oldWidth;
             }
         }
