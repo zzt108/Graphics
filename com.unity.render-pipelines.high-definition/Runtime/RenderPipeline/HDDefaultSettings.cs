@@ -57,7 +57,8 @@ namespace UnityEngine.Rendering.HighDefinition{
             UpdateGraphicsSettings(assetCreated);
             return HDDefaultSettings.instance;
         }
-        void Init() //TODOJENNY - hack BRGRGRGR
+        
+        void Init()
         {
             if(beforeTransparentCustomPostProcesses == null)
             {
@@ -66,6 +67,24 @@ namespace UnityEngine.Rendering.HighDefinition{
                 afterPostProcessCustomPostProcesses = new List<string>();
                 beforeTAACustomPostProcesses = new List<string>();
             }
+
+            lightLayerName0 = "Light Layer default";
+            lightLayerName1 = "Light Layer 1";
+            lightLayerName2 = "Light Layer 2";
+            lightLayerName3 = "Light Layer 3";
+            lightLayerName4 = "Light Layer 4";
+            lightLayerName5 = "Light Layer 5";
+            lightLayerName6 = "Light Layer 6";
+            lightLayerName7 = "Light Layer 7";
+
+            decalLayerName0 = "Decal Layer default";
+            decalLayerName1 = "Decal Layer 1";
+            decalLayerName2 = "Decal Layer 2";
+            decalLayerName3 = "Decal Layer 3";
+            decalLayerName4 = "Decal Layer 4";
+            decalLayerName5 = "Decal Layer 5";
+            decalLayerName6 = "Decal Layer 6";
+            decalLayerName7 = "Decal Layer 7";
         }
 
         internal static HDDefaultSettings MigrateFromHDRPAsset(HDRenderPipelineAsset oldAsset, bool bClearObsoleteFields = true)
@@ -96,18 +115,35 @@ namespace UnityEngine.Rendering.HighDefinition{
             assetCreated.volumeProfile        = oldAsset.m_ObsoleteDefaultVolumeProfile;
             assetCreated.volumeProfileLookDev = oldAsset.m_ObsoleteDefaultLookDevProfile;
 
-            assetCreated.m_RenderingPathDefaultCameraFrameSettings                  = oldAsset.m_FrameSettingsMovedToDefaultSettings;
-            assetCreated.m_RenderingPathDefaultBakedOrCustomReflectionFrameSettings = oldAsset.m_BakedOrCustomReflectionFrameSettingsMovedToDefaultSettings;
-            assetCreated.m_RenderingPathDefaultRealtimeReflectionFrameSettings      = oldAsset.m_RealtimeReflectionFrameSettingsMovedToDefaultSettings;
+            assetCreated.m_RenderingPathDefaultCameraFrameSettings                  = oldAsset.m_ObsoleteFrameSettingsMovedToDefaultSettings;
+            assetCreated.m_RenderingPathDefaultBakedOrCustomReflectionFrameSettings = oldAsset.m_ObsoleteBakedOrCustomReflectionFrameSettingsMovedToDefaultSettings;
+            assetCreated.m_RenderingPathDefaultRealtimeReflectionFrameSettings      = oldAsset.m_ObsoleteRealtimeReflectionFrameSettingsMovedToDefaultSettings;
 
             assetCreated.m_RenderPipelineResources           = oldAsset.m_ObsoleteRenderPipelineResources;
-            assetCreated.m_RenderPipelineEditorResources     = oldAsset.m_ObsoleteRenderPipelineEditorResources;
             assetCreated.m_RenderPipelineRayTracingResources = oldAsset.m_ObsoleteRenderPipelineRayTracingResources;
 
             assetCreated.beforeTransparentCustomPostProcesses.AddRange(oldAsset.m_ObsoleteBeforeTransparentCustomPostProcesses);
             assetCreated.beforePostProcessCustomPostProcesses.AddRange(oldAsset.m_ObsoleteBeforePostProcessCustomPostProcesses);
             assetCreated.afterPostProcessCustomPostProcesses.AddRange(oldAsset.m_ObsoleteAfterPostProcessCustomPostProcesses);
             assetCreated.beforeTAACustomPostProcesses.AddRange(oldAsset.m_ObsoleteBeforeTAACustomPostProcesses);
+
+            assetCreated.lightLayerName0 = oldAsset.currentPlatformRenderPipelineSettings.lightLayerName0;
+            assetCreated.lightLayerName1 = oldAsset.currentPlatformRenderPipelineSettings.lightLayerName1;
+            assetCreated.lightLayerName2 = oldAsset.currentPlatformRenderPipelineSettings.lightLayerName2;
+            assetCreated.lightLayerName3 = oldAsset.currentPlatformRenderPipelineSettings.lightLayerName3;
+            assetCreated.lightLayerName4 = oldAsset.currentPlatformRenderPipelineSettings.lightLayerName4;
+            assetCreated.lightLayerName5 = oldAsset.currentPlatformRenderPipelineSettings.lightLayerName5;
+            assetCreated.lightLayerName6 = oldAsset.currentPlatformRenderPipelineSettings.lightLayerName6;
+            assetCreated.lightLayerName7 = oldAsset.currentPlatformRenderPipelineSettings.lightLayerName7;
+
+            assetCreated.decalLayerName0 = oldAsset.currentPlatformRenderPipelineSettings.decalLayerName0;
+            assetCreated.decalLayerName1 = oldAsset.currentPlatformRenderPipelineSettings.decalLayerName1;
+            assetCreated.decalLayerName2 = oldAsset.currentPlatformRenderPipelineSettings.decalLayerName2;
+            assetCreated.decalLayerName3 = oldAsset.currentPlatformRenderPipelineSettings.decalLayerName3;
+            assetCreated.decalLayerName4 = oldAsset.currentPlatformRenderPipelineSettings.decalLayerName4;
+            assetCreated.decalLayerName5 = oldAsset.currentPlatformRenderPipelineSettings.decalLayerName5;
+            assetCreated.decalLayerName6 = oldAsset.currentPlatformRenderPipelineSettings.decalLayerName6;
+            assetCreated.decalLayerName7 = oldAsset.currentPlatformRenderPipelineSettings.decalLayerName7;
 
             //3. Clear obsolete fields
             if(bClearObsoleteFields)
@@ -116,13 +152,12 @@ namespace UnityEngine.Rendering.HighDefinition{
                 oldAsset.m_ObsoleteDefaultLookDevProfile = null;
 
                 oldAsset.m_ObsoleteRenderPipelineResources = null;
-                oldAsset.m_ObsoleteRenderPipelineEditorResources = null;
                 oldAsset.m_ObsoleteRenderPipelineRayTracingResources = null;
 
                 oldAsset.m_ObsoleteBeforeTransparentCustomPostProcesses = null;
                 oldAsset.m_ObsoleteBeforePostProcessCustomPostProcesses = null;
                 oldAsset.m_ObsoleteAfterPostProcessCustomPostProcesses = null;
-                oldAsset.m_ObsoleteBeforeTAACustomPostProcesses = null;
+                oldAsset.m_ObsoleteBeforeTAACustomPostProcesses = null; 
             }
 #pragma warning restore 618
 
@@ -166,11 +201,30 @@ namespace UnityEngine.Rendering.HighDefinition{
                     assetCreated.beforePostProcessCustomPostProcesses.AddRange(src.beforePostProcessCustomPostProcesses);
                     assetCreated.afterPostProcessCustomPostProcesses.AddRange(src.afterPostProcessCustomPostProcesses);
                     assetCreated.beforeTAACustomPostProcesses.AddRange(src.beforeTAACustomPostProcesses);
+
+                    assetCreated.lightLayerName0 = src.lightLayerName0;
+                    assetCreated.lightLayerName1 = src.lightLayerName1;
+                    assetCreated.lightLayerName2 = src.lightLayerName2;
+                    assetCreated.lightLayerName3 = src.lightLayerName3;
+                    assetCreated.lightLayerName4 = src.lightLayerName4;
+                    assetCreated.lightLayerName5 = src.lightLayerName5;
+                    assetCreated.lightLayerName6 = src.lightLayerName6;
+                    assetCreated.lightLayerName7 = src.lightLayerName7;
+
+                    assetCreated.decalLayerName0 = src.decalLayerName0;
+                    assetCreated.decalLayerName1 = src.decalLayerName1;
+                    assetCreated.decalLayerName2 = src.decalLayerName2;
+                    assetCreated.decalLayerName3 = src.decalLayerName3;
+                    assetCreated.decalLayerName4 = src.decalLayerName4;
+                    assetCreated.decalLayerName5 = src.decalLayerName5;
+                    assetCreated.decalLayerName6 = src.decalLayerName6;
+                    assetCreated.decalLayerName7 = src.decalLayerName7;
                 }
                 else
                 {
                     assetCreated.EnsureResources(forceReload: false);
                     assetCreated.EnsureEditorResources(forceReload: false);
+                    assetCreated.EnsureRayTracingResources(forceReload: false);
                     assetCreated.GetOrCreateDefaultVolumeProfile();
                     assetCreated.GetOrAssignLookDevVolumeProfile();
                 }
@@ -221,7 +275,7 @@ namespace UnityEngine.Rendering.HighDefinition{
         #endregion // Runtime Resources
 
         #region Editor Resources
-#if UNITY_EDITOR        [SerializeField]        HDRenderPipelineEditorResources m_RenderPipelineEditorResources;        internal HDRenderPipelineEditorResources renderPipelineEditorResources        {            get            {                //there is no clean way to load editor resources without having it serialized                // - impossible to load them at deserialization                // - constructor only called at asset creation                // - cannot rely on OnEnable                //thus fallback with lazy init for them                EnsureEditorResources(forceReload:false);                return m_RenderPipelineEditorResources;            }            set { m_RenderPipelineEditorResources = value; }        }        internal void EnsureEditorResources(bool forceReload)        {            if (AreEditorResourcesCreated())                return;            var editorResourcesPath = HDUtils.GetHDRenderPipelinePath() + "Editor/RenderPipelineResources/HDRenderPipelineEditorResources.asset";
+#if UNITY_EDITOR        //[SerializeField]        HDRenderPipelineEditorResources m_RenderPipelineEditorResources;        internal HDRenderPipelineEditorResources renderPipelineEditorResources        {            get            {                //there is no clean way to load editor resources without having it serialized                // - impossible to load them at deserialization                // - constructor only called at asset creation                // - cannot rely on OnEnable                //thus fallback with lazy init for them                EnsureEditorResources(forceReload:false);                return m_RenderPipelineEditorResources;            }            set { m_RenderPipelineEditorResources = value; }        }        internal void EnsureEditorResources(bool forceReload)        {            if (AreEditorResourcesCreated())                return;            var editorResourcesPath = HDUtils.GetHDRenderPipelinePath() + "Editor/RenderPipelineResources/HDRenderPipelineEditorResources.asset";
             var objs = InternalEditorUtility.LoadSerializedFileAndForget(editorResourcesPath);
             m_RenderPipelineEditorResources = (objs != null && objs.Length > 0) ? objs[0] as HDRenderPipelineEditorResources : null;            if(forceReload)            {                if (ResourceReloader.ReloadAllNullIn(m_RenderPipelineEditorResources,HDUtils.GetHDRenderPipelinePath()))
                 {
@@ -249,4 +303,47 @@ namespace UnityEngine.Rendering.HighDefinition{
         #region Custom Post Processes Injections
         // List of custom post process Types that will be executed in the project, in the order of the list (top to back)
         [SerializeField]        internal List<string> beforeTransparentCustomPostProcesses = new List<string>();        [SerializeField]        internal List<string> beforePostProcessCustomPostProcesses = new List<string>();        [SerializeField]        internal List<string> afterPostProcessCustomPostProcesses = new List<string>();        [SerializeField]        internal List<string> beforeTAACustomPostProcesses = new List<string>();
-        #endregion    }}
+
+        #endregion
+
+        #region Layer Names [LIGHT]
+
+        /// <summary>Name for light layer 0.</summary>
+        public string lightLayerName0;
+        /// <summary>Name for light layer 1.</summary>
+        public string lightLayerName1;
+        /// <summary>Name for light layer 2.</summary>
+        public string lightLayerName2;
+        /// <summary>Name for light layer 3.</summary>
+        public string lightLayerName3;
+        /// <summary>Name for light layer 4.</summary>
+        public string lightLayerName4;
+        /// <summary>Name for light layer 5.</summary>
+        public string lightLayerName5;
+        /// <summary>Name for light layer 6.</summary>
+        public string lightLayerName6;
+        /// <summary>Name for light layer 7.</summary>
+        public string lightLayerName7;
+
+        #endregion
+
+        #region Layer Names [DECAL]
+
+        /// <summary>Name for decal layer 0.</summary>
+        public string decalLayerName0;
+        /// <summary>Name for decal layer 1.</summary>
+        public string decalLayerName1;
+        /// <summary>Name for decal layer 2.</summary>
+        public string decalLayerName2;
+        /// <summary>Name for decal layer 3.</summary>
+        public string decalLayerName3;
+        /// <summary>Name for decal layer 4.</summary>
+        public string decalLayerName4;
+        /// <summary>Name for decal layer 5.</summary>
+        public string decalLayerName5;
+        /// <summary>Name for decal layer 6.</summary>
+        public string decalLayerName6;
+        /// <summary>Name for decal layer 7.</summary>
+        public string decalLayerName7;
+
+        #endregion    }}

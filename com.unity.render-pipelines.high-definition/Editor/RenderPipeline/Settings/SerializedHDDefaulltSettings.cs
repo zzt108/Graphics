@@ -7,9 +7,46 @@ using System; //Typenamespace UnityEditor.Rendering.HighDefinition{    class
 
         public SerializedProperty volumeProfileDefault;        public SerializedProperty volumeProfileLookDev;
 
+        public SerializedProperty lightLayerName0;
+        public SerializedProperty lightLayerName1;
+        public SerializedProperty lightLayerName2;
+        public SerializedProperty lightLayerName3;
+        public SerializedProperty lightLayerName4;
+        public SerializedProperty lightLayerName5;
+        public SerializedProperty lightLayerName6;
+        public SerializedProperty lightLayerName7;
+
+        public SerializedProperty decalLayerName0;
+        public SerializedProperty decalLayerName1;
+        public SerializedProperty decalLayerName2;
+        public SerializedProperty decalLayerName3;
+        public SerializedProperty decalLayerName4;
+        public SerializedProperty decalLayerName5;
+        public SerializedProperty decalLayerName6;
+        public SerializedProperty decalLayerName7;
+
         //RenderPipelineResources not always exist and thus cannot be serialized normally.
         public bool editorResourceHasMultipleDifferentValues        {            get            {                var initialValue = firstEditorResources;                for (int index = 1; index < serializedObject.targetObjects.Length; ++index)                {                    if (initialValue != (serializedObject.targetObjects[index] as HDDefaultSettings)?.renderPipelineEditorResources)                        return true;                }                return false;            }        }        public HDRenderPipelineEditorResources firstEditorResources            => (serializedObject.targetObjects[0] as HDDefaultSettings)?.renderPipelineEditorResources;        public void SetEditorResource(HDRenderPipelineEditorResources value)        {            for(int index = 0;index < serializedObject.targetObjects.Length;++index)                (serializedObject.targetObjects[index] as HDDefaultSettings).renderPipelineEditorResources = value;        }        public SerializedHDDefaultSettings(SerializedObject serializedObject)        {            this.serializedObject = serializedObject;            renderPipelineResources = serializedObject.FindProperty("m_RenderPipelineResources");             renderPipelineRayTracingResources = serializedObject.FindProperty("m_RenderPipelineRayTracingResources");            defaultFrameSettings = new SerializedFrameSettings(serializedObject.FindProperty("m_RenderingPathDefaultCameraFrameSettings"), null); //no overrides in HDRPAsset            defaultBakedOrCustomReflectionFrameSettings = new SerializedFrameSettings(serializedObject.FindProperty("m_RenderingPathDefaultBakedOrCustomReflectionFrameSettings"), null); //no overrides in HDRPAsset            defaultRealtimeReflectionFrameSettings = new SerializedFrameSettings(serializedObject.FindProperty("m_RenderingPathDefaultRealtimeReflectionFrameSettings"), null); //no overrides in HDRPAsset            // We are using ReorderableList for the UI. Since the integration with SerializedProperty is still WIP, in the meantime we will not use one            InitializeCustomPostProcessesLists();            volumeProfileDefault  = serializedObject.FindProperty("m_VolumeProfileDefault");
-            volumeProfileLookDev  = serializedObject.FindProperty("m_VolumeProfileLookDev");        }
+            volumeProfileLookDev  = serializedObject.FindProperty("m_VolumeProfileLookDev");
+
+
+            lightLayerName0 = serializedObject.Find((HDDefaultSettings s) => s.lightLayerName0);
+            lightLayerName1 = serializedObject.Find((HDDefaultSettings s) => s.lightLayerName1);
+            lightLayerName2 = serializedObject.Find((HDDefaultSettings s) => s.lightLayerName2);
+            lightLayerName3 = serializedObject.Find((HDDefaultSettings s) => s.lightLayerName3);
+            lightLayerName4 = serializedObject.Find((HDDefaultSettings s) => s.lightLayerName4);
+            lightLayerName5 = serializedObject.Find((HDDefaultSettings s) => s.lightLayerName5);
+            lightLayerName6 = serializedObject.Find((HDDefaultSettings s) => s.lightLayerName6);
+            lightLayerName7 = serializedObject.Find((HDDefaultSettings s) => s.lightLayerName7);
+
+            decalLayerName0 = serializedObject.Find((HDDefaultSettings s) => s.decalLayerName0);
+            decalLayerName1 = serializedObject.Find((HDDefaultSettings s) => s.decalLayerName1);
+            decalLayerName2 = serializedObject.Find((HDDefaultSettings s) => s.decalLayerName2);
+            decalLayerName3 = serializedObject.Find((HDDefaultSettings s) => s.decalLayerName3);
+            decalLayerName4 = serializedObject.Find((HDDefaultSettings s) => s.decalLayerName4);
+            decalLayerName5 = serializedObject.Find((HDDefaultSettings s) => s.decalLayerName5);
+            decalLayerName6 = serializedObject.Find((HDDefaultSettings s) => s.decalLayerName6);
+            decalLayerName7 = serializedObject.Find((HDDefaultSettings s) => s.decalLayerName7);        }
 
         internal ReorderableList uiBeforeTransparentCustomPostProcesses;
         internal ReorderableList uiBeforeTAACustomPostProcesses;

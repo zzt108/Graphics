@@ -345,22 +345,19 @@ namespace UnityEngine.Rendering.HighDefinition
             m_RayTracingSupported = GatherRayTracingSupport(m_Asset.currentPlatformRenderPipelineSettings);
 
 #if UNITY_EDITOR
-            m_Asset.EvaluateSettings();
-
             UpgradeResourcesIfNeeded();
 
             //In case we are loading element in the asset pipeline (occurs when library is not fully constructed) the creation of the HDRenderPipeline is done at a time we cannot access resources.
             //So in this case, the reloader would fail and the resources cannot be validated. So skip validation here.
             //The HDRenderPipeline will be reconstructed in a few frame which will fix this issue. TODOJENNY
-            if ( m_defaultSettings.renderPipelineResources == null
-                || m_defaultSettings.renderPipelineEditorResources == null
-                || (m_RayTracingSupported && m_defaultSettings.renderPipelineRayTracingResources == null))
+            if ( (m_defaultSettings.AreResourcesCreated() == false)
+                || (m_defaultSettings.AreEditorResourcesCreated() == false)
+                || (m_RayTracingSupported && !m_defaultSettings.AreRayTracingResourcesCreated()))
                 return;
             else
                 m_ResourcesInitialized = true;
 
             m_defaultSettings.EnsureShadersCompiled();
-            //TODOJENNY - ValidateResources(); is it the same thing as EnsureShadersCompiled?
 #endif
 
             // We need to call this after the resource initialization as we attempt to use them in checking the supported API.
@@ -540,40 +537,14 @@ namespace UnityEngine.Rendering.HighDefinition
         }
 
 #if UNITY_EDITOR
-        void UpgradeResourcesInAssetIfNeeded(HDRenderPipelineAsset asset)
-        {
-            // Check that the serialized Resources are not broken
-            HDDefaultSettings.instance.EnsureResources(forceReload: true);
-
-            if (m_RayTracingSupported)
-            {
-                HDDefaultSettings.instance.EnsureRayTracingResources(forceReload: true);
-            }
-            else
-            {
-                // If ray tracing is not enabled we do not want to have ray tracing resources referenced
-                HDDefaultSettings.instance.renderPipelineRayTracingResources = null;
-            }
-
-            HDDefaultSettings.instance.EnsureEditorResources(forceReload: true);
-
-            // Upgrade the resources (re-import every references in RenderPipelineResources) if the resource version mismatches
-            // It's done here because we know every HDRP assets have been imported before
-            HDDefaultSettings.instance.renderPipelineResources?.UpgradeIfNeeded();
-        }
-
         void UpgradeResourcesIfNeeded()
         {
             // The first thing we need to do is to set the defines that depend on the render pipeline settings
             m_Asset.EvaluateSettings();
-// TODOJENNY - check why we added this for both current and default asset
-/*
-            // Check and fix both the default and current HDRP asset
-            UpgradeResourcesInAssetIfNeeded(HDRenderPipeline.defaultAsset);
-            UpgradeResourcesInAssetIfNeeded(HDRenderPipeline.currentAsset);
-*/
+
             // Check that the serialized Resources are not broken
             m_defaultSettings.EnsureResources(forceReload: true);
+            m_defaultSettings.EnsureEditorResources(forceReload: true);
 
             if (m_RayTracingSupported)
             {
@@ -585,7 +556,6 @@ namespace UnityEngine.Rendering.HighDefinition
                 m_defaultSettings.renderPipelineRayTracingResources = null;
             }
 
-            m_defaultSettings.EnsureEditorResources(forceReload:true);
         }
 
         void ValidateResources()

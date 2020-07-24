@@ -51,9 +51,10 @@ namespace UnityEngine.Rendering.HighDefinition
             if (HDRenderPipeline.currentAsset == this)
                 base.OnValidate();
 
+            HDDefaultSettings.Ensure();
             UpdateRenderingLayerNames();
 
-               isInOnValidateCall = false;
+            isInOnValidateCall = false;
         }
 
         public HDDefaultSettings defaultSettings => HDDefaultSettings.instance;
@@ -121,23 +122,23 @@ namespace UnityEngine.Rendering.HighDefinition
         {
             m_RenderingLayerNames = new string[32];
 
-            m_RenderingLayerNames[0] = m_RenderPipelineSettings.lightLayerName0;
-            m_RenderingLayerNames[1] = m_RenderPipelineSettings.lightLayerName1;
-            m_RenderingLayerNames[2] = m_RenderPipelineSettings.lightLayerName2;
-            m_RenderingLayerNames[3] = m_RenderPipelineSettings.lightLayerName3;
-            m_RenderingLayerNames[4] = m_RenderPipelineSettings.lightLayerName4;
-            m_RenderingLayerNames[5] = m_RenderPipelineSettings.lightLayerName5;
-            m_RenderingLayerNames[6] = m_RenderPipelineSettings.lightLayerName6;
-            m_RenderingLayerNames[7] = m_RenderPipelineSettings.lightLayerName7;
+            m_RenderingLayerNames[0] = HDDefaultSettings.instance.lightLayerName0;
+            m_RenderingLayerNames[1] = HDDefaultSettings.instance.lightLayerName1;
+            m_RenderingLayerNames[2] = HDDefaultSettings.instance.lightLayerName2;
+            m_RenderingLayerNames[3] = HDDefaultSettings.instance.lightLayerName3;
+            m_RenderingLayerNames[4] = HDDefaultSettings.instance.lightLayerName4;
+            m_RenderingLayerNames[5] = HDDefaultSettings.instance.lightLayerName5;
+            m_RenderingLayerNames[6] = HDDefaultSettings.instance.lightLayerName6;
+            m_RenderingLayerNames[7] = HDDefaultSettings.instance.lightLayerName7;
 
-            m_RenderingLayerNames[8] = m_RenderPipelineSettings.decalLayerName0;
-            m_RenderingLayerNames[9] = m_RenderPipelineSettings.decalLayerName1;
-            m_RenderingLayerNames[10] = m_RenderPipelineSettings.decalLayerName2;
-            m_RenderingLayerNames[11] = m_RenderPipelineSettings.decalLayerName3;
-            m_RenderingLayerNames[12] = m_RenderPipelineSettings.decalLayerName4;
-            m_RenderingLayerNames[13] = m_RenderPipelineSettings.decalLayerName5;
-            m_RenderingLayerNames[14] = m_RenderPipelineSettings.decalLayerName6;
-            m_RenderingLayerNames[15] = m_RenderPipelineSettings.decalLayerName7;
+            m_RenderingLayerNames[8]  = HDDefaultSettings.instance.decalLayerName0;
+            m_RenderingLayerNames[9]  = HDDefaultSettings.instance.decalLayerName1;
+            m_RenderingLayerNames[10] = HDDefaultSettings.instance.decalLayerName2;
+            m_RenderingLayerNames[11] = HDDefaultSettings.instance.decalLayerName3;
+            m_RenderingLayerNames[12] = HDDefaultSettings.instance.decalLayerName4;
+            m_RenderingLayerNames[13] = HDDefaultSettings.instance.decalLayerName5;
+            m_RenderingLayerNames[14] = HDDefaultSettings.instance.decalLayerName6;
+            m_RenderingLayerNames[15] = HDDefaultSettings.instance.decalLayerName7;
 
             // Unused
             for (int i = 16; i < m_RenderingLayerNames.Length; ++i)
@@ -172,7 +173,7 @@ namespace UnityEngine.Rendering.HighDefinition
         /// <summary>
         /// Names used for display of light layers.
         /// </summary>
-        public string[] lightLayerNames //move to defaultSettings TODOJENNY - double check with Remi/Julien
+        public string[] lightLayerNames
         {
             get
             {

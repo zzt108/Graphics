@@ -80,15 +80,6 @@ namespace UnityEngine.Rendering.Universal
             get => 8;
         }
 
-        public override RenderPipelineDefaultSettings defaultSettings
-        {
-            get
-            {
-                Debug.LogError("TODOJENNY");
-                return null;
-            }
-        }
-
         public UniversalRenderPipeline(UniversalRenderPipelineAsset asset)
         {
             SetSupportedRenderingFeatures();

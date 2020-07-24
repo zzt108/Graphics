@@ -51,8 +51,26 @@ namespace UnityEditor.Rendering.HighDefinition
             internal static readonly GUIContent renderPipelineResourcesContent = EditorGUIUtility.TrTextContent("Player Resources","Set of resources that need to be loaded when creating stand alone");
             internal static readonly GUIContent renderPipelineRayTracingResourcesContent = EditorGUIUtility.TrTextContent("Ray Tracing Resources","Set of resources that need to be loaded when using ray tracing");
             internal static readonly GUIContent renderPipelineEditorResourcesContent = EditorGUIUtility.TrTextContent("Editor Resources","Set of resources that need to be loaded for working in editor");
-            internal static readonly GUIContent shaderVariantLogLevel = EditorGUIUtility.TrTextContent("Shader Variant Log Level","Controls the level logging in of shader variants information is outputted when a build is performed. Information appears in the Unity Console when the build finishes.");
 
+            internal static readonly GUIContent lightLayersLabel = EditorGUIUtility.TrTextContent("Light Layers","When enabled, HDRP allocates memory for processing Light Layers. For deferred rendering, this allocation includes an extra render target in memory and extra cost. See the Quality Settings window to enable Decal Layers on your Render pipeline asset.");
+            internal static readonly GUIContent lightLayerName0 = EditorGUIUtility.TrTextContent("Light Layer Name 0","The display name for Light Layer 0. This is purely cosmetic, and can be used to articulate intended use of Light Layer 0");
+            internal static readonly GUIContent lightLayerName1 = EditorGUIUtility.TrTextContent("Light Layer Name 1","The display name for Light Layer 1. This is purely cosmetic, and can be used to articulate intended use of Light Layer 1");
+            internal static readonly GUIContent lightLayerName2 = EditorGUIUtility.TrTextContent("Light Layer Name 2","The display name for Light Layer 2. This is purely cosmetic, and can be used to articulate intended use of Light Layer 2");
+            internal static readonly GUIContent lightLayerName3 = EditorGUIUtility.TrTextContent("Light Layer Name 3","The display name for Light Layer 3. This is purely cosmetic, and can be used to articulate intended use of Light Layer 3");
+            internal static readonly GUIContent lightLayerName4 = EditorGUIUtility.TrTextContent("Light Layer Name 4","The display name for Light Layer 4. This is purely cosmetic, and can be used to articulate intended use of Light Layer 4");
+            internal static readonly GUIContent lightLayerName5 = EditorGUIUtility.TrTextContent("Light Layer Name 5","The display name for Light Layer 5. This is purely cosmetic, and can be used to articulate intended use of Light Layer 5");
+            internal static readonly GUIContent lightLayerName6 = EditorGUIUtility.TrTextContent("Light Layer Name 6","The display name for Light Layer 6. This is purely cosmetic, and can be used to articulate intended use of Light Layer 6");
+            internal static readonly GUIContent lightLayerName7 = EditorGUIUtility.TrTextContent("Light Layer Name 7","The display name for Light Layer 7. This is purely cosmetic, and can be used to articulate intended use of Light Layer 7");
+
+            internal static readonly GUIContent decalLayersLabel = EditorGUIUtility.TrTextContent("Decal Layers","When enabled, HDRP allocates Shader variants and memory to the decals buffer and cluster decal. See the Quality Settings window to enable Decal Layers on your Render pipeline asset.");
+            internal static readonly GUIContent decalLayerName0 = EditorGUIUtility.TrTextContent("Decal Layer Name 0","The display name for Decal Layer 0. This is purely cosmetic, and can be used to articulate intended use of Decal Layer 0");
+            internal static readonly GUIContent decalLayerName1 = EditorGUIUtility.TrTextContent("Decal Layer Name 1","The display name for Decal Layer 1. This is purely cosmetic, and can be used to articulate intended use of Decal Layer 1");
+            internal static readonly GUIContent decalLayerName2 = EditorGUIUtility.TrTextContent("Decal Layer Name 2","The display name for Decal Layer 2. This is purely cosmetic, and can be used to articulate intended use of Decal Layer 2");
+            internal static readonly GUIContent decalLayerName3 = EditorGUIUtility.TrTextContent("Decal Layer Name 3","The display name for Decal Layer 3. This is purely cosmetic, and can be used to articulate intended use of Decal Layer 3");
+            internal static readonly GUIContent decalLayerName4 = EditorGUIUtility.TrTextContent("Decal Layer Name 4","The display name for Decal Layer 4. This is purely cosmetic, and can be used to articulate intended use of Decal Layer 4");
+            internal static readonly GUIContent decalLayerName5 = EditorGUIUtility.TrTextContent("Decal Layer Name 5","The display name for Decal Layer 5. This is purely cosmetic, and can be used to articulate intended use of Decal Layer 5");
+            internal static readonly GUIContent decalLayerName6 = EditorGUIUtility.TrTextContent("Decal Layer Name 6","The display name for Decal Layer 6. This is purely cosmetic, and can be used to articulate intended use of Decal Layer 6");
+            internal static readonly GUIContent decalLayerName7 = EditorGUIUtility.TrTextContent("Decal Layer Name 7","The display name for Decal Layer 7. This is purely cosmetic, and can be used to articulate intended use of Decal Layer 7");
 
             internal static GUIStyle sectionHeaderStyle = new GUIStyle(EditorStyles.boldLabel) { richText = true };
             internal static GUIStyle introStyle = new GUIStyle(EditorStyles.largeLabel) { wordWrap = true };
@@ -70,7 +88,9 @@ namespace UnityEditor.Rendering.HighDefinition
                 CED.Group((serialized,owner) => EditorGUILayout.Space()),
                 VolumeSection,
                 CED.Group((serialized,owner) => EditorGUILayout.Space()),
-                CustomPostProcessesSection
+                CustomPostProcessesSection,
+                CED.Group((serialized,owner) => EditorGUILayout.Space()),
+                LayerNamesSection
                 );
             // fix init of selection along what is serialized
             if (k_ExpandedState[Expandable.BakedOrCustomProbeFrameSettings])
@@ -394,6 +414,44 @@ namespace UnityEditor.Rendering.HighDefinition
 
         #endregion // Volume Profiles
 
+
+        #region Decal and Light Layers
+
+        static readonly CED.IDrawer LayerNamesSection = CED.Group(
+                CED.Group((serialized,owner) => EditorGUILayout.LabelField(Styles.lightLayersLabel,Styles.sectionHeaderStyle)),
+                CED.Group(Drawer_LightLayerNames),
+                CED.Group((serialized,owner) => EditorGUILayout.LabelField(Styles.decalLayersLabel,Styles.sectionHeaderStyle)),
+                CED.Group(Drawer_DecalLayerNames)
+        );
+        static void Drawer_LightLayerNames(SerializedHDDefaultSettings serialized,Editor owner)
+        {
+            using(new EditorGUI.IndentLevelScope())
+            {
+                HDEditorUtils.DrawDelayedTextField(Styles.lightLayerName0,serialized.lightLayerName0);
+                HDEditorUtils.DrawDelayedTextField(Styles.lightLayerName1,serialized.lightLayerName1);
+                HDEditorUtils.DrawDelayedTextField(Styles.lightLayerName2,serialized.lightLayerName2);
+                HDEditorUtils.DrawDelayedTextField(Styles.lightLayerName3,serialized.lightLayerName3);
+                HDEditorUtils.DrawDelayedTextField(Styles.lightLayerName4,serialized.lightLayerName4);
+                HDEditorUtils.DrawDelayedTextField(Styles.lightLayerName5,serialized.lightLayerName5);
+                HDEditorUtils.DrawDelayedTextField(Styles.lightLayerName6,serialized.lightLayerName6);
+                HDEditorUtils.DrawDelayedTextField(Styles.lightLayerName7,serialized.lightLayerName7);
+            }
+        }
+        static void Drawer_DecalLayerNames(SerializedHDDefaultSettings serialized,Editor owner)
+        {
+            using(new EditorGUI.IndentLevelScope())
+            {
+                HDEditorUtils.DrawDelayedTextField(Styles.decalLayerName0,serialized.decalLayerName0);
+                HDEditorUtils.DrawDelayedTextField(Styles.decalLayerName1,serialized.decalLayerName1);
+                HDEditorUtils.DrawDelayedTextField(Styles.decalLayerName2,serialized.decalLayerName2);
+                HDEditorUtils.DrawDelayedTextField(Styles.decalLayerName3,serialized.decalLayerName3);
+                HDEditorUtils.DrawDelayedTextField(Styles.decalLayerName4,serialized.decalLayerName4);
+                HDEditorUtils.DrawDelayedTextField(Styles.decalLayerName5,serialized.decalLayerName5);
+                HDEditorUtils.DrawDelayedTextField(Styles.decalLayerName6,serialized.decalLayerName6);
+                HDEditorUtils.DrawDelayedTextField(Styles.decalLayerName7,serialized.decalLayerName7);
+            }
+        }
+        #endregion // Decal and Light Layers
 
     }
 
