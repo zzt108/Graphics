@@ -28,14 +28,6 @@ namespace UnityEditor.Rendering.HighDefinition
         [FormerlySerializedAs("supportVolumetric")]
         public SerializedProperty supportVolumetrics;
         public SerializedProperty supportLightLayers;
-        public SerializedProperty lightLayerName0;
-        public SerializedProperty lightLayerName1;
-        public SerializedProperty lightLayerName2;
-        public SerializedProperty lightLayerName3;
-        public SerializedProperty lightLayerName4;
-        public SerializedProperty lightLayerName5;
-        public SerializedProperty lightLayerName6;
-        public SerializedProperty lightLayerName7;
         public SerializedProperty supportedLitShaderMode;
         public SerializedProperty colorBufferFormat;
         public SerializedProperty supportCustomPass;
@@ -43,14 +35,6 @@ namespace UnityEditor.Rendering.HighDefinition
 
         public SerializedProperty supportDecals;
         public SerializedProperty supportDecalLayers;
-        public SerializedProperty decalLayerName0;
-        public SerializedProperty decalLayerName1;
-        public SerializedProperty decalLayerName2;
-        public SerializedProperty decalLayerName3;
-        public SerializedProperty decalLayerName4;
-        public SerializedProperty decalLayerName5;
-        public SerializedProperty decalLayerName6;
-        public SerializedProperty decalLayerName7;
 
         public bool supportMSAA => MSAASampleCount.GetEnumValue<UnityEngine.Rendering.MSAASamples>() != UnityEngine.Rendering.MSAASamples.None;
         public SerializedProperty MSAASampleCount;
@@ -85,7 +69,41 @@ namespace UnityEditor.Rendering.HighDefinition
     #pragma warning disable 618 // Type or member is obsolete
         [FormerlySerializedAs("enableUltraQualitySSS"), FormerlySerializedAs("increaseSssSampleCount"), Obsolete("For data migration")]
         SerializedProperty m_ObsoleteincreaseSssSampleCount;
-    #pragma warning restore 618
+
+        [FormerlySerializedAs("lightLayerName0"), Obsolete("For data migration")]
+        SerializedProperty m_ObsoletelightLayerName0;
+        [FormerlySerializedAs("lightLayerName1"), Obsolete("For data migration")]
+        SerializedProperty m_ObsoletelightLayerName1;
+        [FormerlySerializedAs("lightLayerName2"), Obsolete("For data migration")]
+        SerializedProperty m_ObsoletelightLayerName2;
+        [FormerlySerializedAs("lightLayerName3"), Obsolete("For data migration")]
+        SerializedProperty m_ObsoletelightLayerName3;
+        [FormerlySerializedAs("lightLayerName4"), Obsolete("For data migration")]
+        SerializedProperty m_ObsoletelightLayerName4;
+        [FormerlySerializedAs("lightLayerName5"), Obsolete("For data migration")]
+        SerializedProperty m_ObsoletelightLayerName5;
+        [FormerlySerializedAs("lightLayerName6"), Obsolete("For data migration")]
+        SerializedProperty m_ObsoletelightLayerName6;
+        [FormerlySerializedAs("lightLayerName7"), Obsolete("For data migration")]
+        SerializedProperty m_ObsoletelightLayerName7;
+
+        [FormerlySerializedAs("decalLayerName0"), Obsolete("For data migration")]
+        SerializedProperty m_ObsoletedecalLayerName0;
+        [FormerlySerializedAs("decalLayerName1"), Obsolete("For data migration")]
+        SerializedProperty m_ObsoletedecalLayerName1;
+        [FormerlySerializedAs("decalLayerName2"), Obsolete("For data migration")]
+        SerializedProperty m_ObsoletedecalLayerName2;
+        [FormerlySerializedAs("decalLayerName3"), Obsolete("For data migration")]
+        SerializedProperty m_ObsoletedecalLayerName3;
+        [FormerlySerializedAs("decalLayerName4"), Obsolete("For data migration")]
+        SerializedProperty m_ObsoletedecalLayerName4;
+        [FormerlySerializedAs("decalLayerName5"), Obsolete("For data migration")]
+        SerializedProperty m_ObsoletedecalLayerName5;
+        [FormerlySerializedAs("decalLayerName6"), Obsolete("For data migration")]
+        SerializedProperty m_ObsoletedecalLayerName6;
+        [FormerlySerializedAs("decalLayerName7"), Obsolete("For data migration")]
+        SerializedProperty m_ObsoletedecalLayerName7;
+#pragma warning restore 618
 
         public SerializedRenderPipelineSettings(SerializedProperty root)
         {
@@ -100,14 +118,6 @@ namespace UnityEditor.Rendering.HighDefinition
             sssSampleBudget                 = new SerializedScalableSetting(root.Find((RenderPipelineSettings s) => s.sssSampleBudget));
             supportVolumetrics              = root.Find((RenderPipelineSettings s) => s.supportVolumetrics);
             supportLightLayers              = root.Find((RenderPipelineSettings s) => s.supportLightLayers);
-            lightLayerName0                 = root.Find((RenderPipelineSettings s) => s.lightLayerName0);
-            lightLayerName1                 = root.Find((RenderPipelineSettings s) => s.lightLayerName1);
-            lightLayerName2                 = root.Find((RenderPipelineSettings s) => s.lightLayerName2);
-            lightLayerName3                 = root.Find((RenderPipelineSettings s) => s.lightLayerName3);
-            lightLayerName4                 = root.Find((RenderPipelineSettings s) => s.lightLayerName4);
-            lightLayerName5                 = root.Find((RenderPipelineSettings s) => s.lightLayerName5);
-            lightLayerName6                 = root.Find((RenderPipelineSettings s) => s.lightLayerName6);
-            lightLayerName7                 = root.Find((RenderPipelineSettings s) => s.lightLayerName7);
             colorBufferFormat               = root.Find((RenderPipelineSettings s) => s.colorBufferFormat);
             customBufferFormat              = root.Find((RenderPipelineSettings s) => s.customBufferFormat);
             supportCustomPass               = root.Find((RenderPipelineSettings s) => s.supportCustomPass);
@@ -115,14 +125,6 @@ namespace UnityEditor.Rendering.HighDefinition
 
             supportDecals                   = root.Find((RenderPipelineSettings s) => s.supportDecals);
             supportDecalLayers              = root.Find((RenderPipelineSettings s) => s.supportDecalLayers);
-            decalLayerName0                 = root.Find((RenderPipelineSettings s) => s.decalLayerName0);
-            decalLayerName1                 = root.Find((RenderPipelineSettings s) => s.decalLayerName1);
-            decalLayerName2                 = root.Find((RenderPipelineSettings s) => s.decalLayerName2);
-            decalLayerName3                 = root.Find((RenderPipelineSettings s) => s.decalLayerName3);
-            decalLayerName4                 = root.Find((RenderPipelineSettings s) => s.decalLayerName4);
-            decalLayerName5                 = root.Find((RenderPipelineSettings s) => s.decalLayerName5);
-            decalLayerName6                 = root.Find((RenderPipelineSettings s) => s.decalLayerName6);
-            decalLayerName7                 = root.Find((RenderPipelineSettings s) => s.decalLayerName7);
             MSAASampleCount                 = root.Find((RenderPipelineSettings s) => s.msaaSampleCount);
             supportMotionVectors            = root.Find((RenderPipelineSettings s) => s.supportMotionVectors);
             supportRuntimeDebugDisplay      = root.Find((RenderPipelineSettings s) => s.supportRuntimeDebugDisplay);
@@ -154,7 +156,25 @@ namespace UnityEditor.Rendering.HighDefinition
 
         #pragma warning disable 618 // Type or member is obsolete
             m_ObsoleteincreaseSssSampleCount = root.Find((RenderPipelineSettings s) => s.m_ObsoleteincreaseSssSampleCount);
-        #pragma warning restore 618
+
+            m_ObsoletelightLayerName0 = root.Find((RenderPipelineSettings s) => s.m_ObsoletelightLayerName0);
+            m_ObsoletelightLayerName1 = root.Find((RenderPipelineSettings s) => s.m_ObsoletelightLayerName1);
+            m_ObsoletelightLayerName2 = root.Find((RenderPipelineSettings s) => s.m_ObsoletelightLayerName2);
+            m_ObsoletelightLayerName3 = root.Find((RenderPipelineSettings s) => s.m_ObsoletelightLayerName3);
+            m_ObsoletelightLayerName4 = root.Find((RenderPipelineSettings s) => s.m_ObsoletelightLayerName4);
+            m_ObsoletelightLayerName5 = root.Find((RenderPipelineSettings s) => s.m_ObsoletelightLayerName5);
+            m_ObsoletelightLayerName6 = root.Find((RenderPipelineSettings s) => s.m_ObsoletelightLayerName6);
+            m_ObsoletelightLayerName7 = root.Find((RenderPipelineSettings s) => s.m_ObsoletelightLayerName7);
+
+            m_ObsoletedecalLayerName0 = root.Find((RenderPipelineSettings s) => s.m_ObsoletedecalLayerName0);
+            m_ObsoletedecalLayerName1 = root.Find((RenderPipelineSettings s) => s.m_ObsoletedecalLayerName1);
+            m_ObsoletedecalLayerName2 = root.Find((RenderPipelineSettings s) => s.m_ObsoletedecalLayerName2);
+            m_ObsoletedecalLayerName3 = root.Find((RenderPipelineSettings s) => s.m_ObsoletedecalLayerName3);
+            m_ObsoletedecalLayerName4 = root.Find((RenderPipelineSettings s) => s.m_ObsoletedecalLayerName4);
+            m_ObsoletedecalLayerName5 = root.Find((RenderPipelineSettings s) => s.m_ObsoletedecalLayerName5);
+            m_ObsoletedecalLayerName6 = root.Find((RenderPipelineSettings s) => s.m_ObsoletedecalLayerName6);
+            m_ObsoletedecalLayerName7 = root.Find((RenderPipelineSettings s) => s.m_ObsoletedecalLayerName7);
+#pragma warning restore 618
         }
     }
 }

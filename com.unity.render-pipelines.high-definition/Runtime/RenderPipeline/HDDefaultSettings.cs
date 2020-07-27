@@ -131,23 +131,23 @@ namespace UnityEngine.Rendering.HighDefinition{
             assetCreated.afterPostProcessCustomPostProcesses.AddRange(oldAsset.m_ObsoleteAfterPostProcessCustomPostProcesses);
             assetCreated.beforeTAACustomPostProcesses.AddRange(oldAsset.m_ObsoleteBeforeTAACustomPostProcesses);
 
-            assetCreated.lightLayerName0 = oldAsset.currentPlatformRenderPipelineSettings.lightLayerName0;
-            assetCreated.lightLayerName1 = oldAsset.currentPlatformRenderPipelineSettings.lightLayerName1;
-            assetCreated.lightLayerName2 = oldAsset.currentPlatformRenderPipelineSettings.lightLayerName2;
-            assetCreated.lightLayerName3 = oldAsset.currentPlatformRenderPipelineSettings.lightLayerName3;
-            assetCreated.lightLayerName4 = oldAsset.currentPlatformRenderPipelineSettings.lightLayerName4;
-            assetCreated.lightLayerName5 = oldAsset.currentPlatformRenderPipelineSettings.lightLayerName5;
-            assetCreated.lightLayerName6 = oldAsset.currentPlatformRenderPipelineSettings.lightLayerName6;
-            assetCreated.lightLayerName7 = oldAsset.currentPlatformRenderPipelineSettings.lightLayerName7;
+            assetCreated.lightLayerName0 = oldAsset.currentPlatformRenderPipelineSettings.m_ObsoletelightLayerName0;
+            assetCreated.lightLayerName1 = oldAsset.currentPlatformRenderPipelineSettings.m_ObsoletelightLayerName1;
+            assetCreated.lightLayerName2 = oldAsset.currentPlatformRenderPipelineSettings.m_ObsoletelightLayerName2;
+            assetCreated.lightLayerName3 = oldAsset.currentPlatformRenderPipelineSettings.m_ObsoletelightLayerName3;
+            assetCreated.lightLayerName4 = oldAsset.currentPlatformRenderPipelineSettings.m_ObsoletelightLayerName4;
+            assetCreated.lightLayerName5 = oldAsset.currentPlatformRenderPipelineSettings.m_ObsoletelightLayerName5;
+            assetCreated.lightLayerName6 = oldAsset.currentPlatformRenderPipelineSettings.m_ObsoletelightLayerName6;
+            assetCreated.lightLayerName7 = oldAsset.currentPlatformRenderPipelineSettings.m_ObsoletelightLayerName7;
 
-            assetCreated.decalLayerName0 = oldAsset.currentPlatformRenderPipelineSettings.decalLayerName0;
-            assetCreated.decalLayerName1 = oldAsset.currentPlatformRenderPipelineSettings.decalLayerName1;
-            assetCreated.decalLayerName2 = oldAsset.currentPlatformRenderPipelineSettings.decalLayerName2;
-            assetCreated.decalLayerName3 = oldAsset.currentPlatformRenderPipelineSettings.decalLayerName3;
-            assetCreated.decalLayerName4 = oldAsset.currentPlatformRenderPipelineSettings.decalLayerName4;
-            assetCreated.decalLayerName5 = oldAsset.currentPlatformRenderPipelineSettings.decalLayerName5;
-            assetCreated.decalLayerName6 = oldAsset.currentPlatformRenderPipelineSettings.decalLayerName6;
-            assetCreated.decalLayerName7 = oldAsset.currentPlatformRenderPipelineSettings.decalLayerName7;
+            assetCreated.decalLayerName0 = oldAsset.currentPlatformRenderPipelineSettings.m_ObsoletelightLayerName0;
+            assetCreated.decalLayerName1 = oldAsset.currentPlatformRenderPipelineSettings.m_ObsoletelightLayerName1;
+            assetCreated.decalLayerName2 = oldAsset.currentPlatformRenderPipelineSettings.m_ObsoletelightLayerName2;
+            assetCreated.decalLayerName3 = oldAsset.currentPlatformRenderPipelineSettings.m_ObsoletelightLayerName3;
+            assetCreated.decalLayerName4 = oldAsset.currentPlatformRenderPipelineSettings.m_ObsoletelightLayerName4;
+            assetCreated.decalLayerName5 = oldAsset.currentPlatformRenderPipelineSettings.m_ObsoletelightLayerName5;
+            assetCreated.decalLayerName6 = oldAsset.currentPlatformRenderPipelineSettings.m_ObsoletelightLayerName6;
+            assetCreated.decalLayerName7 = oldAsset.currentPlatformRenderPipelineSettings.m_ObsoletelightLayerName7;
 
             //3. Clear obsolete fields
             if(bClearObsoleteFields)
@@ -161,7 +161,26 @@ namespace UnityEngine.Rendering.HighDefinition{
                 oldAsset.m_ObsoleteBeforeTransparentCustomPostProcesses = null;
                 oldAsset.m_ObsoleteBeforePostProcessCustomPostProcesses = null;
                 oldAsset.m_ObsoleteAfterPostProcessCustomPostProcesses = null;
-                oldAsset.m_ObsoleteBeforeTAACustomPostProcesses = null; 
+                oldAsset.m_ObsoleteBeforeTAACustomPostProcesses = null;
+                /* TODOJENNY
+                oldAsset.currentPlatformRenderPipelineSettings.m_ObsoletelightLayerName0 = "";
+                oldAsset.currentPlatformRenderPipelineSettings.m_ObsoletelightLayerName1 = "";
+                oldAsset.currentPlatformRenderPipelineSettings.m_ObsoletelightLayerName2 = "";
+                oldAsset.currentPlatformRenderPipelineSettings.m_ObsoletelightLayerName3 = "";
+                oldAsset.currentPlatformRenderPipelineSettings.m_ObsoletelightLayerName4 = "";
+                oldAsset.currentPlatformRenderPipelineSettings.m_ObsoletelightLayerName5 = "";
+                oldAsset.currentPlatformRenderPipelineSettings.m_ObsoletelightLayerName6 = "";
+                oldAsset.currentPlatformRenderPipelineSettings.m_ObsoletelightLayerName7 = "";
+
+                oldAsset.currentPlatformRenderPipelineSettings.m_ObsoletelightLayerName0 = "";
+                oldAsset.currentPlatformRenderPipelineSettings.m_ObsoletelightLayerName1 = "";
+                oldAsset.currentPlatformRenderPipelineSettings.m_ObsoletelightLayerName2 = "";
+                oldAsset.currentPlatformRenderPipelineSettings.m_ObsoletelightLayerName3 = "";
+                oldAsset.currentPlatformRenderPipelineSettings.m_ObsoletelightLayerName4 = "";
+                oldAsset.currentPlatformRenderPipelineSettings.m_ObsoletelightLayerName5 = "";
+                oldAsset.currentPlatformRenderPipelineSettings.m_ObsoletelightLayerName6 = "";
+                oldAsset.currentPlatformRenderPipelineSettings.m_ObsoletelightLayerName7 = "";
+                */
             }
 #pragma warning restore 618
 
