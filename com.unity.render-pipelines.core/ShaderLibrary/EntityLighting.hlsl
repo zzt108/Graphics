@@ -325,9 +325,13 @@ real3 SampleDirectionalLightmap(TEXTURE2D_PARAM(lightmapTex, lightmapSampler), T
     float3 backNormalWSUnused = 0.0;
     real3 bakeDiffuseLighting = 0.0;
     real3 backBakeDiffuseLightingUnused = 0.0;
+#if defined(SHADER_API_GLES) // If GLES2
+    SampleDirectionalLightmap(  lightmapTex, lightmapDirTex, uv, transform,
+                                normalWS, backNormalWSUnused, encodedLightmap, decodeInstructions, bakeDiffuseLighting, backBakeDiffuseLightingUnused);
+#else
     SampleDirectionalLightmap(  lightmapTex, lightmapSampler, lightmapDirTex, lightmapDirSampler, uv, transform,
                                 normalWS, backNormalWSUnused, encodedLightmap, decodeInstructions, bakeDiffuseLighting, backBakeDiffuseLightingUnused);
-
+#endif
     return bakeDiffuseLighting;
 }
 
