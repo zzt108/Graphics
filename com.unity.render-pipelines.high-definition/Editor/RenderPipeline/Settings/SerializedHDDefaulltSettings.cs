@@ -25,10 +25,11 @@ using System; //Typenamespace UnityEditor.Rendering.HighDefinition{    class
         public SerializedProperty decalLayerName6;
         public SerializedProperty decalLayerName7;
 
+        public SerializedProperty shaderVariantLogLevel;
+
         //RenderPipelineResources not always exist and thus cannot be serialized normally.
         public bool editorResourceHasMultipleDifferentValues        {            get            {                var initialValue = firstEditorResources;                for (int index = 1; index < serializedObject.targetObjects.Length; ++index)                {                    if (initialValue != (serializedObject.targetObjects[index] as HDDefaultSettings)?.renderPipelineEditorResources)                        return true;                }                return false;            }        }        public HDRenderPipelineEditorResources firstEditorResources            => (serializedObject.targetObjects[0] as HDDefaultSettings)?.renderPipelineEditorResources;        public SerializedHDDefaultSettings(SerializedObject serializedObject)        {            this.serializedObject = serializedObject;            renderPipelineResources = serializedObject.FindProperty("m_RenderPipelineResources");             renderPipelineRayTracingResources = serializedObject.FindProperty("m_RenderPipelineRayTracingResources");            defaultFrameSettings = new SerializedFrameSettings(serializedObject.FindProperty("m_RenderingPathDefaultCameraFrameSettings"), null); //no overrides in HDRPAsset            defaultBakedOrCustomReflectionFrameSettings = new SerializedFrameSettings(serializedObject.FindProperty("m_RenderingPathDefaultBakedOrCustomReflectionFrameSettings"), null); //no overrides in HDRPAsset            defaultRealtimeReflectionFrameSettings = new SerializedFrameSettings(serializedObject.FindProperty("m_RenderingPathDefaultRealtimeReflectionFrameSettings"), null); //no overrides in HDRPAsset            // We are using ReorderableList for the UI. Since the integration with SerializedProperty is still WIP, in the meantime we will not use one            InitializeCustomPostProcessesLists();            volumeProfileDefault  = serializedObject.FindProperty("m_VolumeProfileDefault");
             volumeProfileLookDev  = serializedObject.FindProperty("m_VolumeProfileLookDev");
-
 
             lightLayerName0 = serializedObject.Find((HDDefaultSettings s) => s.lightLayerName0);
             lightLayerName1 = serializedObject.Find((HDDefaultSettings s) => s.lightLayerName1);
@@ -46,7 +47,9 @@ using System; //Typenamespace UnityEditor.Rendering.HighDefinition{    class
             decalLayerName4 = serializedObject.Find((HDDefaultSettings s) => s.decalLayerName4);
             decalLayerName5 = serializedObject.Find((HDDefaultSettings s) => s.decalLayerName5);
             decalLayerName6 = serializedObject.Find((HDDefaultSettings s) => s.decalLayerName6);
-            decalLayerName7 = serializedObject.Find((HDDefaultSettings s) => s.decalLayerName7);        }
+            decalLayerName7 = serializedObject.Find((HDDefaultSettings s) => s.decalLayerName7);
+
+            shaderVariantLogLevel = serializedObject.Find((HDDefaultSettings s) => s.shaderVariantLogLevel);        }
 
         internal ReorderableList uiBeforeTransparentCustomPostProcesses;
         internal ReorderableList uiBeforeTAACustomPostProcesses;

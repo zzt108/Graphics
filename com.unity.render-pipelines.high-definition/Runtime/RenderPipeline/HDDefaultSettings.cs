@@ -86,7 +86,9 @@ namespace UnityEngine.Rendering.HighDefinition{
             decalLayerName6 = "Decal Layer 6";
             decalLayerName7 = "Decal Layer 7";
 
-        #if UNITY_EDITOR
+            shaderVariantLogLevel = ShaderVariantLogLevel.Disabled;
+
+#if UNITY_EDITOR
             EnsureEditorResources(forceReload: false);
         #endif
         }
@@ -149,6 +151,8 @@ namespace UnityEngine.Rendering.HighDefinition{
             assetCreated.decalLayerName6 = oldAsset.currentPlatformRenderPipelineSettings.m_ObsoletelightLayerName6;
             assetCreated.decalLayerName7 = oldAsset.currentPlatformRenderPipelineSettings.m_ObsoletelightLayerName7;
 
+            assetCreated.shaderVariantLogLevel = oldAsset.m_ObsoleteShaderVariantLogLevel;
+
             //3. Clear obsolete fields
             if(bClearObsoleteFields)
             {
@@ -181,6 +185,7 @@ namespace UnityEngine.Rendering.HighDefinition{
                 oldAsset.currentPlatformRenderPipelineSettings.m_ObsoletelightLayerName6 = "";
                 oldAsset.currentPlatformRenderPipelineSettings.m_ObsoletelightLayerName7 = "";
                 */
+                assetCreated.shaderVariantLogLevel = oldAsset.m_ObsoleteShaderVariantLogLevel;
             }
 #pragma warning restore 618
 
@@ -241,6 +246,8 @@ namespace UnityEngine.Rendering.HighDefinition{
                     assetCreated.decalLayerName5 = src.decalLayerName5;
                     assetCreated.decalLayerName6 = src.decalLayerName6;
                     assetCreated.decalLayerName7 = src.decalLayerName7;
+
+                    assetCreated.shaderVariantLogLevel = src.shaderVariantLogLevel;
                 }
                 else
                 {
@@ -389,5 +396,12 @@ message.platform, message.file, message.line, message.message, message.messageDe
         public string decalLayerName6;
         /// <summary>Name for decal layer 7.</summary>
         public string decalLayerName7;
+
+
+
+        #endregion
+        #region Shader Variant Log Level
+        [SerializeField]
+        internal ShaderVariantLogLevel shaderVariantLogLevel = ShaderVariantLogLevel.Disabled;
 
         #endregion    }}

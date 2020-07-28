@@ -99,8 +99,6 @@ namespace UnityEngine.Rendering.HighDefinition
         internal bool allowShaderVariantStripping = true;
         [SerializeField]
         internal bool enableSRPBatcher = true;
-        [SerializeField]
-        internal ShaderVariantLogLevel shaderVariantLogLevel = ShaderVariantLogLevel.Disabled;
 
         /// <summary>Available material quality levels for this asset.</summary>
         [FormerlySerializedAs("materialQualityLevels")]

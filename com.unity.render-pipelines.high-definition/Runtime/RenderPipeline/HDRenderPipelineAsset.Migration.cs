@@ -211,6 +211,9 @@ namespace UnityEngine.Rendering.HighDefinition
         [SerializeField]
         [FormerlySerializedAs("beforeTAACustomPostProcesses"), Obsolete("Moved from HDRPAsset to HDDefault Settings")]
         internal List<string> m_ObsoleteBeforeTAACustomPostProcesses;
+        [SerializeField]
+        [FormerlySerializedAs("shaderVariantLogLevel"), Obsolete("Moved from HDRPAsset to HDDefault Settings")]
+        internal ShaderVariantLogLevel m_ObsoleteShaderVariantLogLevel = ShaderVariantLogLevel.Disabled;
         #endregion
 
 #pragma warning restore 618

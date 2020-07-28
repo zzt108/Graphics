@@ -52,7 +52,9 @@ namespace UnityEditor.Rendering.HighDefinition
             internal static readonly GUIContent renderPipelineRayTracingResourcesContent = EditorGUIUtility.TrTextContent("Ray Tracing Resources","Set of resources that need to be loaded when using ray tracing");
             internal static readonly GUIContent renderPipelineEditorResourcesContent = EditorGUIUtility.TrTextContent("Editor Resources","Set of resources that need to be loaded for working in editor");
 
-            internal static readonly GUIContent layerNamesLabel = EditorGUIUtility.TrTextContent("Layers Names", "Light and Decal Layers are specific LayerMasks used to to make LightsDecals only affect Meshes that are on corresponding Light Layers, and to apply Decals only matching Mesh Renderer or Terrain.");
+            internal static readonly GUIContent generalSettingsLabel = EditorGUIUtility.TrTextContent("Miscellaneous");
+
+            internal static readonly GUIContent layerNamesLabel = EditorGUIUtility.TrTextContent("Layers Names","Light and Decal Layers are specific LayerMasks used to to make LightsDecals only affect Meshes that are on corresponding Light Layers, and to apply Decals only matching Mesh Renderer or Terrain. By default, Mesh Renderers, or Terrain, Decal Layers are named **Decal Layer 1-7**. To more easily differentiate between them, you can give each Decal Layer a specific name in this section.");
             internal static readonly GUIContent layerNamesIntro = EditorGUIUtility.TrTextContent("By default, Mesh Renderers, or Terrain, Decal Layers are named **Decal Layer 1-7**. To more easily differentiate between them, you can give each Decal Layer a specific name in this section.");
 
             internal static readonly GUIContent lightLayersLabel = EditorGUIUtility.TrTextContent("Light Layers Names","When enabled, HDRP allocates memory for processing Light Layers. For deferred rendering, this allocation includes an extra render target in memory and extra cost. See the Quality Settings window to enable Decal Layers on your Render pipeline asset.");
@@ -74,6 +76,8 @@ namespace UnityEditor.Rendering.HighDefinition
             internal static readonly GUIContent decalLayerName5 = EditorGUIUtility.TrTextContent("Decal Layer 5","The display name for Decal Layer 5. This is purely cosmetic, and can be used to articulate intended use of Decal Layer 5");
             internal static readonly GUIContent decalLayerName6 = EditorGUIUtility.TrTextContent("Decal Layer 6","The display name for Decal Layer 6. This is purely cosmetic, and can be used to articulate intended use of Decal Layer 6");
             internal static readonly GUIContent decalLayerName7 = EditorGUIUtility.TrTextContent("Decal Layer 7","The display name for Decal Layer 7. This is purely cosmetic, and can be used to articulate intended use of Decal Layer 7");
+
+            internal static readonly GUIContent shaderVariantLogLevel = EditorGUIUtility.TrTextContent("Shader Variant Log Level","Controls the level logging in of shader variants information is outputted when a build is performed. Information appears in the Unity Console when the build finishes.");
 
             internal static GUIStyle sectionHeaderStyle = new GUIStyle(EditorStyles.boldLabel) { richText = true };
             internal static GUIStyle introStyle = new GUIStyle(EditorStyles.largeLabel) { wordWrap = true };
@@ -176,14 +180,6 @@ namespace UnityEditor.Rendering.HighDefinition
                 }
                 GUI.enabled = guiEnabled;
             }
-            // TODOJENNY:  move shader log level to default settings?
-            /*if(HDRenderPipeline.currentAsset != null)
-            {
-                EditorGUILayout.Space();
-                var serializedObject = new SerializedObject(HDRenderPipeline.currentAsset);
-                var serializedHDRPAsset = new SerializedHDRenderPipelineAsset(serializedObject);
-                HDRenderPipelineUI.GeneralSection.Draw(serializedHDRPAsset,null);
-            }*/
             EditorGUIUtility.labelWidth = oldWidth;
         }
         #endregion // Global HDDefaultSettings asset selection
@@ -418,12 +414,11 @@ namespace UnityEditor.Rendering.HighDefinition
 
         #endregion // Volume Profiles
 
-
-        #region Decal and Light Layers
+        #region General Settings (log level, layer names)
 
         static readonly CED.IDrawer LayerNamesSection = CED.Group(
-                CED.Group((serialized,owner) => EditorGUILayout.LabelField(Styles.layerNamesLabel,Styles.sectionHeaderStyle)),
-                CED.Group((serialized,owner) => EditorGUILayout.LabelField(Styles.layerNamesIntro,Styles.introStyle)),
+                CED.Group((serialized,owner) => EditorGUILayout.LabelField(Styles.generalSettingsLabel,Styles.sectionHeaderStyle)),
+                CED.Group((serialized,owner) => EditorGUILayout.PropertyField(serialized.shaderVariantLogLevel,Styles.shaderVariantLogLevel)),
                 CED.Group(Drawer_LightLayerNames),
                 CED.Group(Drawer_DecalLayerNames)
         );
@@ -466,7 +461,7 @@ namespace UnityEditor.Rendering.HighDefinition
                 }
             }
         }
-        #endregion // Decal and Light Layers
+        #endregion
 
     }
 
