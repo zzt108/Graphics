@@ -4,6 +4,11 @@ All notable changes to this package will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [8.3.0] - 2020-07-23
+
+### Fixed
+- Fixed an issue where the package would fail to compile if the Animation module was disabled. [case 1227068](https://issuetracker.unity3d.com/product/unity/issues/guid/1227068/)
+
 ## [8.2.0] - 2020-07-08
 
 ### Added
@@ -41,6 +46,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fixed an issue where camera stacking with MSAA on OpenGL resulted in a black screen. [Case 1250602](https://issuetracker.unity3d.com/issues/urp-camera-stacking-results-in-black-screen-when-msaa-and-opengl-graphics-api-are-used).
 - Fixed an issue where Model Importer Materials used the Standard Shader from the Built-in Render Pipeline instead of URP Lit shader when the import happened at Editor startup.
 - Fixed an issue causing shadows to be incorrectly rendered when a light was close to the shadow caster.
+- Fixed an issue where camera stacking with postFX on XR resulted in a grey screen. [Case 1260378](https://issuetracker.unity3d.com/issues/xr-urp-game-view-is-grey-when-using-camera-stacking-and-enabling-post-processing)
 
 ## [8.1.0] - 2020-04-21
 
@@ -124,6 +130,7 @@ The version number for this package has increased due to a version update of a r
 - Fixed a performance regression when you used the 2D Renderer.
 - Fixed an issue where the Freeform 2D Light gizmo didn't correctly show the Falloff offset.
 - Fixed an issue where the 2D Renderer rendered nothing when you used shadow-casting lights with incompatible Renderer2DData.
+- Fixed an issue where errors were generated when the Physics2D module was not included in the project's manifest.
 - Fixed an issue where Prefab previews were incorrectly lit when you used the 2D Renderer.
 - Fixed an issue where the Light didn't update correctly when you deleted a Sprite that a Sprite 2D Light uses.
 - Fixed an issue where 2D Lighting was broken for Perspective Cameras.
