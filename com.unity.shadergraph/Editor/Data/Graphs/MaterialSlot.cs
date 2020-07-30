@@ -98,6 +98,8 @@ namespace UnityEditor.ShaderGraph
                     return "(C)";
                 case ConcreteSlotValueType.Gradient:
                     return "(G)";
+                case ConcreteSlotValueType.VirtualTexture:
+                    return "(VT)";
                 default:
                     return "(E)";
             }
@@ -144,6 +146,10 @@ namespace UnityEditor.ShaderGraph
                     return slotType == SlotType.Input
                         ? new CubemapInputMaterialSlot(slotId, displayName, shaderOutputName, shaderStageCapability, hidden)
                         : new CubemapMaterialSlot(slotId, displayName, shaderOutputName, slotType, shaderStageCapability, hidden);
+                case SlotValueType.VirtualTexture:
+                    return slotType == SlotType.Input
+                        ? new VirtualTextureInputMaterialSlot(slotId, displayName, shaderOutputName, shaderStageCapability, hidden)
+                        : new VirtualTextureMaterialSlot(slotId, displayName, shaderOutputName, slotType, shaderStageCapability, hidden);
                 case SlotValueType.Gradient:
                     return slotType == SlotType.Input
                         ? new GradientInputMaterialSlot(slotId, displayName, shaderOutputName, shaderStageCapability, hidden)
@@ -214,6 +220,8 @@ namespace UnityEditor.ShaderGraph
             }
         }
 
+        public abstract bool isDefaultValue { get; }
+
         public abstract SlotValueType valueType { get; }
 
         public abstract ConcreteSlotValueType concreteValueType { get; }
@@ -234,6 +242,14 @@ namespace UnityEditor.ShaderGraph
         {
             get { return m_HasError; }
             set { m_HasError = value; }
+        }
+
+        public bool IsUsingDefaultValue()
+        {
+            if (!isConnected && isDefaultValue)
+                return true;
+            else
+                return false;
         }
 
         public bool IsCompatibleWith(MaterialSlot otherSlot)
@@ -264,7 +280,7 @@ namespace UnityEditor.ShaderGraph
             if (matOwner == null)
                 throw new Exception(string.Format("Slot {0} either has no owner, or the owner is not a {1}", this, typeof(AbstractMaterialNode)));
 
-            if (generationMode.IsPreview())
+            if (generationMode.IsPreview() && matOwner.isActive)
                 return matOwner.GetVariableNameForSlot(id);
 
             return ConcreteSlotValueAsVariable();

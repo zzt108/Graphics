@@ -56,10 +56,10 @@ namespace UnityEditor.ShaderGraph.Drawing
         }
 
         GraphEditorView m_GraphEditorView;
-        GraphEditorView graphEditorView
+        internal GraphEditorView graphEditorView
         {
             get { return m_GraphEditorView; }
-            set
+            private set
             {
                 if (m_GraphEditorView != null)
                 {
@@ -84,7 +84,7 @@ namespace UnityEditor.ShaderGraph.Drawing
             }
         }
 
-        GraphObject graphObject
+        internal GraphObject graphObject
         {
             get { return m_GraphObject; }
             set
@@ -322,15 +322,7 @@ namespace UnityEditor.ShaderGraph.Drawing
 
         void OnDestroy()
         {
-            if (graphObject != null)
-            {
-                string nameOfFile = AssetDatabase.GUIDToAssetPath(selectedGuid);
-                if (IsDirty() && EditorUtility.DisplayDialog("Shader Graph Has Been Modified", "Do you want to save the changes you made in the Shader Graph?\n" + nameOfFile + "\n\nYour changes will be lost if you don't save them.", "Save", "Don't Save"))
-                    UpdateAsset();
-                Undo.ClearUndo(graphObject);
-                graphObject = null;
-            }
-
+            PromptSaveIfDirtyOnQuit();
             graphEditorView = null;
         }
 
@@ -385,18 +377,28 @@ namespace UnityEditor.ShaderGraph.Drawing
                     ShaderUtil.ClearShaderMessages(oldShader);
 
                 UpdateShaderGraphOnDisk(path);
-
-                if (GraphData.onSaveGraph != null)
-                {
-                    var shader = AssetDatabase.LoadAssetAtPath<Shader>(path);
-                    if (shader != null)
-                    {
-                        GraphData.onSaveGraph(shader, (graphObject.graph.outputNode as AbstractMaterialNode).saveContext);
-                    }
-                }
+                OnSaveGraph(path);
             }
 
             UpdateTitle();
+        }
+
+        void OnSaveGraph(string path)
+        {
+            if(GraphData.onSaveGraph == null)
+                return;
+
+            if(graphObject.graph.isSubGraph)
+                return;
+
+            var shader = AssetDatabase.LoadAssetAtPath<Shader>(path);
+            if(shader == null)
+                return;
+
+            foreach(var target in graphObject.graph.activeTargets)
+            {
+                GraphData.onSaveGraph(shader, target.saveContext);
+            }
         }
 
         public void SaveAs()
@@ -424,18 +426,16 @@ namespace UnityEditor.ShaderGraph.Drawing
                 {
                     if (!string.IsNullOrEmpty(newPath))
                     {
+                        // If the newPath already exists, we are overwriting an existing file, and could be creating recursions. Let's check.
+                        if (GraphUtil.CheckForRecursiveDependencyOnPendingSave(newPath, graphObject.graph.GetNodes<SubGraphNode>(), "Save As"))
+                            return false;
+
                         var success = FileUtilities.WriteShaderGraphToDisk(newPath, graphObject.graph);
                         AssetDatabase.ImportAsset(newPath);
                         if (success)
                         {
                             ShaderGraphImporterEditor.ShowGraphEditWindow(newPath);
-                            // This is for updating material dependencies so we exclude subgraphs here.
-                            if (GraphData.onSaveGraph != null && extension != ShaderSubGraphImporter.Extension)
-                            {
-                                var shader = AssetDatabase.LoadAssetAtPath<Shader>(newPath);
-                                // Retrieve graph context, note that if we're here the output node will always be a master node
-                                GraphData.onSaveGraph(shader, (graphObject.graph.outputNode as AbstractMaterialNode).saveContext);
-                            }
+                            OnSaveGraph(newPath);
                         }
                     }
 
@@ -475,9 +475,18 @@ namespace UnityEditor.ShaderGraph.Drawing
             if (path.Length == 0)
                 return;
 
+            var nodes = graphView.selection.OfType<IShaderNodeView>().Where(x => !(x.node is PropertyNode || x.node is SubGraphOutputNode)).Select(x => x.node).Where(x => x.allowedInSubGraph).ToArray();
+
+            // Convert To Subgraph could create recursive reference loops if the target path already exists
+            // Let's check for that here
+            if (!string.IsNullOrEmpty(path))
+            {
+                if (GraphUtil.CheckForRecursiveDependencyOnPendingSave(path, nodes.OfType<SubGraphNode>(), "Convert To SubGraph"))
+                    return;
+            }
+
             graphObject.RegisterCompleteObjectUndo("Convert To Subgraph");
 
-            var nodes = graphView.selection.OfType<IShaderNodeView>().Where(x => !(x.node is PropertyNode || x.node is SubGraphOutputNode)).Select(x => x.node).Where(x => x.allowedInSubGraph).ToArray();
             var bounds = Rect.MinMaxRect(float.PositiveInfinity, float.PositiveInfinity, float.NegativeInfinity, float.NegativeInfinity);
             foreach (var node in nodes)
             {
@@ -511,6 +520,8 @@ namespace UnityEditor.ShaderGraph.Drawing
                 graphView.selection.OfType<StickyNote>().Select(x => x.userData),
                 true);
 
+            // why do we serialize and deserialize only to make copies of everything in the steps below?
+            // is this just to clear out all non-serialized data?
             var deserialized = CopyPasteGraph.FromJson(MultiJson.Serialize(copyPasteGraph), graphView.graph);
             if (deserialized == null)
                 return;
@@ -619,6 +630,11 @@ namespace UnityEditor.ShaderGraph.Drawing
                 var fromNode = sr.node;
                 var fromSlot = sr.slot;
 
+                var materialGraph = graphObject.graph;
+                var fromProperty = fromNode is PropertyNode fromPropertyNode
+                    ? materialGraph.properties.FirstOrDefault(p => p == fromPropertyNode.property)
+                    : null;
+
                 AbstractShaderProperty prop;
                 switch (fromSlot.concreteValueType)
                 {
@@ -664,14 +680,17 @@ namespace UnityEditor.ShaderGraph.Drawing
                     case ConcreteSlotValueType.Gradient:
                         prop = new GradientShaderProperty();
                         break;
+                    case ConcreteSlotValueType.VirtualTexture:
+                        prop = new VirtualTextureShaderProperty()
+                        {
+                            // also copy the VT settings over from the original property (if there is one)
+                            value = (fromProperty as VirtualTextureShaderProperty)?.value ?? new SerializableVirtualTexture()
+                        };
+                        break;
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
 
-                var materialGraph = graphObject.graph;
-                var fromProperty = fromNode is PropertyNode fromPropertyNode
-                    ? materialGraph.properties.FirstOrDefault(p => p == fromPropertyNode.property)
-                    : null;
                 prop.displayName = fromProperty != null
                     ? fromProperty.displayName
                     : fromSlot.concreteValueType.ToString();
@@ -752,8 +771,8 @@ namespace UnityEditor.ShaderGraph.Drawing
                 subGraphNode.group = firstNode.group;
             }
 
-            graphObject.graph.AddNode(subGraphNode);
             subGraphNode.asset = loadedSubGraph;
+            graphObject.graph.AddNode(subGraphNode);
 
             foreach (var edgeMap in externalInputNeedingConnection)
             {
@@ -785,6 +804,7 @@ namespace UnityEditor.ShaderGraph.Drawing
         {
             try
             {
+                EditorApplication.wantsToQuit -= PromptSaveIfDirtyOnQuit;
                 m_ColorSpace = PlayerSettings.colorSpace;
                 m_RenderPipelineAsset = GraphicsSettings.renderPipelineAsset;
 
@@ -850,6 +870,7 @@ namespace UnityEditor.ShaderGraph.Drawing
                 UpdateTitle();
 
                 Repaint();
+                EditorApplication.wantsToQuit += PromptSaveIfDirtyOnQuit;
             }
             catch (Exception)
             {
@@ -858,6 +879,19 @@ namespace UnityEditor.ShaderGraph.Drawing
                 graphObject = null;
                 throw;
             }
+        }
+
+        private bool PromptSaveIfDirtyOnQuit()
+        {
+            if (graphObject != null)
+            {
+                string nameOfFile = AssetDatabase.GUIDToAssetPath(selectedGuid);
+                if (IsDirty() && EditorUtility.DisplayDialog("Shader Graph Has Been Modified", "Do you want to save the changes you made in the Shader Graph?\n" + nameOfFile + "\n\nYour changes will be lost if you don't save them.", "Save", "Don't Save"))
+                    UpdateAsset();
+                Undo.ClearUndo(graphObject);
+                graphObject = null;
+            }
+            return true;
         }
 
         Texture2D GetThemeIcon(GraphData graphdata)
