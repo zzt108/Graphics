@@ -45,6 +45,8 @@ namespace UnityEditor.Rendering.Universal
         ShaderKeyword m_DeprecatedShadowsCascade = new ShaderKeyword("_SHADOWS_CASCADE");
         ShaderKeyword m_DeprecatedLocalShadowsEnabled = new ShaderKeyword("_LOCAL_SHADOWS_ENABLED");
 
+        ShaderKeyword m_UseDrawProcedural = new ShaderKeyword(ShaderKeywordStrings.UseDrawProcedural);
+
         int m_TotalVariantsInputCount;
         int m_TotalVariantsOutputCount;
 
@@ -142,6 +144,10 @@ namespace UnityEditor.Rendering.Universal
             if (compilerData.shaderCompilerPlatform == ShaderCompilerPlatform.GLES20)
             {
                 if (compilerData.shaderKeywordSet.IsEnabled(m_CascadeShadows))
+                    return true;
+
+                // GLES2 does not support VertexID that is required for full screen draw procedural pass;
+                if (compilerData.shaderKeywordSet.IsEnabled(m_UseDrawProcedural))
                     return true;
             }
 
@@ -282,7 +288,7 @@ namespace UnityEditor.Rendering.Universal
         private static void FetchAllSupportedFeatures()
         {
             List<UniversalRenderPipelineAsset> urps = new List<UniversalRenderPipelineAsset>();
-            urps.Add(GraphicsSettings.defaultRenderPipeline as UniversalRenderPipelineAsset);
+            //urps.Add(GraphicsSettings.defaultRenderPipeline as UniversalRenderPipelineAsset); TODOJENNY
             for(int i = 0; i < QualitySettings.names.Length; i++)
             {
                 urps.Add(QualitySettings.GetRenderPipelineAssetAt(i) as UniversalRenderPipelineAsset);

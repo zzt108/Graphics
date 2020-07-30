@@ -24,7 +24,7 @@ namespace  UnityEngine.Rendering.HighDefinition
 
         public VTBufferManager(HDRenderPipelineAsset asset)
         {
-            downSampleCS = asset.renderPipelineResources.shaders.VTFeedbackDownsample;
+            downSampleCS = HDDefaultSettings.instance.renderPipelineResources.shaders.VTFeedbackDownsample;
         }
 
         public void CreateBuffers(RenderPipelineSettings settings)

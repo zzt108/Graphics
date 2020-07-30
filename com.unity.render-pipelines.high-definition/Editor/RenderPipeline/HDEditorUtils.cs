@@ -230,7 +230,7 @@ namespace UnityEditor.Rendering.HighDefinition
 
         internal static void DrawDecalLayerMask_Internal(Rect rect, GUIContent label, SerializedProperty property)
         {
-            if (HDRenderPipeline.defaultAsset == null)
+            if (HDRenderPipeline.defaultAsset == null) //TODOJENNY - remove?
                 return ;
 
             EditorGUI.BeginProperty(rect, label, property);

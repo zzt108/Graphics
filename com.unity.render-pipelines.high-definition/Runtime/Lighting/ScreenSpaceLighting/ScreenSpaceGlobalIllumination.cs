@@ -38,8 +38,8 @@ namespace UnityEngine.Rendering.HighDefinition
                 m_IndirectDiffuseHitPointBuffer = RTHandles.Alloc(Vector2.one, TextureXR.slices, colorFormat: GraphicsFormat.R16G16_SFloat, dimension: TextureXR.dimension, enableRandomWrite: true, useDynamicScale: true, useMipMap: false, autoGenerateMips: false, name: "IndirectDiffuseHitBuffer");
 
                 // Grab the sets of shaders that we'll be using
-                ComputeShader ssGICS = m_Asset.renderPipelineResources.shaders.screenSpaceGlobalIlluminationCS;
-                ComputeShader bilateralUpsampleCS = m_Asset.renderPipelineResources.shaders.bilateralUpsampleCS;
+                ComputeShader ssGICS = HDDefaultSettings.instance.renderPipelineResources.shaders.screenSpaceGlobalIlluminationCS;
+                ComputeShader bilateralUpsampleCS = HDDefaultSettings.instance.renderPipelineResources.shaders.bilateralUpsampleCS;
 
                 // Grab the set of kernels that we shall be using
                 m_TraceGlobalIlluminationKernel = ssGICS.FindKernel("TraceGlobalIllumination");
@@ -99,7 +99,7 @@ namespace UnityEngine.Rendering.HighDefinition
             BlueNoise blueNoise = GetBlueNoiseManager();
 
             // Grab the shaders we shall be using
-            ComputeShader ssGICS = m_Asset.renderPipelineResources.shaders.screenSpaceGlobalIlluminationCS;
+            ComputeShader ssGICS = HDDefaultSettings.instance.renderPipelineResources.shaders.screenSpaceGlobalIlluminationCS;
 
             // Evaluate the dispatch parameters
             int texWidth, texHeight;
@@ -208,7 +208,7 @@ namespace UnityEngine.Rendering.HighDefinition
                 // If this was a half resolution effect, we still have to upscale it
                 if (!giSettings.fullResolutionSS)
                 {
-                    ComputeShader bilateralUpsampleCS = m_Asset.renderPipelineResources.shaders.bilateralUpsampleCS;
+                    ComputeShader bilateralUpsampleCS = HDDefaultSettings.instance.renderPipelineResources.shaders.bilateralUpsampleCS;
 
                     // Re-evaluate the dispatch parameters (we are evaluating the upsample in full resolution)
                     numTilesXHR = (hdCamera.actualWidth + (areaTileSize - 1)) / areaTileSize;
