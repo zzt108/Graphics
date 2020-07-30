@@ -29,7 +29,6 @@ namespace UnityEngine.Rendering.HighDefinition
         }
 
         static readonly MigrationDescription<Version, HDRenderPipelineAsset> k_Migration = MigrationDescription.New(
-            /* TODOJENNY - once i know which settings need to be moved to the Default Settings */
             MigrationStep.New(Version.UpgradeFrameSettingsToStruct,(HDRenderPipelineAsset data) =>
             {
 #pragma warning disable 618 // Type or member is obsolete
@@ -145,6 +144,7 @@ namespace UnityEngine.Rendering.HighDefinition
             }),
             MigrationStep.New(Version.DefaultSettingsAsAnAsset,(HDRenderPipelineAsset data) =>
             {
+#if UNITY_EDITOR
                 // 2/ it acted as the definition of the Default Settings - now migrated to its own asset
 #pragma warning disable 618 // Type or member is obsolete
                 if(data == GraphicsSettings.defaultRenderPipeline)
@@ -154,6 +154,7 @@ namespace UnityEngine.Rendering.HighDefinition
                     HDDefaultSettings.UpdateGraphicsSettings(defaultSettings);
                     EditorUtility.SetDirty(defaultSettings);
                 }
+#endif
             })
         );
 

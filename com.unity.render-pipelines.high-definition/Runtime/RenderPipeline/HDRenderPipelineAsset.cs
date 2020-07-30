@@ -51,8 +51,9 @@ namespace UnityEngine.Rendering.HighDefinition
             //OnValidate is called once at first selection of the asset.
             if (HDRenderPipeline.currentAsset == this)
                 base.OnValidate();
-
+#if UNITY_EDITOR
             HDDefaultSettings.Ensure();
+#endif
             UpdateRenderingLayerNames();
 
             isInOnValidateCall = false;
