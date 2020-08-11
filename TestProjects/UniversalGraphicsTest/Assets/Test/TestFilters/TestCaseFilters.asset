@@ -446,3 +446,10 @@ MonoBehaviour:
     XrSdk: None
     StereoModes: 0
     Reason: Android GLES2 Terrain shader sampler limit (scene 38)
+  - FilteredScene: {fileID: 102900000, guid: 381306730e4f1b141bf8e0e1c35f16e9, type: 3}
+    ColorSpace: -1
+    BuildPlatform: 13
+    GraphicsDevice: 8
+    XrSdk: None
+    StereoModes: 0
+    Reason: Android GLES2 Lit Graph issue (scene 056)
