@@ -53,6 +53,10 @@ namespace UnityEngine.Rendering.Universal
             projMatrix = renderParameter.projection;
             viewMatrix = renderParameter.view;
             viewport = renderParameter.viewport;
+            // yflip viewport here to match XRSDK's viewport with URP viewport
+            // XRSDK viewport origin is top left while URP viewport origin is bottom left
+            viewport.y = 1.0f - viewport.height;
+            
             occlusionMesh = renderParameter.occlusionMesh;
             textureArraySlice = renderParameter.textureArraySlice;
 
