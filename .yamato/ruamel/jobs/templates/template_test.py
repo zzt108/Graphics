@@ -23,10 +23,8 @@ class Template_TestJob():
                 f'pip install unity-downloader-cli --index-url {UNITY_DOWNLOADER_CLI_URL} --upgrade',
                 f'unity-downloader-cli --source-file {PATH_UNITY_REVISION} -c editor --wait --published-only']
         if platform["os"].lower() == 'windows':
-                commands.append(f'mkdir upm-ci~\\packages')
                 commands.append(f'for /r {PATH_PACKAGES_temp} %%x in (*.tgz) do copy %%x upm-ci~\packages')
         elif platform["os"].lower() == 'macos':
-                commands.append(f'mkdir upm-ci~ && mkdir upm-ci~/packages')
                 commands.append(f'cp {PATH_PACKAGES_temp}/**/upm-ci~/packages/*.tgz upm-ci~/packages')
         if template.get('hascodependencies', None) is not None:
             commands.append(platform["copycmd"])
