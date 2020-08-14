@@ -4,26 +4,26 @@ from ..shared.constants import PATH_UNITY_REVISION, NPM_UPMCI_INSTALL_URL, UNITY
 from ..shared.yml_job import YMLJob
 
 class Template_TestJob():
-    
+
     def __init__(self, template, platform, editor):
         self.job_id = template_job_id_test(template["id"],platform["os"],editor["version"])
         self.yml = self.get_job_definition(template, platform, editor).get_yml()
 
-    
+
     def get_job_definition(self, template, platform, editor):
 
         # define dependencies
         dependencies = [f'{editor_filepath()}#{editor_job_id(editor["version"], platform["os"]) }']
-        dependencies.extend([f'{packages_filepath()}#{package_job_id_pack(dep)}' for dep in template["dependencies"]])
-        
+        dependencies.extend([f'{templates_filepath()}#{template_job_id_pack(template["id"])}'])
+        # dependencies.extend([f'{packages_filepath()}#{package_job_id_pack(dep)}' for dep in template["dependencies"]])
 
         # define commands
         commands = [
                 f'npm install upm-ci-utils@stable -g --registry {NPM_UPMCI_INSTALL_URL}',
                 f'pip install unity-downloader-cli --index-url {UNITY_DOWNLOADER_CLI_URL} --upgrade',
                 f'unity-downloader-cli --source-file {PATH_UNITY_REVISION} -c editor --wait --published-only']
-        if template.get('hascodependencies', None) is not None:
-            commands.append(platform["copycmd"])
+        # if template.get('hascodependencies', None) is not None:
+        #     commands.append(platform["copycmd"])
         commands.append(f'upm-ci template test -u {platform["editorpath"]} --project-path {template["packagename"]}')
 
 
@@ -37,6 +37,5 @@ class Template_TestJob():
         return job
 
 
-    
-    
-    
+
+
