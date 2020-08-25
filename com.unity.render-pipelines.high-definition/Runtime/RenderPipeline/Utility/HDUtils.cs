@@ -551,7 +551,6 @@ namespace UnityEngine.Rendering.HighDefinition
         // IMPORTANT: RenderPipelineManager.currentPipeline won't be HDRP until a camera.Render() call is made.
         internal static RenderPipelineAsset SwitchToBuiltinRenderPipeline()
         {
-            // If we are here, it means the asset comes from quality settings
             var assetFromQuality = QualitySettings.renderPipeline;
             QualitySettings.renderPipeline = null;
             return assetFromQuality;
@@ -560,9 +559,9 @@ namespace UnityEngine.Rendering.HighDefinition
         // Set the renderPipelineAsset, either on the quality settings if it was unset from there or in GraphicsSettings.
         // IMPORTANT: RenderPipelineManager.currentPipeline won't be HDRP until a camera.Render() call is made. 
         internal static void RestoreRenderPipelineAsset(RenderPipelineAsset renderPipelineAsset)
-            {
-                QualitySettings.renderPipeline = renderPipelineAsset;
-            }
+        {
+            QualitySettings.renderPipeline = renderPipelineAsset;
+        }
 
         internal struct PackedMipChainInfo
         {
