@@ -50,8 +50,5 @@ editor_versions:
       revision: e7940f100eec256f89065cb78d4eabb373486585
       version: ''
     macos:
-      revision: e7940f100eec256f89065cb78d4eabb373486585
-      version: ''
-    windows:
-      revision: e7940f100eec256f89065cb78d4eabb373486585
+      revision: 69cbd412784eb87e2cf8366c80a06b2f5140dc9d
       version: ''
