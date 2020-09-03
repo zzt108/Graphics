@@ -15,7 +15,7 @@ Universal_OSX_OpenGLCore_playmode_2020.1:
       -  curl -s https://artifactory.internal.unity3d.com/core-automation/tools/utr-standalone/utr --output TestProjects/UniversalGraphicsTest/utr
       -  chmod +x TestProjects/UniversalGraphicsTest/utr
       -  pip install unity-downloader-cli --index-url https://artifactory.prd.it.unity3d.com/artifactory/api/pypi/pypi/simple --upgrade
-      -  cd TestProjects/UniversalGraphicsTest && unity-downloader-cli -u fa717bb873ec -c editor -c il2cpp  --wait --published-only
+      -  cd TestProjects/UniversalGraphicsTest && unity-downloader-cli -u e025938fdedc -c editor -c il2cpp  --wait --published-only
       -  cd TestProjects/UniversalGraphicsTest && ./utr --suite=playmode --testproject=. --editor-location=.Editor --artifacts_path=test-results
     artifacts:
         logs:
@@ -33,7 +33,7 @@ Universal_OSX_OpenGLCore_editmode_2020.1:
       -  curl -s https://artifactory.internal.unity3d.com/core-automation/tools/utr-standalone/utr --output TestProjects/UniversalGraphicsTest/utr
       -  chmod +x TestProjects/UniversalGraphicsTest/utr
       -  pip install unity-downloader-cli --index-url https://artifactory.prd.it.unity3d.com/artifactory/api/pypi/pypi/simple --upgrade
-      -  cd TestProjects/UniversalGraphicsTest && unity-downloader-cli -u fa717bb873ec -c editor -c il2cpp  --wait --published-only
+      -  cd TestProjects/UniversalGraphicsTest && unity-downloader-cli -u e025938fdedc -c editor -c il2cpp  --wait --published-only
       -  cd TestProjects/UniversalGraphicsTest && ./utr --suite=editor --platform=editmode --testproject=. --editor-location=.Editor --artifacts_path=test-results
     artifacts:
         logs:
@@ -51,7 +51,7 @@ Universal_OSX_OpenGLCore_playmode_XR_2020.1:
       -  curl -s https://artifactory.internal.unity3d.com/core-automation/tools/utr-standalone/utr --output TestProjects/UniversalGraphicsTest/utr
       -  chmod +x TestProjects/UniversalGraphicsTest/utr
       -  pip install unity-downloader-cli --index-url https://artifactory.prd.it.unity3d.com/artifactory/api/pypi/pypi/simple --upgrade
-      -  cd TestProjects/UniversalGraphicsTest && unity-downloader-cli -u fa717bb873ec -c editor -c il2cpp  --wait --published-only
+      -  cd TestProjects/UniversalGraphicsTest && unity-downloader-cli -u e025938fdedc -c editor -c il2cpp  --wait --published-only
       -  cd TestProjects/UniversalGraphicsTest && ./utr --suite=playmode --extra-editor-arg="-xr-tests" --testproject=. --editor-location=.Editor --artifacts_path=test-results
     artifacts:
         logs:
