@@ -3,6 +3,7 @@ Shader "Hidden/Universal Render Pipeline/XR/XROcclusionMesh"
     HLSLINCLUDE
         #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 
+        #pragma exclude_renderers gles
         // Not all platforms properly support SV_RenderTargetArrayIndex
         #if defined(SHADER_API_D3D11) || defined(SHADER_API_VULKAN) || defined(SHADER_API_GLCORE) || defined(SHADER_API_GLES3) || defined(SHADER_API_PSSL)
             #pragma multi_compile _ XR_OCCLUSION_MESH_COMBINED
