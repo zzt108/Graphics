@@ -25,23 +25,23 @@ editor_versions:
       version: 2020.1.6f1
   2020.1_latest_public:
     android:
-      revision: fa717bb873ec
-      version: 2020.1.4f1
+      revision: e025938fdedc
+      version: 2020.1.5f1
     ios:
-      revision: fa717bb873ec
-      version: 2020.1.4f1
+      revision: e025938fdedc
+      version: 2020.1.5f1
     linux:
-      revision: fa717bb873ec
-      version: 2020.1.4f1
+      revision: e025938fdedc
+      version: 2020.1.5f1
     macos:
-      revision: fa717bb873ec
-      version: 2020.1.4f1
+      revision: e025938fdedc
+      version: 2020.1.5f1
     windows:
-      revision: fa717bb873ec
-      version: 2020.1.4f1
+      revision: e025938fdedc
+      version: 2020.1.5f1
   2020.1_staging:
     android:
-      revision: fc477ca6df1065670da309521895a8574ed5705e
+      revision: 35bce2a18f3d58ee8be3ff955140f2605226d34c
       version: ''
     ios:
       revision: fc477ca6df1065670da309521895a8574ed5705e
@@ -53,5 +53,5 @@ editor_versions:
       revision: fc477ca6df1065670da309521895a8574ed5705e
       version: ''
     windows:
-      revision: fc477ca6df1065670da309521895a8574ed5705e
+      revision: 35bce2a18f3d58ee8be3ff955140f2605226d34c
       version: ''
