@@ -44,13 +44,13 @@ editor_versions:
       revision: 35bce2a18f3d58ee8be3ff955140f2605226d34c
       version: ''
     ios:
-      revision: fc477ca6df1065670da309521895a8574ed5705e
+      revision: 35bce2a18f3d58ee8be3ff955140f2605226d34c
       version: ''
     linux:
-      revision: fc477ca6df1065670da309521895a8574ed5705e
+      revision: 35bce2a18f3d58ee8be3ff955140f2605226d34c
       version: ''
     macos:
-      revision: fc477ca6df1065670da309521895a8574ed5705e
+      revision: 35bce2a18f3d58ee8be3ff955140f2605226d34c
       version: ''
     windows:
       revision: 35bce2a18f3d58ee8be3ff955140f2605226d34c
