@@ -124,8 +124,7 @@ namespace UnityEngine.Rendering
             // Look for existing cached layer masks and add it there if needed
             foreach (var kvp in m_SortedVolumes)
             {
-                // We add the volume to sorted lists only if the layer match and if it doesn't contain the volume already.
-                if ((kvp.Key & (1 << layer)) != 0 && !kvp.Value.Contains(volume))
+                if ((kvp.Key & (1 << layer)) != 0)
                     kvp.Value.Add(volume);
             }
 
