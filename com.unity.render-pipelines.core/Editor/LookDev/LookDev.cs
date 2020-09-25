@@ -93,7 +93,10 @@ namespace UnityEditor.Rendering.LookDev
         /// <summary>Open the LookDev window</summary>
         public static void Open()
         {
-            EditorWindow.GetWindow<DisplayWindow>();
+            var Window = EditorWindow.GetWindow<DisplayWindow>();
+            s_ViewDisplayer = Window;
+            s_EnvironmentDisplayer = Window;
+            ConfigureLookDev(reloadWithTemporaryID: false);
         }
 
         /// <summary>Close the LookDev window</summary>
@@ -103,14 +106,6 @@ namespace UnityEditor.Rendering.LookDev
             s_ViewDisplayer = null;
             (s_EnvironmentDisplayer as EditorWindow)?.Close();
             s_EnvironmentDisplayer = null;
-        }
-
-        internal static void Initialize(DisplayWindow window)
-        {
-            s_ViewDisplayer = window;
-            s_EnvironmentDisplayer = window;
-            open = true;
-            ConfigureLookDev(reloadWithTemporaryID: false);
         }
 
         [Callbacks.DidReloadScripts]
@@ -163,6 +158,8 @@ namespace UnityEditor.Rendering.LookDev
 
         static void LinkViewDisplayer()
         {
+            EditorApplication.playModeStateChanged += state => Close();
+
             s_ViewDisplayer.OnClosed += () =>
             {
                 s_Compositor?.Dispose();
