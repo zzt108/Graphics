@@ -2,9 +2,9 @@ project:
   name: ShaderGraph_Stereo
   folder: ShaderGraphUniversalStereo
 test_platforms:
-  - type: Standalone
-# - type: playmode
-  - type: editmode
+  - Standalone
+# - playmode
+  - editmode
 platforms:
   - name: Win
     apis: 

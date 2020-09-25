@@ -2,8 +2,8 @@ project:
   name: URPUpdate_Top_Asset_Store
   folder: Top-URP-Assets
 test_platforms:
-  - type: playmode
-  - type: editmode
+  - playmode
+  - editmode
 platforms:
   - name: Win
     apis:

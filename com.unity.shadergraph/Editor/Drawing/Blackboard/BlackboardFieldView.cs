@@ -88,8 +88,7 @@ namespace UnityEditor.ShaderGraph.Drawing
 
         public void InspectorUpdateTrigger()
         {
-            if (m_inspectorUpdateTrigger != null)
-                m_inspectorUpdateTrigger();
+            m_inspectorUpdateTrigger();
         }
 
         public BlackboardFieldView(GraphData graph, ShaderInput input, BlackBoardCallback updateBlackboardView,

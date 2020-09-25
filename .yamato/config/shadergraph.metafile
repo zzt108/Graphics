@@ -2,11 +2,9 @@ project:
   name: ShaderGraph
   folder: ShaderGraph
 test_platforms:
-  - type: Standalone
-    timeout:
-      OSX_Metal: 2400
-  - type: playmode
-  - type: editmode
+  - Standalone
+  - playmode
+  - editmode
 platforms:
   - name: Win
     apis:
