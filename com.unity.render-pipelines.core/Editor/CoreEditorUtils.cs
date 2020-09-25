@@ -227,7 +227,6 @@ namespace UnityEditor.Rendering
         public static void DrawSplitter(bool isBoxed = false)
         {
             var rect = GUILayoutUtility.GetRect(1f, 1f);
-            float xMin = rect.xMin;
 
             // Splitter rect should be full-width
             rect.xMin = 0f;
@@ -235,7 +234,7 @@ namespace UnityEditor.Rendering
             
             if (isBoxed)
             {
-                rect.xMin = xMin == 7.0 ? 4.0f : EditorGUIUtility.singleLineHeight;
+                rect.xMin = EditorGUIUtility.singleLineHeight;
                 rect.width -= 1;
             }
 
@@ -300,7 +299,6 @@ namespace UnityEditor.Rendering
         {
             const float height = 17f;
             var backgroundRect = GUILayoutUtility.GetRect(1f, height);
-            float xMin = backgroundRect.xMin;
 
             var labelRect = backgroundRect;
             labelRect.xMin += 16f;
@@ -330,7 +328,7 @@ namespace UnityEditor.Rendering
             {
                 labelRect.xMin += 5;
                 foldoutRect.xMin += 5;
-                backgroundRect.xMin = xMin == 7.0 ? 4.0f : EditorGUIUtility.singleLineHeight;
+                backgroundRect.xMin = EditorGUIUtility.singleLineHeight;
                 backgroundRect.width -= 1;
             }
 
