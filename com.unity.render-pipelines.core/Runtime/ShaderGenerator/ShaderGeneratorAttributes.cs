@@ -152,10 +152,6 @@ namespace UnityEngine.Rendering
         /// Field precision.
         /// </summary>
         public FieldPrecision precision;
-        /// <summary>
-        /// Field is a normalized vector.
-        /// </summary>
-        public bool checkIsNormalized;
 
         /// <summary>
         /// SurfaceDataAttributes constructor.
@@ -164,14 +160,13 @@ namespace UnityEngine.Rendering
         /// <param name="isDirection">Field is a direction.</param>
         /// <param name="sRGBDisplay">Field is an sRGB value.</param>
         /// <param name="precision">Field precision.</param>
-        public SurfaceDataAttributes(string displayName = "", bool isDirection = false, bool sRGBDisplay = false, FieldPrecision precision = FieldPrecision.Default, bool checkIsNormalized = false)
+        public SurfaceDataAttributes(string displayName = "", bool isDirection = false, bool sRGBDisplay = false, FieldPrecision precision = FieldPrecision.Default)
         {
             displayNames = new string[1];
             displayNames[0] = displayName;
             this.isDirection = isDirection;
             this.sRGBDisplay = sRGBDisplay;
             this.precision = precision;
-            this.checkIsNormalized = checkIsNormalized;
         }
 
         // We allow users to add several names for one field, so user can override the auto behavior and do something else with the same data
@@ -183,13 +178,12 @@ namespace UnityEngine.Rendering
         /// <param name="isDirection">Field is a direction.</param>
         /// <param name="sRGBDisplay">Field is an sRGB value.</param>
         /// <param name="precision">Field precision.</param>
-        public SurfaceDataAttributes(string[] displayNames, bool isDirection = false, bool sRGBDisplay = false, bool checkIsNormalized = false, FieldPrecision precision = FieldPrecision.Default)
+        public SurfaceDataAttributes(string[] displayNames, bool isDirection = false, bool sRGBDisplay = false, FieldPrecision precision = FieldPrecision.Default)
         {
             this.displayNames = displayNames;
             this.isDirection = isDirection;
             this.sRGBDisplay = sRGBDisplay;
             this.precision = precision;
-            this.checkIsNormalized = checkIsNormalized;
         }
     }
 
@@ -254,10 +248,6 @@ namespace UnityEngine.Rendering
         /// True if the field is an sRGB value.
         /// </summary>
         public bool sRGBDisplay;
-        /// <summary>
-        /// True if the field is an sRGB value.
-        /// </summary>
-        public bool checkIsNormalized;
 
         /// <summary>
         /// Packing Attribute constructor.
@@ -270,14 +260,13 @@ namespace UnityEngine.Rendering
         /// <param name="maxValue">Maximum value.</param>
         /// <param name="isDirection">Field is a direction.</param>
         /// <param name="sRGBDisplay">Field is an sRGB value.</param>
-        public PackingAttribute(string[] displayNames, FieldPacking packingScheme = FieldPacking.NoPacking, int bitSize = 32, int offsetInSource = 0, float minValue = 0.0f, float maxValue = 1.0f, bool isDirection = false, bool sRGBDisplay = false, bool checkIsNormalized = false)
+        public PackingAttribute(string[] displayNames, FieldPacking packingScheme = FieldPacking.NoPacking, int bitSize = 32, int offsetInSource = 0, float minValue = 0.0f, float maxValue = 1.0f, bool isDirection = false, bool sRGBDisplay = false)
         {
             this.displayNames = displayNames;
             this.packingScheme = packingScheme;
             this.offsetInSource = offsetInSource;
             this.isDirection = isDirection;
             this.sRGBDisplay = sRGBDisplay;
-            this.checkIsNormalized = checkIsNormalized;
             this.sizeInBits = bitSize;
             this.range = new float[] { minValue, maxValue };
         }
@@ -293,7 +282,7 @@ namespace UnityEngine.Rendering
         /// <param name="maxValue">Maximum value.</param>
         /// <param name="isDirection">Field is a direction.</param>
         /// <param name="sRGBDisplay">Field is an sRGB value.</param>
-        public PackingAttribute(string displayName = "", FieldPacking packingScheme = FieldPacking.NoPacking, int bitSize = 0, int offsetInSource = 0, float minValue = 0.0f, float maxValue = 1.0f, bool isDirection = false, bool sRGBDisplay = false, bool checkIsNormalized = false)
+        public PackingAttribute(string displayName = "", FieldPacking packingScheme = FieldPacking.NoPacking, int bitSize = 0, int offsetInSource = 0, float minValue = 0.0f, float maxValue = 1.0f, bool isDirection = false, bool sRGBDisplay = false)
         {
             displayNames = new string[1];
             displayNames[0] = displayName;
@@ -301,7 +290,6 @@ namespace UnityEngine.Rendering
             this.offsetInSource = offsetInSource;
             this.isDirection = isDirection;
             this.sRGBDisplay = sRGBDisplay;
-            this.checkIsNormalized = checkIsNormalized;
             this.sizeInBits = bitSize;
             this.range = new float[] { minValue, maxValue };
         }
