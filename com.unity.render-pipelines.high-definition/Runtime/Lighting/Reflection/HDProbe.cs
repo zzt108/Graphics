@@ -1,8 +1,5 @@
 using System;
 using UnityEngine.Serialization;
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
 
 namespace UnityEngine.Rendering.HighDefinition
 {
@@ -124,9 +121,6 @@ namespace UnityEngine.Rendering.HighDefinition
         RTHandle m_RealtimeDepthBuffer;
         RenderData m_RealtimeRenderData;
         bool m_WasRenderedSinceLastOnDemandRequest = true;
-#if UNITY_EDITOR
-        bool m_WasRenderedDuringAsyncCompilation = false;
-#endif
 
         // Array of names that will be used in the Render Loop to name the probes in debug
         internal string[] probeName = new string[6];
@@ -135,10 +129,6 @@ namespace UnityEngine.Rendering.HighDefinition
         {
             get
             {
-#if UNITY_EDITOR
-                if (m_WasRenderedDuringAsyncCompilation && !ShaderUtil.anythingCompiling)
-                    return true;
-#endif
                 if (mode != ProbeSettings.Mode.Realtime)
                     return false;
                 switch (realtimeMode)
@@ -478,9 +468,6 @@ namespace UnityEngine.Rendering.HighDefinition
 
         internal void SetIsRendered(int frame)
         {
-#if UNITY_EDITOR
-            m_WasRenderedDuringAsyncCompilation = ShaderUtil.anythingCompiling;
-#endif
             m_WasRenderedSinceLastOnDemandRequest = true;
             wasRenderedAfterOnEnable = true;
             lastRenderedFrame = frame;
