@@ -1980,6 +1980,12 @@ namespace UnityEngine.Rendering.HighDefinition
 
                         hdCamera.parentCamera = parentCamera; // Used to inherit the properties of the view
 
+                        if (visibleProbe.type == ProbeSettings.ProbeType.PlanarProbe && hdCamera.frameSettings.IsEnabled(FrameSettingsField.ExposureControl))
+                        {
+                            RTHandle exposureTexture = GetExposureTexture(hdCamera);
+                            visibleProbe.RequestProbeExposureValue(exposureTexture);
+                        }
+
                         HDAdditionalCameraData hdCam;
                         camera.TryGetComponent<HDAdditionalCameraData>(out hdCam);
                         hdCam.flipYMode = visibleProbe.type == ProbeSettings.ProbeType.ReflectionProbe
