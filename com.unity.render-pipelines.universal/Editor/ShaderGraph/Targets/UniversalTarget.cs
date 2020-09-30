@@ -45,7 +45,7 @@ namespace UnityEditor.Rendering.Universal.ShaderGraph
     sealed class UniversalTarget : Target, ILegacyTarget
     {
         // Constants
-        const string kAssetGuid = "8c72f47fdde33b14a9340e325ce56f4d";
+        static readonly GUID kSourceCodeGuid = new GUID("8c72f47fdde33b14a9340e325ce56f4d"); // UniversalTarget.cs
         public const string kPipelineTag = "UniversalPipeline";
         public const string kLitMaterialTypeTag = "\"UniversalMaterialType\" = \"Lit\"";
         public const string kUnlitMaterialTypeTag = "\"UniversalMaterialType\" = \"Unlit\"";
@@ -159,7 +159,7 @@ namespace UnityEditor.Rendering.Universal.ShaderGraph
         public override void Setup(ref TargetSetupContext context)
         {
             // Setup the Target
-            context.AddAssetDependencyPath(AssetDatabase.GUIDToAssetPath(kAssetGuid));
+            context.AddAssetDependency(kSourceCodeGuid, AssetCollection.Flags.SourceDependency);
 
             // Setup the active SubTarget
             TargetUtils.ProcessSubTargetList(ref m_ActiveSubTarget, ref m_SubTargets);
@@ -534,7 +534,7 @@ namespace UnityEditor.Rendering.Universal.ShaderGraph
         public static readonly PragmaCollection DOTSDefault = new PragmaCollection
         {
             { Pragma.Target(ShaderModel.Target45) },
-            { Pragma.ExcludeRenderers(new[]{ Platform.D3D9, Platform.GLES }) },
+            { Pragma.ExcludeRenderers(new[]{ Platform.GLES, Platform.GLES3, Platform.GLCore }) },
             { Pragma.Vertex("vert") },
             { Pragma.Fragment("frag") },
         };
@@ -542,7 +542,7 @@ namespace UnityEditor.Rendering.Universal.ShaderGraph
         public static readonly PragmaCollection DOTSInstanced = new PragmaCollection
         {
             { Pragma.Target(ShaderModel.Target45) },
-            { Pragma.ExcludeRenderers(new[]{ Platform.D3D9, Platform.GLES }) },
+            { Pragma.ExcludeRenderers(new[]{ Platform.GLES, Platform.GLES3, Platform.GLCore }) },
             { Pragma.MultiCompileInstancing },
             { Pragma.DOTSInstancing },
             { Pragma.Vertex("vert") },
@@ -552,7 +552,7 @@ namespace UnityEditor.Rendering.Universal.ShaderGraph
         public static readonly PragmaCollection DOTSForward = new PragmaCollection
         {
             { Pragma.Target(ShaderModel.Target45) },
-            { Pragma.ExcludeRenderers(new[]{ Platform.D3D9, Platform.GLES }) },
+            { Pragma.ExcludeRenderers(new[]{ Platform.GLES, Platform.GLES3, Platform.GLCore }) },
             { Pragma.MultiCompileInstancing },
             { Pragma.MultiCompileFog },
             { Pragma.DOTSInstancing },
@@ -563,7 +563,7 @@ namespace UnityEditor.Rendering.Universal.ShaderGraph
         public static readonly PragmaCollection DOTSGBuffer = new PragmaCollection
         {
             { Pragma.Target(ShaderModel.Target45) },
-            { Pragma.ExcludeRenderers(new[]{ Platform.D3D9, Platform.GLES }) },
+            { Pragma.ExcludeRenderers(new[]{ Platform.GLES, Platform.GLES3, Platform.GLCore }) },
             { Pragma.MultiCompileInstancing },
             { Pragma.MultiCompileFog },
             { Pragma.DOTSInstancing },
@@ -738,6 +738,24 @@ namespace UnityEditor.Rendering.Universal.ShaderGraph
         {
             displayName = "Mixed Lighting Subtractive",
             referenceName = "_MIXED_LIGHTING_SUBTRACTIVE",
+            type = KeywordType.Boolean,
+            definition = KeywordDefinition.MultiCompile,
+            scope = KeywordScope.Global,
+        };
+
+        public static readonly KeywordDescriptor LightmapShadowMixing = new KeywordDescriptor()
+        {
+            displayName = "Lightmap Shadow Mixing",
+            referenceName = "LIGHTMAP_SHADOW_MIXING",
+            type = KeywordType.Boolean,
+            definition = KeywordDefinition.MultiCompile,
+            scope = KeywordScope.Global,
+        };
+
+        public static readonly KeywordDescriptor ShadowsShadowmask = new KeywordDescriptor()
+        {
+            displayName = "Shadows Shadowmask",
+            referenceName = "SHADOWS_SHADOWMASK",
             type = KeywordType.Boolean,
             definition = KeywordDefinition.MultiCompile,
             scope = KeywordScope.Global,
