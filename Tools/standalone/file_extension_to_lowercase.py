@@ -31,7 +31,7 @@ def convert_extension_of_files(files):
 
 def convert_extensions_of_folder(folder):
 	for root, directories, files in os.walk(folder):
-		convert_extension_of_files(files)
+		convert_extension_of_files([os.path.join(root, file) for file in files])
 
 
 if __name__ == "__main__":
