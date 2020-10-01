@@ -221,8 +221,6 @@ namespace UnityEngine.Experimental.Rendering.RenderGraphModule
         DynamicArray<CompiledPassInfo>          m_CompiledPassInfos = new DynamicArray<CompiledPassInfo>();
         Stack<int>                              m_CullingStack = new Stack<int>();
 
-        int                                     m_ExecutionCount;
-
         #region Public Interface
 
         /// <summary>
@@ -416,11 +414,9 @@ namespace UnityEngine.Experimental.Rendering.RenderGraphModule
         /// <param name="parameters">Parameters necessary for the render graph execution.</param>
         public void Begin(in RenderGraphParameters parameters)
         {
-            m_ExecutionCount++;
-
             m_Logger.Initialize();
 
-            m_Resources.BeginRender(parameters.currentFrameIndex, m_ExecutionCount);
+            m_Resources.BeginRender(parameters.currentFrameIndex);
 
             m_RenderGraphContext.cmd = parameters.commandBuffer;
             m_RenderGraphContext.renderContext = parameters.scriptableRenderContext;
