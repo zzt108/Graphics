@@ -74,7 +74,7 @@ struct SFiniteLightBound
     float3 boxAxisY;
     float3 boxAxisZ;
     float3 center;
-    float scaleXY;
+    float2 scaleXY;
     float radius;
 };
 
