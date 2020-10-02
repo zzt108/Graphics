@@ -24,7 +24,7 @@ Shader "Hidden/Universal Render Pipeline/Debug/Replacement"
             #pragma fragment frag
 
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
-            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Debugging.hlsl"
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Debugging3D.hlsl"
 
             struct Attributes
             {
@@ -109,7 +109,7 @@ Shader "Hidden/Universal Render Pipeline/Debug/Replacement"
             #pragma fragment frag
 
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
-            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Debugging.hlsl"
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Debugging3D.hlsl"
 
             struct Attributes
             {
