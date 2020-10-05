@@ -63,6 +63,12 @@ namespace UnityEngine.Experimental.Rendering.Universal
         [SerializeField, Reload("Runtime/Data/PostProcessData.asset")]
         PostProcessData m_PostProcessData = null;
 
+        [SerializeField, Reload("Shaders/Utils/FullScreenDebug.shader")]
+        public Shader fullScreenDebugPS;
+
+        [SerializeField, Reload("Textures/numberFont.png")]
+        public Texture2D NumberFont;
+
         public float hdrEmulationScale => m_HDREmulationScale;
         public Light2DBlendStyle[] lightBlendStyles => m_LightBlendStyles;
         internal bool useDepthStencilBuffer => m_UseDepthStencilBuffer;

@@ -181,7 +181,7 @@ namespace UnityEngine.Rendering.Universal
             m_SceneViewDepthCopyPass = new SceneViewDepthCopyPass(RenderPassEvent.AfterRendering + 9, m_CopyDepthMaterial);
 #endif
 
-            // Hook in the debug-render where appropriate...
+            // Hook in the debug-handler where appropriate...
             m_RenderOpaqueForwardPass.DebugHandler = m_DebugHandler;
             if(m_RenderOpaqueForwardOnlyPass != null)
             {

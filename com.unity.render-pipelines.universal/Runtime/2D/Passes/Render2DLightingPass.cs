@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using UnityEditor.Rendering;
 using UnityEngine.Rendering;
 using UnityEngine.Profiling;
 using UnityEngine.Rendering.Universal;
@@ -162,32 +163,41 @@ namespace UnityEngine.Experimental.Rendering.Universal
                         filterSettings.sortingLayerRange = new SortingLayerRange(lowerBound, upperBound);
 
                         // Start Rendering
-                        if (lightStats.totalNormalMapUsage > 0)
-                            this.RenderNormals(context, renderingData.cullResults, normalsDrawSettings, filterSettings, depthAttachment);
-
-                        cmd.Clear();
-                        if (lightStats.totalLights > 0)
+                        if(DebugHandler.IsDebugMaterialActive || DebugHandler.IsSceneOverrideActive)
                         {
-                            this.RenderLights(renderingData, cmd, layerToRender, lightStats.blendStylesUsed);
+                            bool overrideMaterial = DebugHandler.IsSceneOverrideActive || DebugHandler.IsVertexAttributeOverrideActive;
+
+                            RenderObjectWithDebug(context, k_ShaderTags, ref renderingData, filterSettings, sortSettings.criteria, overrideMaterial);
                         }
                         else
                         {
-                            this.ClearDirtyLighting(cmd, lightStats.blendStylesUsed);
-                        }
+                            if (lightStats.totalNormalMapUsage > 0)
+                                this.RenderNormals(context, renderingData.cullResults, normalsDrawSettings, filterSettings, depthAttachment);
 
-                        CoreUtils.SetRenderTarget(cmd, colorAttachment, depthAttachment, ClearFlag.None, Color.white);
-                        context.ExecuteCommandBuffer(cmd);
-
-                        Profiler.BeginSample("RenderSpritesWithLighting - Draw Transparent Renderers");
-                        context.DrawRenderers(renderingData.cullResults, ref combinedDrawSettings, ref filterSettings);
-                        Profiler.EndSample();
-
-                        if (lightStats.totalVolumetricUsage > 0)
-                        {
                             cmd.Clear();
-                            this.RenderLightVolumes(renderingData, cmd, layerToRender, colorAttachment, depthAttachment, lightStats.blendStylesUsed);
+                            if (lightStats.totalLights > 0)
+                            {
+                                this.RenderLights(renderingData, cmd, layerToRender, lightStats.blendStylesUsed);
+                            }
+                            else
+                            {
+                                this.ClearDirtyLighting(cmd, lightStats.blendStylesUsed);
+                            }
+
+                            CoreUtils.SetRenderTarget(cmd, colorAttachment, depthAttachment, ClearFlag.None, Color.white);
                             context.ExecuteCommandBuffer(cmd);
-                            cmd.Clear();
+
+                            Profiler.BeginSample("RenderSpritesWithLighting - Draw Transparent Renderers");
+                            context.DrawRenderers(renderingData.cullResults, ref combinedDrawSettings, ref filterSettings);
+                            Profiler.EndSample();
+
+                            if (lightStats.totalVolumetricUsage > 0)
+                            {
+                                cmd.Clear();
+                                this.RenderLightVolumes(renderingData, cmd, layerToRender, colorAttachment, depthAttachment, lightStats.blendStylesUsed);
+                                context.ExecuteCommandBuffer(cmd);
+                                cmd.Clear();
+                            }
                         }
 
                         // move on to the next one
@@ -208,7 +218,7 @@ namespace UnityEngine.Experimental.Rendering.Universal
             }
             else
             {
-                var unlitDrawSettings = CreateDrawingSettings(k_ShaderTags, ref renderingData, SortingCriteria.CommonTransparent);
+                SortingCriteria sortingCriteria = SortingCriteria.CommonTransparent;
 
                 var cmd = CommandBufferPool.Get();
                 using (new ProfilingScope(cmd, m_ProfilingSamplerUnlit))
@@ -226,11 +236,22 @@ namespace UnityEngine.Experimental.Rendering.Universal
                 context.ExecuteCommandBuffer(cmd);
                 CommandBufferPool.Release(cmd);
 
-                Profiler.BeginSample("Render Sprites Unlit");
-                    context.DrawRenderers(renderingData.cullResults, ref unlitDrawSettings, ref filterSettings);
-                Profiler.EndSample();
+                if(DebugHandler.IsDebugMaterialActive || DebugHandler.IsSceneOverrideActive)
+                {
+                    bool overrideMaterial = DebugHandler.IsDebugMaterialActive;
 
-                RenderingUtils.RenderObjectsWithError(context, ref renderingData.cullResults, camera, filterSettings, SortingCriteria.None);
+                    RenderObjectWithDebug(context, k_ShaderTags, ref renderingData, filterSettings, sortingCriteria, overrideMaterial);
+                }
+                else
+                {
+                    var unlitDrawSettings = CreateDrawingSettings(k_ShaderTags, ref renderingData, sortingCriteria);
+
+                    Profiler.BeginSample("Render Sprites Unlit");
+                    context.DrawRenderers(renderingData.cullResults, ref unlitDrawSettings, ref filterSettings);
+                    Profiler.EndSample();
+
+                    RenderingUtils.RenderObjectsWithError(context, ref renderingData.cullResults, camera, filterSettings, SortingCriteria.None);
+                }
             }
         }
 

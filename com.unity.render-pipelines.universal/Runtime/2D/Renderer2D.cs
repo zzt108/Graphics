@@ -15,6 +15,8 @@ namespace UnityEngine.Experimental.Rendering.Universal
 
         private static readonly ProfilingSampler m_ProfilingSampler = new ProfilingSampler("Create Camera Textures");
 
+        private readonly DebugHandler m_DebugHandler;
+
         bool m_UseDepthStencilBuffer = true;
         bool m_CreateColorTexture;
         bool m_CreateDepthTexture;
@@ -33,6 +35,8 @@ namespace UnityEngine.Experimental.Rendering.Universal
 
         public Renderer2D(Renderer2DData data) : base(data)
         {
+            m_DebugHandler = new DebugHandler(data.NumberFont, data.fullScreenDebugPS);
+
             m_BlitMaterial = CoreUtils.CreateEngineMaterial(data.blitShader);
 
             m_ColorGradingLutPass = new ColorGradingLutPass(RenderPassEvent.BeforeRenderingOpaques, data.postProcessData);
@@ -42,6 +46,9 @@ namespace UnityEngine.Experimental.Rendering.Universal
             m_FinalBlitPass = new FinalBlitPass(RenderPassEvent.AfterRendering + 1, m_BlitMaterial);
 
             m_UseDepthStencilBuffer = data.useDepthStencilBuffer;
+
+            // Hook in the debug-handler where appropriate...
+            m_Render2DLightingPass.DebugHandler = m_DebugHandler;
 
             // We probably should declare these names in the base class,
             // as they must be the same across all ScriptableRenderer types for camera stacking to work.
@@ -67,7 +74,7 @@ namespace UnityEngine.Experimental.Rendering.Universal
             m_PostProcessPass.Cleanup();
             m_FinalPostProcessPass.Cleanup();
             m_ColorGradingLutPass.Cleanup();
-            
+
             CoreUtils.Destroy(m_BlitMaterial);
         }
 
@@ -132,6 +139,8 @@ namespace UnityEngine.Experimental.Rendering.Universal
 
         public override void Setup(ScriptableRenderContext context, ref RenderingData renderingData)
         {
+            m_DebugHandler.Setup(context);
+
             ref CameraData cameraData = ref renderingData.cameraData;
             ref var cameraTargetDescriptor = ref cameraData.cameraTargetDescriptor;
             bool stackHasPostProcess = renderingData.postProcessingEnabled;
