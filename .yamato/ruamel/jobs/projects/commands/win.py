@@ -3,10 +3,10 @@ from ...shared.utr_utils import utr_editmode_flags, utr_playmode_flags, utr_stan
 
 def _cmd_base(project_folder, platform, utr_flags, editor):
     return [
-        f'curl -s {UTR_INSTALL_URL}.bat --output {TEST_PROJECTS_DIR}/{project_folder}/utr.bat',
+        # f'curl -s {UTR_INSTALL_URL}.bat --output {TEST_PROJECTS_DIR}/{project_folder}/utr.bat',
         f'pip install unity-downloader-cli --index-url {UNITY_DOWNLOADER_CLI_URL} --upgrade',
         f'cd {TEST_PROJECTS_DIR}/{project_folder} && unity-downloader-cli { get_unity_downloader_cli_cmd(editor, platform["os"], cd=True) } {"".join([f"-c {c} " for c in platform["components"]])} --wait --published-only',
-        f'cd {TEST_PROJECTS_DIR}/{project_folder} && utr {" ".join(utr_flags)}'
+        f'cd {TEST_PROJECTS_DIR}/{project_folder} && .bin/utr.3284084/UnifiedTestRunner.exe {" ".join(utr_flags)}'
     ]
 
 
