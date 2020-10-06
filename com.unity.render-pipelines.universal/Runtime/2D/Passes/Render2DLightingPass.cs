@@ -163,7 +163,8 @@ namespace UnityEngine.Experimental.Rendering.Universal
                         filterSettings.sortingLayerRange = new SortingLayerRange(lowerBound, upperBound);
 
                         // Start Rendering
-                        if(DebugHandler.IsDebugMaterialActive || DebugHandler.IsSceneOverrideActive)
+                        if((DebugHandler != null) &&
+                           (DebugHandler.IsDebugMaterialActive || DebugHandler.IsSceneOverrideActive))
                         {
                             bool overrideMaterial = DebugHandler.IsSceneOverrideActive || DebugHandler.IsVertexAttributeOverrideActive;
 
@@ -236,7 +237,8 @@ namespace UnityEngine.Experimental.Rendering.Universal
                 context.ExecuteCommandBuffer(cmd);
                 CommandBufferPool.Release(cmd);
 
-                if(DebugHandler.IsDebugMaterialActive || DebugHandler.IsSceneOverrideActive)
+                if((DebugHandler != null) &&
+                    (DebugHandler.IsDebugMaterialActive || DebugHandler.IsSceneOverrideActive))
                 {
                     bool overrideMaterial = DebugHandler.IsDebugMaterialActive;
 
