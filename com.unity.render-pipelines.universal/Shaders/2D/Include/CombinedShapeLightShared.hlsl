@@ -57,7 +57,7 @@ half4 CalculateFinalColor(half3 initialColor, half3 finalColor, half3x3 tangentM
     return half4(finalColor, alpha);
 }
 
-half4 CombinedShapeLightShared(half4 color, half4 mask, half2 lightingUV, half3x3 tangentMatrixWS, half3 normalWS)
+half4 CombinedShapeLightShared(half4 color, half4 mask, half2 lightingUV, half3x3 tangentMatrixWS, half3 normalTS)
 {
 	if (color.a == 0.0)
 		discard;
@@ -65,7 +65,7 @@ half4 CombinedShapeLightShared(half4 color, half4 mask, half2 lightingUV, half3x
     color = color * _RendererColor; // This is needed for sprite shape
 
 #if !USE_SHAPE_LIGHT_TYPE_0 && !USE_SHAPE_LIGHT_TYPE_1 && !USE_SHAPE_LIGHT_TYPE_2 && ! USE_SHAPE_LIGHT_TYPE_3
-    half3 sceneLightingColor = color;
+    half3 sceneLightingColor = color.rgb;
 #else
     half4 finalModulate = half4(0, 0, 0, 0);
     half4 finalAdditive = half4(0, 0, 0, 0);
@@ -98,9 +98,9 @@ half4 CombinedShapeLightShared(half4 color, half4 mask, half2 lightingUV, half3x
                       finalModulate, finalAdditive);
     #endif
 
-    half3 sceneLightingColor = _HDREmulationScale * (color.rgb * finalModulate + finalAdditive);
+    half3 sceneLightingColor = _HDREmulationScale * (color.rgb * finalModulate.rgb + finalAdditive.rgb);
 #endif
 
-    return CalculateFinalColor(color.rgb, sceneLightingColor, tangentMatrixWS, normalWS, color.a);
+    return CalculateFinalColor(color.rgb, sceneLightingColor, tangentMatrixWS, normalTS, color.a);
 }
 #endif
