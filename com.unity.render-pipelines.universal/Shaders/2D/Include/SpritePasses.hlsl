@@ -11,7 +11,7 @@ struct Attributes
     float4 color      : COLOR;
     float2 uv         : TEXCOORD0;
     #if defined(_NORMALMAP)
-    float4 tangent    : TANGENT;
+    float4 tangentOS  : TANGENT;
     #endif
 
     UNITY_VERTEX_INPUT_INSTANCE_ID
@@ -46,6 +46,13 @@ Varyings CombinedShapeLightVertex(Attributes v)
     float4 clipVertex = o.positionCS / o.positionCS.w;
     o.lightingUV = ComputeScreenPos(clipVertex).xy;
     o.color = v.color;
+
+    #if defined(_NORMALMAP)
+    o.normalWS = TransformObjectToWorldDir(float3(0, 0, -1));
+    // o.tangentWS = TransformObjectToWorldDir(attributes.tangentOS.xyz);
+    // o.bitangentWS = cross(o.normalWS, o.tangentWS) * attributes.tangentOS.w;
+    #endif
+
     return o;
 }
 
@@ -53,8 +60,15 @@ half4 CombinedShapeLightFragment(Varyings i) : SV_Target
 {
     half4 main = i.color * SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.uv);
     half4 mask = SAMPLE_TEXTURE2D(_MaskTex, sampler_MaskTex, i.uv);
+    #if defined(_NORMALMAP)
+    half3 normalTS = UnpackNormal(SAMPLE_TEXTURE2D(_NormalMap, sampler_NormalMap, i.uv));
+    half3x3 tangentMatrixWS = half3x3(i.tangentWS.xyz, i.bitangentWS.xyz, i.normalWS.xyz);
+    #else
+    half3 normalTS = half3(0, 0, 1);
+    half3x3 tangentMatrixWS = half3x3(half3(1, 0, 0), half3(0, 1, 0), half3(0, 0, 1));
+    #endif
 
-    return CombinedShapeLightShared(main, mask, i.lightingUV);
+    return CombinedShapeLightShared(main, mask, i.lightingUV, tangentMatrixWS, normalTS);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -72,8 +86,8 @@ Varyings NormalsRenderingVertex(Attributes attributes)
     o.uv = attributes.uv;
     o.color = attributes.color;
     o.normalWS = TransformObjectToWorldDir(float3(0, 0, -1));
-    o.tangentWS = TransformObjectToWorldDir(attributes.tangent.xyz);
-    o.bitangentWS = cross(o.normalWS, o.tangentWS) * attributes.tangent.w;
+    o.tangentWS = TransformObjectToWorldDir(attributes.tangentOS.xyz);
+    o.bitangentWS = cross(o.normalWS, o.tangentWS) * attributes.tangentOS.w;
     return o;
 }
 

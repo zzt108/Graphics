@@ -25,7 +25,7 @@ void UpdateShapeLight(half4 maskFilter, half4 invertedFilter, half4 mask, half4 
     finalAdditive += additive;
 }
 
-half4 CalculateFinalColor(half3 initialColor, half3 finalColor, half alpha)
+half4 CalculateFinalColor(half3 initialColor, half3 finalColor, half3x3 tangentMatrixWS, half3 normalTS, half alpha)
 {
     #if defined(_DEBUG_SHADER)
     if(_DebugMaterialIndex != DEBUG_LIGHTING_NONE)
@@ -39,6 +39,14 @@ half4 CalculateFinalColor(half3 initialColor, half3 finalColor, half alpha)
             case DEBUG_MATERIAL_ALPHA:
                 return half4(alpha, alpha, alpha, 1);
 
+            case DEBUG_MATERIAL_NORMAL_WORLD_SPACE:
+                half3 normalWS = TransformTangentToWorld(normalTS, tangentMatrixWS);
+
+                return half4((normalWS * 0.5) + 0.5, 1);
+
+            case DEBUG_MATERIAL_NORMAL_TANGENT_SPACE:
+                return half4((normalTS * 0.5) + 0.5, 1);
+
             default:
                 return half4(0, 0, 0, 1);
         }
@@ -49,7 +57,7 @@ half4 CalculateFinalColor(half3 initialColor, half3 finalColor, half alpha)
     return half4(finalColor, alpha);
 }
 
-half4 CombinedShapeLightShared(half4 color, half4 mask, half2 lightingUV)
+half4 CombinedShapeLightShared(half4 color, half4 mask, half2 lightingUV, half3x3 tangentMatrixWS, half3 normalWS)
 {
 	if (color.a == 0.0)
 		discard;
@@ -93,6 +101,6 @@ half4 CombinedShapeLightShared(half4 color, half4 mask, half2 lightingUV)
     half3 sceneLightingColor = _HDREmulationScale * (color.rgb * finalModulate + finalAdditive);
 #endif
 
-    return CalculateFinalColor(color.rgb, sceneLightingColor, color.a);
+    return CalculateFinalColor(color.rgb, sceneLightingColor, tangentMatrixWS, normalWS, color.a);
 }
 #endif

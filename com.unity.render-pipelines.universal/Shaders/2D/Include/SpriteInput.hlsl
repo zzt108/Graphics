@@ -3,13 +3,16 @@
 
 TEXTURE2D(_MainTex);
 SAMPLER(sampler_MainTex);
+half4 _MainTex_ST;
+
 TEXTURE2D(_MaskTex);
 SAMPLER(sampler_MaskTex);
+
+#if defined(_NORMALMAP)
 TEXTURE2D(_NormalMap);
 SAMPLER(sampler_NormalMap);
-
-half4 _MainTex_ST;
 half4 _NormalMap_ST;
+#endif
 
 #if USE_SHAPE_LIGHT_TYPE_0
 SHAPE_LIGHT(0)
