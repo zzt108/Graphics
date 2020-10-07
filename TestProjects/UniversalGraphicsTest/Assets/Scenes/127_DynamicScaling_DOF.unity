@@ -734,3 +734,4 @@ MonoBehaviour:
     AverageCorrectnessThreshold: 0.005
     UseHDR: 0
   WaitFrames: 0
+  XRCompatible: 0
