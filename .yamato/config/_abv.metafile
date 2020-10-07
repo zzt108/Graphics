@@ -40,7 +40,7 @@ nightly:
         - Standalone
         - editmode
         - playmode
-        # - playmode_XR # uncomment once bug fixed on XR side
+        - playmode_XR
     - project: URPUpdate
       platform: Win
       api: DX11
