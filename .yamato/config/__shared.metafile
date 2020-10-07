@@ -7,13 +7,32 @@ editors: # applied for all yml files
     rerun_strategy: on-new-revision
     editor_pinning: True
     nightly: True
+  - track: trunk
+    name: fast-trunk
+    rerun_strategy: on-new-revision
+    editor_pinning: False
+    nightly: False
+    abv_pr: True
+    fast: True
   - track: 2020.2
     name: 2020.2
     rerun_strategy: on-new-revision
     editor_pinning: True
-    # fast: True
-    abv_pr: True
     nightly: True
+  - track: 2020.2
+    name: fast-2020.2
+    rerun_strategy: on-new-revision
+    editor_pinning: False
+    fast: True
+    abv_pr: True
+    nightly: False
+  - track: 2020.2
+    name: latest-2020.2
+    rerun_strategy: on-new-revision
+    editor_pinning: False
+    fast: False
+    abv_pr: False
+    nightly: False
   - track: CUSTOM-REVISION
     name: CUSTOM-REVISION
     rerun_strategy: always
