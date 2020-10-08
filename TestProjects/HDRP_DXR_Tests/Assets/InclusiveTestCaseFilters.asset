@@ -19,7 +19,7 @@ MonoBehaviour:
     - {fileID: 102900000, guid: 7370a32694f72f146851c3347ef04385, type: 3}
     - {fileID: 102900000, guid: 5fd2fada5be46b04898ce4c60cd49a90, type: 3}
     ColorSpace: -1
-    BuildPlatform: 5
+    BuildPlatform: 19
     GraphicsDevice: 4
     XrSdk: 
     StereoModes: 0
