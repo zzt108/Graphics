@@ -163,42 +163,45 @@ namespace UnityEngine.Experimental.Rendering.Universal
                         filterSettings.sortingLayerRange = new SortingLayerRange(lowerBound, upperBound);
 
                         // Start Rendering
+                        if (lightStats.totalNormalMapUsage > 0)
+                            this.RenderNormals(context, renderingData.cullResults, normalsDrawSettings, filterSettings, depthAttachment);
+
+                        cmd.Clear();
+                        if (lightStats.totalLights > 0)
+                        {
+                            this.RenderLights(renderingData, cmd, layerToRender, lightStats.blendStylesUsed);
+                        }
+                        else
+                        {
+                            this.ClearDirtyLighting(cmd, lightStats.blendStylesUsed);
+                        }
+
+                        CoreUtils.SetRenderTarget(cmd, colorAttachment, depthAttachment, ClearFlag.None, Color.white);
+                        context.ExecuteCommandBuffer(cmd);
+
+                        bool renderLightVolumes = lightStats.totalVolumetricUsage > 0;
+
                         if((DebugHandler != null) &&
                            (DebugHandler.IsDebugMaterialActive || DebugHandler.IsSceneOverrideActive))
                         {
                             bool overrideMaterial = DebugHandler.IsSceneOverrideActive || DebugHandler.IsVertexAttributeOverrideActive;
 
                             RenderObjectWithDebug(context, k_ShaderTags, ref renderingData, filterSettings, sortSettings.criteria, overrideMaterial);
+                            renderLightVolumes &= DebugHandler.IsLightingDebugActive || DebugHandler.IsLightingFeatureActive;
                         }
                         else
                         {
-                            if (lightStats.totalNormalMapUsage > 0)
-                                this.RenderNormals(context, renderingData.cullResults, normalsDrawSettings, filterSettings, depthAttachment);
-
-                            cmd.Clear();
-                            if (lightStats.totalLights > 0)
-                            {
-                                this.RenderLights(renderingData, cmd, layerToRender, lightStats.blendStylesUsed);
-                            }
-                            else
-                            {
-                                this.ClearDirtyLighting(cmd, lightStats.blendStylesUsed);
-                            }
-
-                            CoreUtils.SetRenderTarget(cmd, colorAttachment, depthAttachment, ClearFlag.None, Color.white);
-                            context.ExecuteCommandBuffer(cmd);
-
                             Profiler.BeginSample("RenderSpritesWithLighting - Draw Transparent Renderers");
                             context.DrawRenderers(renderingData.cullResults, ref combinedDrawSettings, ref filterSettings);
                             Profiler.EndSample();
+                        }
 
-                            if (lightStats.totalVolumetricUsage > 0)
-                            {
-                                cmd.Clear();
-                                this.RenderLightVolumes(renderingData, cmd, layerToRender, colorAttachment, depthAttachment, lightStats.blendStylesUsed);
-                                context.ExecuteCommandBuffer(cmd);
-                                cmd.Clear();
-                            }
+                        if(renderLightVolumes)
+                        {
+                            cmd.Clear();
+                            this.RenderLightVolumes(renderingData, cmd, layerToRender, colorAttachment, depthAttachment, lightStats.blendStylesUsed);
+                            context.ExecuteCommandBuffer(cmd);
+                            cmd.Clear();
                         }
 
                         // move on to the next one

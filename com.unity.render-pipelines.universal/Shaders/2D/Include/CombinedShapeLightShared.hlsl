@@ -28,7 +28,7 @@ void UpdateShapeLight(half4 maskFilter, half4 invertedFilter, half4 mask, half4 
 half4 CalculateFinalColor(half3 initialColor, half3 finalColor, half3x3 tangentMatrixWS, half3 normalTS, half alpha)
 {
     #if defined(_DEBUG_SHADER)
-    if(_DebugMaterialIndex != DEBUG_LIGHTING_NONE)
+    if(_DebugMaterialIndex != DEBUG_MATERIAL_NONE)
     {
         switch(_DebugMaterialIndex)
         {
@@ -64,17 +64,17 @@ half4 CombinedShapeLightShared(half4 color, half4 mask, half2 lightingUV, half3x
 
     color = color * _RendererColor; // This is needed for sprite shape
 
-#if !USE_SHAPE_LIGHT_TYPE_0 && !USE_SHAPE_LIGHT_TYPE_1 && !USE_SHAPE_LIGHT_TYPE_2 && ! USE_SHAPE_LIGHT_TYPE_3
-    half3 sceneLightingColor = color.rgb;
-#else
     half4 finalModulate = half4(0, 0, 0, 0);
     half4 finalAdditive = half4(0, 0, 0, 0);
+    half hdrEmulationScale = _HDREmulationScale;
+    int numShapeLights = 0;
 
     #if USE_SHAPE_LIGHT_TYPE_0
     half4 shapeLight0 = SAMPLE_TEXTURE2D(_ShapeLightTexture0, sampler_ShapeLightTexture0, lightingUV);
 
     UpdateShapeLight(_ShapeLightMaskFilter0, _ShapeLightInvertedFilter0, mask, shapeLight0, _ShapeLightBlendFactors0,
                       finalModulate, finalAdditive);
+    numShapeLights++;
     #endif
 
     #if USE_SHAPE_LIGHT_TYPE_1
@@ -82,6 +82,7 @@ half4 CombinedShapeLightShared(half4 color, half4 mask, half2 lightingUV, half3x
 
     UpdateShapeLight(_ShapeLightMaskFilter1, _ShapeLightInvertedFilter1, mask, shapeLight1, _ShapeLightBlendFactors1,
                       finalModulate, finalAdditive);
+    numShapeLights++;
     #endif
 
     #if USE_SHAPE_LIGHT_TYPE_2
@@ -89,6 +90,7 @@ half4 CombinedShapeLightShared(half4 color, half4 mask, half2 lightingUV, half3x
 
     UpdateShapeLight(_ShapeLightMaskFilter2, _ShapeLightInvertedFilter2, mask, shapeLight2, _ShapeLightBlendFactors2,
                       finalModulate, finalAdditive);
+    numShapeLights++;
     #endif
 
     #if USE_SHAPE_LIGHT_TYPE_3
@@ -96,10 +98,30 @@ half4 CombinedShapeLightShared(half4 color, half4 mask, half2 lightingUV, half3x
 
     UpdateShapeLight(_ShapeLightMaskFilter3, _ShapeLightInvertedFilter3, mask, shapeLight3, _ShapeLightBlendFactors3,
                       finalModulate, finalAdditive);
+    numShapeLights++;
     #endif
 
-    half3 sceneLightingColor = _HDREmulationScale * (color.rgb * finalModulate.rgb + finalAdditive.rgb);
-#endif
+    if(numShapeLights == 0)
+    {
+        finalModulate = half4(1, 1, 1, 1);
+        hdrEmulationScale = 1;
+    }
+
+    #if defined(_DEBUG_SHADER)
+    if((_DebugLightingIndex == DEBUG_LIGHTING_LIGHT_ONLY) || (_DebugLightingIndex == DEBUG_LIGHTING_LIGHT_DETAIL))
+    {
+        color.rgb = half3(0.1, 0.1, 0.1);
+        hdrEmulationScale = 1;
+
+        if(_DebugLightingIndex == DEBUG_LIGHTING_LIGHT_ONLY)
+        {
+            normalTS = half3(0, 0, 1);
+        }
+    }
+    #endif
+
+    half3 litColor = (color.rgb * finalModulate.rgb) + finalAdditive.rgb;
+    half3 sceneLightingColor = hdrEmulationScale * litColor;
 
     return CalculateFinalColor(color.rgb, sceneLightingColor, tangentMatrixWS, normalTS, color.a);
 }
