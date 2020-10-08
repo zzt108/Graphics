@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Shader Graphs_SGLit_RaytracingKeyword_Emission
+  m_Name: Shader Graphs_SGLit_RaytracingKeyword_Emission_Unlit
   m_Shader: {fileID: -6465566751694194690, guid: 58bceeb58a032bb40a7c4580ab3957ff,
     type: 3}
   m_ShaderKeywords: _DISABLE_SSR_TRANSPARENT

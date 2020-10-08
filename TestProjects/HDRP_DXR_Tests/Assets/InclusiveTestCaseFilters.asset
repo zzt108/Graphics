@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d173eb8ff7aee9245a790f3348990cea, type: 3}
+  m_Name: InclusiveTestCaseFilters
+  m_EditorClassIdentifier: 
+  filter:
+    FilteredScene: {fileID: 0}
+    FilteredScenes:
+    - {fileID: 102900000, guid: 4951b574dff43c34d93926b58d153f35, type: 3}
+    - {fileID: 102900000, guid: 7370a32694f72f146851c3347ef04385, type: 3}
+    - {fileID: 102900000, guid: 5fd2fada5be46b04898ce4c60cd49a90, type: 3}
+    ColorSpace: -1
+    BuildPlatform: 5
+    GraphicsDevice: 4
+    XrSdk: 
+    StereoModes: 0
+    Reason: 
