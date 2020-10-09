@@ -8,7 +8,6 @@ def utr_playmode_flags(suite='playmode', testproject='.', editor_location='.Edit
         f'--testproject={testproject}',
         f'--editor-location={editor_location}',
         f'--artifacts_path={artifacts_path}',
-        f'--reruncount=2'
         ]
     return [f for f in flags if f]
 
