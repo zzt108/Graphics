@@ -152,7 +152,7 @@ namespace UnityEditor.Rendering.HighDefinition
                             EditorGUI.indentLevel--;
                         }
                     }
-
+                    EditorGUI.indentLevel--;
                     PropertyField(m_DirectionalLightsOnly);
                     PropertyField(m_Anisotropy, s_AnisotropyLabel);
                     if (m_Anisotropy.value.floatValue != 0.0f)
