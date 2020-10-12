@@ -268,10 +268,28 @@ MonoBehaviour:
     Reason: iOS crashes on scene 038 (temporary disabled for testing)
   - FilteredScene: {fileID: 0}
     FilteredScenes:
-    - {fileID: 102900000, guid: 4387c323b80b3f8479359d07b90f0031, type: 3}
+    - {fileID: 102900000, guid: 362b9a0c21a9b4e798504044c7604e80, type: 3}
     ColorSpace: -1
     BuildPlatform: 9
     GraphicsDevice: 16
     XrSdk: None
     StereoModes: 0
-    Reason: iOS crashes on scene 069
+    Reason: iOS crash search 055
+  - FilteredScene: {fileID: 0}
+    FilteredScenes:
+    - {fileID: 102900000, guid: cd37c7e9d54e74dd7add9b40a2698ada, type: 3}
+    ColorSpace: -1
+    BuildPlatform: 9
+    GraphicsDevice: 16
+    XrSdk: None
+    StereoModes: 0
+    Reason: iOS crash search 041
+  - FilteredScene: {fileID: 0}
+    FilteredScenes:
+    - {fileID: 102900000, guid: 7a8ef7ce062f0465b9e493dd5730cecb, type: 3}
+    ColorSpace: -1
+    BuildPlatform: 9
+    GraphicsDevice: 16
+    XrSdk: None
+    StereoModes: 0
+    Reason: iOS crash search 036
