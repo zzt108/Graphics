@@ -52,33 +52,6 @@ MonoBehaviour:
     Reason: iOS Tracked issue (023)
   - FilteredScene: {fileID: 0}
     FilteredScenes:
-    - {fileID: 102900000, guid: 7a8ef7ce062f0465b9e493dd5730cecb, type: 3}
-    ColorSpace: -1
-    BuildPlatform: 9
-    GraphicsDevice: 16
-    XrSdk: None
-    StereoModes: 0
-    Reason: iOS Tracked issue (036)
-  - FilteredScene: {fileID: 0}
-    FilteredScenes:
-    - {fileID: 102900000, guid: cd37c7e9d54e74dd7add9b40a2698ada, type: 3}
-    ColorSpace: -1
-    BuildPlatform: 9
-    GraphicsDevice: 16
-    XrSdk: None
-    StereoModes: 0
-    Reason: iOS Tracked issue (041)
-  - FilteredScene: {fileID: 0}
-    FilteredScenes:
-    - {fileID: 102900000, guid: 362b9a0c21a9b4e798504044c7604e80, type: 3}
-    ColorSpace: -1
-    BuildPlatform: 9
-    GraphicsDevice: 16
-    XrSdk: None
-    StereoModes: 0
-    Reason: iOS Tracked issue  (055)
-  - FilteredScene: {fileID: 0}
-    FilteredScenes:
     - {fileID: 102900000, guid: 9f750aafa54d07a43b7601615bb2c7ea, type: 3}
     ColorSpace: -1
     BuildPlatform: 9
@@ -366,16 +339,6 @@ MonoBehaviour:
       033)'
   - FilteredScene: {fileID: 0}
     FilteredScenes:
-    - {fileID: 102900000, guid: e346f8573410f414ea2a8a4740526c88, type: 3}
-    ColorSpace: -1
-    BuildPlatform: 9
-    GraphicsDevice: 16
-    XrSdk: None
-    StereoModes: 0
-    Reason: 'iOS tracked  regression: Lit shader fails has an error on iOS (scene
-      034)'
-  - FilteredScene: {fileID: 0}
-    FilteredScenes:
     - {fileID: 102900000, guid: 5578c9d8b0329024d8020e3094f70302, type: 3}
     ColorSpace: -1
     BuildPlatform: 9
@@ -393,15 +356,6 @@ MonoBehaviour:
     XrSdk: None
     StereoModes: 0
     Reason: Android 039 new faulty testscene
-  - FilteredScene: {fileID: 0}
-    FilteredScenes:
-    - {fileID: 102900000, guid: 5fca56b2f8a46664e858cbb290338fc8, type: 3}
-    ColorSpace: -1
-    BuildPlatform: 9
-    GraphicsDevice: 16
-    XrSdk: None
-    StereoModes: 0
-    Reason: iOS 039 new faulty test scene
   - FilteredScene: {fileID: 0}
     FilteredScenes:
     - {fileID: 102900000, guid: 44c3bddf1a7da4af28d764901f2e9507, type: 3}
