@@ -16,7 +16,7 @@ HDRP_Win_DX11_playmode_trunk:
       -  curl -s https://artifactory.internal.unity3d.com/core-automation/tools/utr-standalone/utr.bat --output TestProjects/HDRP_Tests/utr.bat
       -  pip install unity-downloader-cli --index-url https://artifactory.prd.it.unity3d.com/artifactory/api/pypi/pypi/simple --upgrade
       -  cd TestProjects/HDRP_Tests && unity-downloader-cli -u 5181ec54d595526303eb2714f480cbc3ee1911bd -c editor -c il2cpp  --wait --published-only
-      -  cd TestProjects/HDRP_Tests && utr --suite=playmode --testproject=. --editor-location=.Editor --artifacts_path=test-results --reruncount=2 --extra-editor-arg="-force-d3d11"
+      -  cd TestProjects/HDRP_Tests && utr --suite=playmode --testproject=. --editor-location=.Editor --artifacts_path=test-results --extra-editor-arg="-force-d3d11"
     artifacts:
         logs:
             paths:
