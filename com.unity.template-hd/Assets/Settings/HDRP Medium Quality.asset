@@ -156,7 +156,7 @@ MonoBehaviour:
   m_RenderingPathDefaultCameraFrameSettings:
     bitDatas:
       data1: 140666621263709
-      data2: 4539628425463136256
+      data2: 4539628427610619904
     lodBias: 1
     lodBiasMode: 0
     lodBiasQualityLevel: 0
@@ -267,7 +267,7 @@ MonoBehaviour:
       maxEnvLightsOnScreen: 32
       maxDecalsOnScreen: 512
       maxPlanarReflectionOnScreen: 16
-      maxLightsPerClusterCell: 8
+      maxLightsPerClusterCell: 20
     hdShadowInitParams:
       maxShadowRequests: 128
       directionalShadowsDepthBits: 16
