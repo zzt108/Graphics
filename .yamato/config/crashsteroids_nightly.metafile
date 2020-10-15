@@ -1,0 +1,28 @@
+project:
+  name: CS_Nightly_Test
+  folder: Crashteriods
+test_platforms:
+  - type: Standalone
+    timeout:
+      OSX_Metal: 2400
+  - type: playmode
+platforms:
+  - name: Win
+    apis:
+      - DX11
+      - Vulkan
+  - name: OSX 
+    apis:
+      - Metal
+      - OpenGLCore
+  - name: Linux
+    apis: 
+      - Vulkan
+      - OpenGLCore
+all:
+  dependencies:
+    - platform: Win
+      api: DX11
+      test_platforms:
+        - Standalone
+        - playmode
