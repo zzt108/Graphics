@@ -1,31 +1,30 @@
+# multiplatform test runs would be executed nightly bcs executing them takes longer time
+# multiplatform tests would test only game mode tests as edit mode tests are for less platforms which are tested via edit mode tests
+
 project:
-  name: CS_Nightly_Test
-  folder: Crashteriods
+  name: URP_1_multiplatform
+  folder: urp1
 test_platforms:
+  - type: playmode
+  #- type: editmode # This mode is executed by URP_1_edit_mode  
   - type: Standalone
     timeout:
       OSX_Metal: 2400
-  - type: playmode
 platforms:
   - name: Win
     apis:
-      - DX11
+      #- DX11 # has been executed on smoke tests
       - Vulkan
-  - name: OSX 
+  - name: OSX
     apis:
       - Metal
       - OpenGLCore
   - name: Linux
-    apis: 
+    apis:
       - Vulkan
       - OpenGLCore
 all:
   dependencies:
-    - platform: Win
-      api: DX11
-      test_platforms:
-        - Standalone
-        - playmode
     - platform: Win
       api: Vulkan
       test_platforms:

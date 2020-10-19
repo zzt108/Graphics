@@ -29,6 +29,22 @@ all_project_ci_nightly_trunk:
          rerun: on-new-revision
       -  path: .yamato/smoke_test-win-dx11.yml#Smoke_Test_Win_DX11_Standalone_trunk
          rerun: on-new-revision
+      -  path: .yamato/cs_nightly_test-win-dx11.yml#CS_Nightly_Test_Win_DX11_playmode_trunk
+         rerun: on-new-revision
+      -  path: .yamato/cs_nightly_test-win-dx11.yml#CS_Nightly_Test_Win_DX11_Standalone_trunk
+         rerun: on-new-revision
+      -  path: .yamato/cs_nightly_test-win-vulkan.yml#CS_Nightly_Test_Win_Vulkan_playmode_trunk
+         rerun: on-new-revision
+      -  path: .yamato/cs_nightly_test-win-vulkan.yml#CS_Nightly_Test_Win_Vulkan_Standalone_trunk
+         rerun: on-new-revision
+      -  path: .yamato/cs_nightly_test-linux-vulkan.yml#CS_Nightly_Test_Linux_Vulkan_playmode_trunk
+         rerun: on-new-revision
+      -  path: .yamato/cs_nightly_test-linux-vulkan.yml#CS_Nightly_Test_Linux_Vulkan_Standalone_trunk
+         rerun: on-new-revision
+      -  path: .yamato/cs_nightly_test-osx-metal.yml#CS_Nightly_Test_OSX_Metal_playmode_trunk
+         rerun: on-new-revision
+      -  path: .yamato/cs_nightly_test-osx-metal.yml#CS_Nightly_Test_OSX_Metal_Standalone_trunk
+         rerun: on-new-revision
       -  path: .yamato/universal-android-opengles3.yml#Universal_Android_OpenGLES3_Standalone_trunk
          rerun: on-new-revision
       -  path: .yamato/universal-android-vulkan.yml#Universal_Android_Vulkan_Standalone_trunk
@@ -105,6 +121,22 @@ all_project_ci_nightly_2020.2:
       -  path: .yamato/smoke_test-win-dx11.yml#Smoke_Test_Win_DX11_editmode_2020.2
          rerun: on-new-revision
       -  path: .yamato/smoke_test-win-dx11.yml#Smoke_Test_Win_DX11_Standalone_2020.2
+         rerun: on-new-revision
+      -  path: .yamato/cs_nightly_test-win-dx11.yml#CS_Nightly_Test_Win_DX11_playmode_2020.2
+         rerun: on-new-revision
+      -  path: .yamato/cs_nightly_test-win-dx11.yml#CS_Nightly_Test_Win_DX11_Standalone_2020.2
+         rerun: on-new-revision
+      -  path: .yamato/cs_nightly_test-win-vulkan.yml#CS_Nightly_Test_Win_Vulkan_playmode_2020.2
+         rerun: on-new-revision
+      -  path: .yamato/cs_nightly_test-win-vulkan.yml#CS_Nightly_Test_Win_Vulkan_Standalone_2020.2
+         rerun: on-new-revision
+      -  path: .yamato/cs_nightly_test-linux-vulkan.yml#CS_Nightly_Test_Linux_Vulkan_playmode_2020.2
+         rerun: on-new-revision
+      -  path: .yamato/cs_nightly_test-linux-vulkan.yml#CS_Nightly_Test_Linux_Vulkan_Standalone_2020.2
+         rerun: on-new-revision
+      -  path: .yamato/cs_nightly_test-osx-metal.yml#CS_Nightly_Test_OSX_Metal_playmode_2020.2
+         rerun: on-new-revision
+      -  path: .yamato/cs_nightly_test-osx-metal.yml#CS_Nightly_Test_OSX_Metal_Standalone_2020.2
          rerun: on-new-revision
       -  path: .yamato/universal-android-opengles3.yml#Universal_Android_OpenGLES3_Standalone_2020.2
          rerun: on-new-revision
