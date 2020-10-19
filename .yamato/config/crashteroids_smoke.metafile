@@ -1,0 +1,18 @@
+project:
+  name: CS_Smoke_Test
+  folder: Crashteriods
+test_platforms:
+  - type: playmode
+  - type: Standalone
+platforms:
+  - name: Win
+    apis:
+      - DX11
+all:
+  dependencies:
+    - platform: Win
+      api: DX11
+      test_platforms:
+        - playmode
+        - Standalone
+        

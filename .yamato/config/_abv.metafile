@@ -15,6 +15,30 @@ nightly:
         - playmode
         - editmode
         - Standalone
+    - project: CS_Nightly_Test
+      platform: Win
+      api: DX11
+      test_platforms:
+        - playmode
+        - Standalone
+    - project: CS_Nightly_Test
+      platform: Win
+      api: Vulkan
+      test_platforms:
+        - playmode
+        - Standalone
+    - project: CS_Nightly_Test
+      platform: Linux
+      api: Vulkan
+      test_platforms:
+        - playmode
+        - Standalone
+    - project: CS_Nightly_Test
+      platform: OSX
+      api: Metal
+      test_platforms:
+        - playmode
+        - Standalone
     - project: Universal
       platform: Android
       api: OpenGLES3
