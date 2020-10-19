@@ -3,10 +3,10 @@
 # Introduce any changes under .yamato/config/*.metafile files (for most cases) or under .yamato/ruamel/* within Python (more elaborate cases), and rerun build.py to regenerate all .yml files. 
 # Read more under .yamato/docs/readme.md 
 
-URP_1_multiplatform_Linux_OpenGLCore_playmode_trunk:
-    name: URP_1_multiplatform on Linux_OpenGLCore_playmode on version trunk
+URP_1_edit_mode_Linux_OpenGLCore_editmode_trunk:
+    name: URP_1_edit_mode on Linux_OpenGLCore_editmode on version trunk
     agent:
-        type: Unity::VM::GPU
+        type: Unity::VM
         image: cds-ops/ubuntu-18.04-base:stable
         flavor: b1.large
     variables:
@@ -17,16 +17,16 @@ URP_1_multiplatform_Linux_OpenGLCore_playmode_trunk:
       -  curl -s https://artifactory.internal.unity3d.com/core-automation/tools/utr-standalone/utr --output TestProjects/urp1/utr
       -  chmod +x TestProjects/urp1/utr
       -  cd TestProjects/urp1 && sudo unity-downloader-cli -u 5181ec54d595526303eb2714f480cbc3ee1911bd -c editor -c il2cpp  --wait --published-only
-      -  cd TestProjects/urp1 && DISPLAY=:0.0 ./utr --suite=playmode --testproject=. --editor-location=.Editor --artifacts_path=test-results --reruncount=2 --extra-editor-arg="-force-glcore"
+      -  cd TestProjects/urp1 && DISPLAY=:0.0 ./utr --suite=editor --platform=editmode --testproject=. --editor-location=.Editor --artifacts_path=test-results --reruncount=2 --extra-editor-arg="-force-glcore"
     artifacts:
         logs:
             paths:
               -  "**/test-results/**"
               -  "TestProjects/urp1/Logs/*.log"
-URP_1_multiplatform_Linux_OpenGLCore_playmode_2020.2:
-    name: URP_1_multiplatform on Linux_OpenGLCore_playmode on version 2020.2
+URP_1_edit_mode_Linux_OpenGLCore_editmode_2020.2:
+    name: URP_1_edit_mode on Linux_OpenGLCore_editmode on version 2020.2
     agent:
-        type: Unity::VM::GPU
+        type: Unity::VM
         image: cds-ops/ubuntu-18.04-base:stable
         flavor: b1.large
     variables:
@@ -37,16 +37,16 @@ URP_1_multiplatform_Linux_OpenGLCore_playmode_2020.2:
       -  curl -s https://artifactory.internal.unity3d.com/core-automation/tools/utr-standalone/utr --output TestProjects/urp1/utr
       -  chmod +x TestProjects/urp1/utr
       -  cd TestProjects/urp1 && sudo unity-downloader-cli -u 2ea77e477b085e913ac2cdc798fcd655b010f1a2 -c editor -c il2cpp  --wait --published-only
-      -  cd TestProjects/urp1 && DISPLAY=:0.0 ./utr --suite=playmode --testproject=. --editor-location=.Editor --artifacts_path=test-results --reruncount=2 --extra-editor-arg="-force-glcore"
+      -  cd TestProjects/urp1 && DISPLAY=:0.0 ./utr --suite=editor --platform=editmode --testproject=. --editor-location=.Editor --artifacts_path=test-results --reruncount=2 --extra-editor-arg="-force-glcore"
     artifacts:
         logs:
             paths:
               -  "**/test-results/**"
               -  "TestProjects/urp1/Logs/*.log"
-URP_1_multiplatform_Linux_OpenGLCore_playmode_CUSTOM-REVISION:
-    name: URP_1_multiplatform on Linux_OpenGLCore_playmode on version CUSTOM-REVISION
+URP_1_edit_mode_Linux_OpenGLCore_editmode_CUSTOM-REVISION:
+    name: URP_1_edit_mode on Linux_OpenGLCore_editmode on version CUSTOM-REVISION
     agent:
-        type: Unity::VM::GPU
+        type: Unity::VM
         image: cds-ops/ubuntu-18.04-base:stable
         flavor: b1.large
     variables:
@@ -58,7 +58,7 @@ URP_1_multiplatform_Linux_OpenGLCore_playmode_CUSTOM-REVISION:
       -  curl -s https://artifactory.internal.unity3d.com/core-automation/tools/utr-standalone/utr --output TestProjects/urp1/utr
       -  chmod +x TestProjects/urp1/utr
       -  cd TestProjects/urp1 && sudo unity-downloader-cli --source-file ../../unity_revision.txt -c editor -c il2cpp  --wait --published-only
-      -  cd TestProjects/urp1 && DISPLAY=:0.0 ./utr --suite=playmode --testproject=. --editor-location=.Editor --artifacts_path=test-results --reruncount=2 --extra-editor-arg="-force-glcore"
+      -  cd TestProjects/urp1 && DISPLAY=:0.0 ./utr --suite=editor --platform=editmode --testproject=. --editor-location=.Editor --artifacts_path=test-results --reruncount=2 --extra-editor-arg="-force-glcore"
     artifacts:
         logs:
             paths:

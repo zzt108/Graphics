@@ -1,28 +1,26 @@
+# edit mode testruns would be executed nightly bcs executing them takes longer time
 project:
-  name: URP_1_multiplatform
+  name: URP_1_edit_mode
   folder: urp1
 test_platforms:
-  - type: Standalone
-    timeout:
-      OSX_Metal: 2400
-  - type: playmode
+  - type: editmode
 platforms:
   - name: Win
     apis:
-      - DX11
+      #- DX11 # has been executed on smoke tests
       - Vulkan
-  - name: OSX 
+  - name: OSX
     apis:
       - Metal
       - OpenGLCore
   - name: Linux
-    apis: 
+    apis:
       - Vulkan
       - OpenGLCore
 all:
   dependencies:
     - platform: Win
-      api: DX11
+      api: Vulkan
       test_platforms:
-        - Standalone
-        - playmode
+        - editmode
+

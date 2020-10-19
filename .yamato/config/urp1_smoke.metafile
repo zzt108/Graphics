@@ -1,5 +1,7 @@
+# smoke tests should run befor every git commit/push
+# smoke tests are testing both edit mode and play mode unit tests, but only on Win platform to save time
 project:
-  name: URP_1
+  name: URP_1_Smoke
   folder: urp1
 test_platforms:
   - type: playmode
@@ -17,4 +19,3 @@ all:
         - playmode
         - editmode
         - Standalone
-        
